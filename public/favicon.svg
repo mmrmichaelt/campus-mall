@@ -1,28 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Red app icon background -->
   <rect width="64" height="64" rx="16" fill="#e11d48"/>
 
-  <!-- C -->
-  <text x="5" y="40"
+  <!-- CM -->
+  <text x="32" y="31"
+        text-anchor="middle"
         font-family="Arial, Helvetica, sans-serif"
-        font-size="23"
-        font-weight="800"
-        fill="white">C</text>
+        font-size="24"
+        font-weight="900"
+        letter-spacing="1"
+        fill="white">CM</text>
 
-  <!-- Shopping cart -->
+  <!-- Small shopping cart -->
   <g fill="none"
      stroke="white"
      stroke-width="2.8"
      stroke-linecap="round"
      stroke-linejoin="round">
-    <path d="M22 25h4l3 14h12l4-10H27"/>
-    <circle cx="32" cy="44" r="2" fill="white"/>
-    <circle cx="41" cy="44" r="2" fill="white"/>
+    <path d="M22 37h4l2 10h13l3-8H27"/>
+    <circle cx="30" cy="51" r="2" fill="white"/>
+    <circle cx="41" cy="51" r="2" fill="white"/>
   </g>
-
-  <!-- M -->
-  <text x="46" y="40"
-        font-family="Arial, Helvetica, sans-serif"
-        font-size="21"
-        font-weight="800"
-        fill="white">M</text>
 </svg>
