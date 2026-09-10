@@ -1,0 +1,1 @@
+export default function Logo({small=false}:{small?:boolean}){return <div className={small?'logo small':'logo'} aria-label="Campus Mall logo"><span>CM</span><svg viewBox="0 0 48 28" aria-hidden="true"><path d="M4 5h5l3 14h21l5-10H10"/><circle cx="17" cy="24" r="2.5"/><circle cx="31" cy="24" r="2.5"/></svg></div>}
