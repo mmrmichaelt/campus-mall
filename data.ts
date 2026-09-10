@@ -1,0 +1,8 @@
+export const institutions = ['Kisii University','University of Nairobi','Kenyatta University','Jomo Kenyatta University of Agriculture and Technology','Moi University','Egerton University','Maseno University','Technical University of Kenya','Technical University of Mombasa','Mount Kenya University','Strathmore University','United States International University-Africa','KCA University','Other / International institution'] as const;
+export const categories = ['Electronics','Books & Stationery','Fashion','Hostel & Furniture','Beauty','Food','Services','Sports','Transport','Other'] as const;
+export const demoListings = [
+ {id:'demo-1',title:'Scientific Calculator',description:'Clean calculator suitable for maths and science units.',price:1800,category:'Electronics',condition:'Good',seller:'Campus Seller',institution:'Kisii University',location:'Kisii',image:'🧮',sold:false,createdAt:Date.now()-86400000},
+ {id:'demo-2',title:'Semester Textbooks',description:'University textbooks in good condition.',price:1200,category:'Books & Stationery',condition:'Used',seller:'Book Corner',institution:'Kenyatta University',location:'Nairobi',image:'📚',sold:false,createdAt:Date.now()-172800000},
+ {id:'demo-3',title:'Study Desk',description:'Compact desk for hostel or home study.',price:3500,category:'Hostel & Furniture',condition:'Used',seller:'Hostel Finds',institution:'University of Nairobi',location:'Nairobi',image:'🪑',sold:false,createdAt:Date.now()-259200000}
+];
+export function flag(code:string){if(code==='OTHER') return '🌍'; return String.fromCodePoint(...code.split('').map(c=>127397+c.charCodeAt(0)));}
