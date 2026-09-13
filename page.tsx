@@ -1,0 +1,2 @@
+"use client";import {useEffect,useState} from "react";
+export default function Orders(){const[o,setO]=useState<any[]>([]);useEffect(()=>{fetch("/api/orders").then(r=>r.ok?r.json():{orders:[]}).then(x=>setO(x.orders))},[]);return <><h1>Orders</h1>{o.map(x=><div className="panel" key={x.id}><b>{x.listing.title}</b><p>KSh {x.amount.toLocaleString()} · {x.status}</p><small>{x.buyer?.name} → {x.seller?.name}</small></div>)}{!o.length&&<div className="panel">No orders yet.</div>}</>}
