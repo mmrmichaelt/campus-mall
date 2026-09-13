@@ -1,16 +1,14 @@
 import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 
-import { prisma } from "../../../lib/prisma";
 import { getCurrentUser } from "../../../lib/auth";
+import { prisma } from "../../../lib/prisma";
 import { listingSchema } from "../../../lib/validation";
 
-const DEFAULT_PAGE_SIZE = 20;
-const MAX_PAGE_SIZE = 50;
+export const dynamic = "force-dynamic";
 
-function serializeListing(listing: {
+function formatListing(listing: {
   id: string;
-  sellerId: string;
   title: string;
   description: string;
   price: Prisma.Decimal;
@@ -27,225 +25,185 @@ function serializeListing(listing: {
     name: string;
     country: string;
     university: string;
-    accountType: string;
+    emailVerified: boolean;
+    phoneVerified: boolean;
   };
 }) {
   return {
-    id: listing.id,
-    sellerId: listing.sellerId,
-    title: listing.title,
-    description: listing.description,
-    price: Number(listing.price),
-    currency: listing.currency,
-    category: listing.category,
-    imageUrl: listing.imageUrl,
-    location: listing.location,
-    status: listing.status,
-    soldAt: listing.soldAt,
-    createdAt: listing.createdAt,
-    updatedAt: listing.updatedAt,
-    seller: listing.seller,
+    ...listing,
+    price: listing.price.toString(),
   };
 }
 
-/*
- * GET /api/listings
- *
- * Public listing search.
- *
- * Supported query parameters:
- * ?q=phone
- * ?category=items
- * ?country=Kenya
- * ?university=Kisii University
- * ?page=1
- * ?limit=20
- */
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const query = searchParams.get("q")?.trim() ?? "";
-    const category = searchParams.get("category")?.trim() ?? "";
-    const country = searchParams.get("country")?.trim() ?? "";
+    const q = searchParams.get("q")?.trim() || "";
+    const category =
+      searchParams.get("category")?.trim() || "";
+    const country =
+      searchParams.get("country")?.trim() || "";
     const university =
-      searchParams.get("university")?.trim() ?? "";
+      searchParams.get("university")?.trim() || "";
 
-    const requestedPage = Number(
-      searchParams.get("page") ?? "1"
-    );
-
-    const requestedLimit = Number(
-      searchParams.get("limit") ?? DEFAULT_PAGE_SIZE
+    const rawPage = Number(searchParams.get("page") || "1");
+    const rawLimit = Number(
+      searchParams.get("limit") || "30"
     );
 
     const page =
-      Number.isFinite(requestedPage) && requestedPage >= 1
-        ? Math.floor(requestedPage)
+      Number.isInteger(rawPage) && rawPage > 0
+        ? rawPage
         : 1;
 
     const limit =
-      Number.isFinite(requestedLimit) &&
-      requestedLimit >= 1
-        ? Math.min(
-            Math.floor(requestedLimit),
-            MAX_PAGE_SIZE
-          )
-        : DEFAULT_PAGE_SIZE;
+      Number.isInteger(rawLimit) &&
+      rawLimit >= 1 &&
+      rawLimit <= 60
+        ? rawLimit
+        : 30;
 
-    /*
-     * Only ACTIVE listings are returned.
-     *
-     * This is important because when a seller marks an item
-     * SOLD, it immediately disappears from the marketplace.
-     */
     const where: Prisma.ListingWhereInput = {
       status: "ACTIVE",
-    };
 
-    if (query) {
-      where.OR = [
-        {
-          title: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
-        {
-          description: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
-        {
-          location: {
-            contains: query,
-            mode: "insensitive",
-          },
-        },
-        {
-          seller: {
-            name: {
-              contains: query,
+      ...(category
+        ? {
+            category: {
+              equals: category,
               mode: "insensitive",
             },
+          }
+        : {}),
+
+      ...(country
+        ? {
+            seller: {
+              country: {
+                equals: country,
+                mode: "insensitive",
+              },
+            },
+          }
+        : {}),
+
+      ...(university
+        ? {
+            seller: {
+              university: {
+                equals: university,
+                mode: "insensitive",
+              },
+            },
+          }
+        : {}),
+
+      ...(q
+        ? {
+            OR: [
+              {
+                title: {
+                  contains: q,
+                  mode: "insensitive",
+                },
+              },
+              {
+                description: {
+                  contains: q,
+                  mode: "insensitive",
+                },
+              },
+              {
+                category: {
+                  contains: q,
+                  mode: "insensitive",
+                },
+              },
+              {
+                location: {
+                  contains: q,
+                  mode: "insensitive",
+                },
+              },
+            ],
+          }
+        : {}),
+    };
+
+    const [listings, total] =
+      await prisma.$transaction([
+        prisma.listing.findMany({
+          where,
+          orderBy: {
+            createdAt: "desc",
           },
-        },
-      ];
-    }
-
-    if (category) {
-      where.category = {
-        equals: category,
-        mode: "insensitive",
-      };
-    }
-
-    if (country) {
-      where.seller = {
-        ...(where.seller &&
-        typeof where.seller === "object"
-          ? where.seller
-          : {}),
-        country: {
-          equals: country,
-          mode: "insensitive",
-        },
-      };
-    }
-
-    if (university) {
-      where.seller = {
-        ...(where.seller &&
-        typeof where.seller === "object"
-          ? where.seller
-          : {}),
-        university: {
-          equals: university,
-          mode: "insensitive",
-        },
-      };
-    }
-
-    const skip = (page - 1) * limit;
-
-    const [listings, total] = await prisma.$transaction([
-      prisma.listing.findMany({
-        where,
-        orderBy: {
-          createdAt: "desc",
-        },
-        skip,
-        take: limit,
-        select: {
-          id: true,
-          sellerId: true,
-          title: true,
-          description: true,
-          price: true,
-          currency: true,
-          category: true,
-          imageUrl: true,
-          location: true,
-          status: true,
-          soldAt: true,
-          createdAt: true,
-          updatedAt: true,
-          seller: {
-            select: {
-              id: true,
-              name: true,
-              country: true,
-              university: true,
-              accountType: true,
+          skip: (page - 1) * limit,
+          take: limit,
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            price: true,
+            currency: true,
+            category: true,
+            imageUrl: true,
+            location: true,
+            status: true,
+            soldAt: true,
+            createdAt: true,
+            updatedAt: true,
+            seller: {
+              select: {
+                id: true,
+                name: true,
+                country: true,
+                university: true,
+                emailVerified: true,
+                phoneVerified: true,
+              },
             },
           },
-        },
-      }),
+        }),
 
-      prisma.listing.count({
-        where,
-      }),
-    ]);
+        prisma.listing.count({
+          where,
+        }),
+      ]);
 
     return NextResponse.json({
       success: true,
-      listings: listings.map(serializeListing),
+      listings: listings.map(formatListing),
       pagination: {
         page,
         limit,
         total,
-        totalPages:
-          total === 0 ? 0 : Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limit),
         hasNextPage: page * limit < total,
         hasPreviousPage: page > 1,
       },
       filters: {
-        q: query,
+        q,
         category,
         country,
         university,
       },
     });
   } catch (error) {
-    console.error("Campus Mall listing search error:", error);
+    console.error(
+      "Campus Mall listings GET error:",
+      error
+    );
 
     return NextResponse.json(
       {
         error:
-          "We could not load marketplace listings right now.",
+          "Unable to load marketplace listings right now.",
       },
       { status: 500 }
     );
   }
 }
 
-/*
- * POST /api/listings
- *
- * Creates a real listing belonging to the authenticated
- * Campus Mall user.
- */
 export async function POST(request: Request) {
   try {
     const user = await getCurrentUser();
@@ -253,9 +211,24 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json(
         {
-          error: "You must be logged in to create a listing.",
+          error:
+            "You must be logged in to create a listing.",
         },
         { status: 401 }
+      );
+    }
+
+    if (
+      !user.emailVerified ||
+      !user.phoneVerified
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Please verify both your email and phone number before creating a listing.",
+          redirectTo: "/verify",
+        },
+        { status: 403 }
       );
     }
 
@@ -267,81 +240,58 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            parsed.error.issues[0]?.message ??
+            parsed.error.issues[0]?.message ||
             "Invalid listing details.",
         },
         { status: 400 }
       );
     }
 
-    const {
-      title,
-      description,
-      price,
-      currency,
-      category,
-      imageUrl,
-      location,
-    } = parsed.data;
+    const data = parsed.data;
 
     const listing = await prisma.listing.create({
       data: {
         sellerId: user.id,
-        title: title.trim(),
-        description: description.trim(),
-        price: new Prisma.Decimal(price),
-        currency: currency.trim().toUpperCase(),
-        category: category.trim(),
+        title: data.title.trim(),
+        description: data.description.trim(),
+        price: new Prisma.Decimal(data.price),
+        currency: data.currency.trim().toUpperCase(),
+        category: data.category.trim().toLowerCase(),
         imageUrl:
-          imageUrl && imageUrl.trim()
-            ? imageUrl.trim()
-            : null,
-        location: location.trim(),
+          data.imageUrl?.trim() || null,
+        location: data.location.trim(),
         status: "ACTIVE",
       },
       select: {
         id: true,
-        sellerId: true,
         title: true,
-        description: true,
-        price: true,
-        currency: true,
-        category: true,
-        imageUrl: true,
-        location: true,
         status: true,
-        soldAt: true,
         createdAt: true,
-        updatedAt: true,
-        seller: {
-          select: {
-            id: true,
-            name: true,
-            country: true,
-            university: true,
-            accountType: true,
-          },
-        },
       },
     });
 
     return NextResponse.json(
       {
         success: true,
-        message: "Your listing has been created.",
-        listing: serializeListing(listing),
+        message:
+          "Your listing has been published successfully.",
+        listing,
+        redirectTo: `/listings/${listing.id}`,
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Campus Mall listing creation error:", error);
+    console.error(
+      "Campus Mall listing creation error:",
+      error
+    );
 
     return NextResponse.json(
       {
         error:
-          "We could not create your listing right now. Please try again.",
+          "Unable to create your listing right now. Please try again.",
       },
       { status: 500 }
     );
   }
-}
+                }
