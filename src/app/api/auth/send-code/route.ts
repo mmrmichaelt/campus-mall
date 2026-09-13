@@ -5,6 +5,9 @@ import {
   sendEmailVerificationCode,
   sendPhoneVerificationCode,
 } from "../../../../lib/verification";
+import { sendVerificationCodeSchema } from "../../../../lib/validation";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
@@ -13,38 +16,51 @@ export async function POST(request: Request) {
     if (!user) {
       return NextResponse.json(
         {
-          error: "You must be logged in to request a verification code.",
+          error:
+            "You must be logged in to request a verification code.",
         },
         { status: 401 }
       );
     }
 
-    const body = await request.json().catch(() => null);
+    const body = await request.json();
 
-    const type =
-      body?.type === "EMAIL" || body?.type === "PHONE"
-        ? body.type
-        : null;
+    const parsed = sendVerificationCodeSchema.safeParse(body);
 
-    if (!type) {
+    if (!parsed.success) {
       return NextResponse.json(
         {
-          error: "Choose either email or phone verification.",
+          error:
+            parsed.error.issues[0]?.message ||
+            "Invalid verification request.",
         },
         { status: 400 }
       );
     }
 
-    if (type === "EMAIL" && user.emailVerified) {
-      return NextResponse.json(
-        {
-          error: "Your email address is already verified.",
-        },
-        { status: 400 }
-      );
+    const { type } = parsed.data;
+
+    if (type === "EMAIL") {
+      if (user.emailVerified) {
+        return NextResponse.json(
+          {
+            error: "Your email address is already verified.",
+          },
+          { status: 400 }
+        );
+      }
+
+      await sendEmailVerificationCode(user.id);
+
+      return NextResponse.json({
+        success: true,
+        type: "EMAIL",
+        message:
+          "A new verification code has been sent to your email address.",
+      });
     }
 
-    if (type === "PHONE" && user.phoneVerified) {
+    if (user.phoneVerified) {
       return NextResponse.json(
         {
           error: "Your phone number is already verified.",
@@ -53,27 +69,24 @@ export async function POST(request: Request) {
       );
     }
 
-    if (type === "EMAIL") {
-      await sendEmailVerificationCode(user.id);
-    } else {
-      await sendPhoneVerificationCode(user.id);
-    }
+    await sendPhoneVerificationCode(user.id);
 
     return NextResponse.json({
       success: true,
+      type: "PHONE",
       message:
-        type === "EMAIL"
-          ? "A new verification code has been sent to your email."
-          : "A new verification code has been sent to your phone.",
-      type,
+        "A new verification code has been sent to your phone number.",
     });
   } catch (error) {
-    console.error("Campus Mall send verification code error:", error);
+    console.error(
+      "Campus Mall verification-code delivery error:",
+      error
+    );
 
     return NextResponse.json(
       {
         error:
-          "We could not send the verification code right now. Please try again.",
+          "Unable to send the verification code right now. Please try again.",
       },
       { status: 500 }
     );
