@@ -1,0 +1,2 @@
+"use client";import {useEffect,useState} from "react";
+export default function Notifications(){const [n,setN]=useState<any[]>([]);useEffect(()=>{fetch("/api/notifications").then(r=>r.ok?r.json():{notifications:[]}).then(x=>setN(x.notifications));fetch("/api/notifications",{method:"PUT"});},[]);return <><h1>Notifications</h1>{n.length?n.map(x=><div className="panel" key={x.id}><b>{x.title}</b><p>{x.body}</p><small className="note">{new Date(x.createdAt).toLocaleString()}</small></div>):<div className="panel">No notifications yet.</div>}</>}
