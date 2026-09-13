@@ -5,6 +5,8 @@ import { prisma } from "../../../../lib/prisma";
 import { createSession } from "../../../../lib/auth";
 import { loginSchema } from "../../../../lib/validation";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -15,93 +17,72 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            parsed.error.issues[0]?.message ??
+            parsed.error.issues[0]?.message ||
             "Invalid login details.",
         },
         { status: 400 }
       );
     }
 
-    const {
-      email,
-      password,
-    } = parsed.data;
-
-    const normalizedEmail = email.trim().toLowerCase();
+    const email = parsed.data.email
+      .trim()
+      .toLowerCase();
 
     const user = await prisma.user.findUnique({
       where: {
-        email: normalizedEmail,
+        email,
       },
       select: {
         id: true,
         name: true,
         email: true,
-        phone: true,
         passwordHash: true,
         emailVerified: true,
         phoneVerified: true,
       },
     });
 
-    /*
-     * Use the same message whether the email exists or not.
-     * This prevents exposing which email addresses have
-     * Campus Mall accounts.
-     */
     if (!user) {
       return NextResponse.json(
         {
-          error: "Invalid email or password.",
+          error:
+            "The email address or password is incorrect.",
         },
         { status: 401 }
       );
     }
 
     const passwordMatches = await bcrypt.compare(
-      password,
+      parsed.data.password,
       user.passwordHash
     );
 
     if (!passwordMatches) {
       return NextResponse.json(
         {
-          error: "Invalid email or password.",
+          error:
+            "The email address or password is incorrect.",
         },
         { status: 401 }
       );
     }
 
-    /*
-     * Create a fresh authenticated session.
-     */
     await createSession(user.id);
 
-    /*
-     * Verification is separate from authentication.
-     *
-     * Users can log in before verification, but protected
-     * features such as real chats will require both
-     * emailVerified and phoneVerified.
-     */
     const fullyVerified =
       user.emailVerified && user.phoneVerified;
 
     return NextResponse.json({
       success: true,
       message: fullyVerified
-        ? "Login successful."
-        : "Login successful. Please complete your email and phone verification.",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
+        ? `Welcome back, ${user.name}.`
+        : "Welcome back. Please complete your account verification.",
+      redirectTo: fullyVerified ? "/" : "/verify",
+      verification: {
         emailVerified: user.emailVerified,
         phoneVerified: user.phoneVerified,
+        fullyVerified,
       },
-      verificationRequired: !fullyVerified,
-      redirectTo: fullyVerified ? "/" : "/verify",
     });
   } catch (error) {
     console.error("Campus Mall login error:", error);
@@ -109,7 +90,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error:
-          "We could not log you in right now. Please try again.",
+          "Unable to log in right now. Please try again.",
       },
       { status: 500 }
     );
