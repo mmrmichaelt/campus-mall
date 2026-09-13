@@ -1,1247 +1,213 @@
-export const countries = [
-  {
-    "code": "AF",
-    "name": "Afghanistan",
-    "flag": "🇦🇫"
-  },
-  {
-    "code": "AL",
-    "name": "Albania",
-    "flag": "🇦🇱"
-  },
-  {
-    "code": "DZ",
-    "name": "Algeria",
-    "flag": "🇩🇿"
-  },
-  {
-    "code": "AS",
-    "name": "American Samoa",
-    "flag": "🇦🇸"
-  },
-  {
-    "code": "AD",
-    "name": "Andorra",
-    "flag": "🇦🇩"
-  },
-  {
-    "code": "AO",
-    "name": "Angola",
-    "flag": "🇦🇴"
-  },
-  {
-    "code": "AI",
-    "name": "Anguilla",
-    "flag": "🇦🇮"
-  },
-  {
-    "code": "AQ",
-    "name": "Antarctica",
-    "flag": "🇦🇶"
-  },
-  {
-    "code": "AG",
-    "name": "Antigua and Barbuda",
-    "flag": "🇦🇬"
-  },
-  {
-    "code": "AR",
-    "name": "Argentina",
-    "flag": "🇦🇷"
-  },
-  {
-    "code": "AM",
-    "name": "Armenia",
-    "flag": "🇦🇲"
-  },
-  {
-    "code": "AW",
-    "name": "Aruba",
-    "flag": "🇦🇼"
-  },
-  {
-    "code": "AU",
-    "name": "Australia",
-    "flag": "🇦🇺"
-  },
-  {
-    "code": "AT",
-    "name": "Austria",
-    "flag": "🇦🇹"
-  },
-  {
-    "code": "AZ",
-    "name": "Azerbaijan",
-    "flag": "🇦🇿"
-  },
-  {
-    "code": "BS",
-    "name": "Bahamas",
-    "flag": "🇧🇸"
-  },
-  {
-    "code": "BH",
-    "name": "Bahrain",
-    "flag": "🇧🇭"
-  },
-  {
-    "code": "BD",
-    "name": "Bangladesh",
-    "flag": "🇧🇩"
-  },
-  {
-    "code": "BB",
-    "name": "Barbados",
-    "flag": "🇧🇧"
-  },
-  {
-    "code": "BY",
-    "name": "Belarus",
-    "flag": "🇧🇾"
-  },
-  {
-    "code": "BE",
-    "name": "Belgium",
-    "flag": "🇧🇪"
-  },
-  {
-    "code": "BZ",
-    "name": "Belize",
-    "flag": "🇧🇿"
-  },
-  {
-    "code": "BJ",
-    "name": "Benin",
-    "flag": "🇧🇯"
-  },
-  {
-    "code": "BM",
-    "name": "Bermuda",
-    "flag": "🇧🇲"
-  },
-  {
-    "code": "BT",
-    "name": "Bhutan",
-    "flag": "🇧🇹"
-  },
-  {
-    "code": "BO",
-    "name": "Bolivia, Plurinational State of",
-    "flag": "🇧🇴"
-  },
-  {
-    "code": "BQ",
-    "name": "Bonaire, Sint Eustatius and Saba",
-    "flag": "🇧🇶"
-  },
-  {
-    "code": "BA",
-    "name": "Bosnia and Herzegovina",
-    "flag": "🇧🇦"
-  },
-  {
-    "code": "BW",
-    "name": "Botswana",
-    "flag": "🇧🇼"
-  },
-  {
-    "code": "BV",
-    "name": "Bouvet Island",
-    "flag": "🇧🇻"
-  },
-  {
-    "code": "BR",
-    "name": "Brazil",
-    "flag": "🇧🇷"
-  },
-  {
-    "code": "IO",
-    "name": "British Indian Ocean Territory",
-    "flag": "🇮🇴"
-  },
-  {
-    "code": "BN",
-    "name": "Brunei Darussalam",
-    "flag": "🇧🇳"
-  },
-  {
-    "code": "BG",
-    "name": "Bulgaria",
-    "flag": "🇧🇬"
-  },
-  {
-    "code": "BF",
-    "name": "Burkina Faso",
-    "flag": "🇧🇫"
-  },
-  {
-    "code": "BI",
-    "name": "Burundi",
-    "flag": "🇧🇮"
-  },
-  {
-    "code": "CV",
-    "name": "Cabo Verde",
-    "flag": "🇨🇻"
-  },
-  {
-    "code": "KH",
-    "name": "Cambodia",
-    "flag": "🇰🇭"
-  },
-  {
-    "code": "CM",
-    "name": "Cameroon",
-    "flag": "🇨🇲"
-  },
-  {
-    "code": "CA",
-    "name": "Canada",
-    "flag": "🇨🇦"
-  },
-  {
-    "code": "KY",
-    "name": "Cayman Islands",
-    "flag": "🇰🇾"
-  },
-  {
-    "code": "CF",
-    "name": "Central African Republic",
-    "flag": "🇨🇫"
-  },
-  {
-    "code": "TD",
-    "name": "Chad",
-    "flag": "🇹🇩"
-  },
-  {
-    "code": "CL",
-    "name": "Chile",
-    "flag": "🇨🇱"
-  },
-  {
-    "code": "CN",
-    "name": "China",
-    "flag": "🇨🇳"
-  },
-  {
-    "code": "CX",
-    "name": "Christmas Island",
-    "flag": "🇨🇽"
-  },
-  {
-    "code": "CC",
-    "name": "Cocos (Keeling) Islands",
-    "flag": "🇨🇨"
-  },
-  {
-    "code": "CO",
-    "name": "Colombia",
-    "flag": "🇨🇴"
-  },
-  {
-    "code": "KM",
-    "name": "Comoros",
-    "flag": "🇰🇲"
-  },
-  {
-    "code": "CG",
-    "name": "Congo",
-    "flag": "🇨🇬"
-  },
-  {
-    "code": "CD",
-    "name": "Congo, The Democratic Republic of the",
-    "flag": "🇨🇩"
-  },
-  {
-    "code": "CK",
-    "name": "Cook Islands",
-    "flag": "🇨🇰"
-  },
-  {
-    "code": "CR",
-    "name": "Costa Rica",
-    "flag": "🇨🇷"
-  },
-  {
-    "code": "HR",
-    "name": "Croatia",
-    "flag": "🇭🇷"
-  },
-  {
-    "code": "CU",
-    "name": "Cuba",
-    "flag": "🇨🇺"
-  },
-  {
-    "code": "CW",
-    "name": "Curaçao",
-    "flag": "🇨🇼"
-  },
-  {
-    "code": "CY",
-    "name": "Cyprus",
-    "flag": "🇨🇾"
-  },
-  {
-    "code": "CZ",
-    "name": "Czechia",
-    "flag": "🇨🇿"
-  },
-  {
-    "code": "CI",
-    "name": "Côte d'Ivoire",
-    "flag": "🇨🇮"
-  },
-  {
-    "code": "DK",
-    "name": "Denmark",
-    "flag": "🇩🇰"
-  },
-  {
-    "code": "DJ",
-    "name": "Djibouti",
-    "flag": "🇩🇯"
-  },
-  {
-    "code": "DM",
-    "name": "Dominica",
-    "flag": "🇩🇲"
-  },
-  {
-    "code": "DO",
-    "name": "Dominican Republic",
-    "flag": "🇩🇴"
-  },
-  {
-    "code": "EC",
-    "name": "Ecuador",
-    "flag": "🇪🇨"
-  },
-  {
-    "code": "EG",
-    "name": "Egypt",
-    "flag": "🇪🇬"
-  },
-  {
-    "code": "SV",
-    "name": "El Salvador",
-    "flag": "🇸🇻"
-  },
-  {
-    "code": "GQ",
-    "name": "Equatorial Guinea",
-    "flag": "🇬🇶"
-  },
-  {
-    "code": "ER",
-    "name": "Eritrea",
-    "flag": "🇪🇷"
-  },
-  {
-    "code": "EE",
-    "name": "Estonia",
-    "flag": "🇪🇪"
-  },
-  {
-    "code": "SZ",
-    "name": "Eswatini",
-    "flag": "🇸🇿"
-  },
-  {
-    "code": "ET",
-    "name": "Ethiopia",
-    "flag": "🇪🇹"
-  },
-  {
-    "code": "FK",
-    "name": "Falkland Islands (Malvinas)",
-    "flag": "🇫🇰"
-  },
-  {
-    "code": "FO",
-    "name": "Faroe Islands",
-    "flag": "🇫🇴"
-  },
-  {
-    "code": "FJ",
-    "name": "Fiji",
-    "flag": "🇫🇯"
-  },
-  {
-    "code": "FI",
-    "name": "Finland",
-    "flag": "🇫🇮"
-  },
-  {
-    "code": "FR",
-    "name": "France",
-    "flag": "🇫🇷"
-  },
-  {
-    "code": "GF",
-    "name": "French Guiana",
-    "flag": "🇬🇫"
-  },
-  {
-    "code": "PF",
-    "name": "French Polynesia",
-    "flag": "🇵🇫"
-  },
-  {
-    "code": "TF",
-    "name": "French Southern Territories",
-    "flag": "🇹🇫"
-  },
-  {
-    "code": "GA",
-    "name": "Gabon",
-    "flag": "🇬🇦"
-  },
-  {
-    "code": "GM",
-    "name": "Gambia",
-    "flag": "🇬🇲"
-  },
-  {
-    "code": "GE",
-    "name": "Georgia",
-    "flag": "🇬🇪"
-  },
-  {
-    "code": "DE",
-    "name": "Germany",
-    "flag": "🇩🇪"
-  },
-  {
-    "code": "GH",
-    "name": "Ghana",
-    "flag": "🇬🇭"
-  },
-  {
-    "code": "GI",
-    "name": "Gibraltar",
-    "flag": "🇬🇮"
-  },
-  {
-    "code": "GR",
-    "name": "Greece",
-    "flag": "🇬🇷"
-  },
-  {
-    "code": "GL",
-    "name": "Greenland",
-    "flag": "🇬🇱"
-  },
-  {
-    "code": "GD",
-    "name": "Grenada",
-    "flag": "🇬🇩"
-  },
-  {
-    "code": "GP",
-    "name": "Guadeloupe",
-    "flag": "🇬🇵"
-  },
-  {
-    "code": "GU",
-    "name": "Guam",
-    "flag": "🇬🇺"
-  },
-  {
-    "code": "GT",
-    "name": "Guatemala",
-    "flag": "🇬🇹"
-  },
-  {
-    "code": "GG",
-    "name": "Guernsey",
-    "flag": "🇬🇬"
-  },
-  {
-    "code": "GN",
-    "name": "Guinea",
-    "flag": "🇬🇳"
-  },
-  {
-    "code": "GW",
-    "name": "Guinea-Bissau",
-    "flag": "🇬🇼"
-  },
-  {
-    "code": "GY",
-    "name": "Guyana",
-    "flag": "🇬🇾"
-  },
-  {
-    "code": "HT",
-    "name": "Haiti",
-    "flag": "🇭🇹"
-  },
-  {
-    "code": "HM",
-    "name": "Heard Island and McDonald Islands",
-    "flag": "🇭🇲"
-  },
-  {
-    "code": "VA",
-    "name": "Holy See (Vatican City State)",
-    "flag": "🇻🇦"
-  },
-  {
-    "code": "HN",
-    "name": "Honduras",
-    "flag": "🇭🇳"
-  },
-  {
-    "code": "HK",
-    "name": "Hong Kong",
-    "flag": "🇭🇰"
-  },
-  {
-    "code": "HU",
-    "name": "Hungary",
-    "flag": "🇭🇺"
-  },
-  {
-    "code": "IS",
-    "name": "Iceland",
-    "flag": "🇮🇸"
-  },
-  {
-    "code": "IN",
-    "name": "India",
-    "flag": "🇮🇳"
-  },
-  {
-    "code": "ID",
-    "name": "Indonesia",
-    "flag": "🇮🇩"
-  },
-  {
-    "code": "IR",
-    "name": "Iran, Islamic Republic of",
-    "flag": "🇮🇷"
-  },
-  {
-    "code": "IQ",
-    "name": "Iraq",
-    "flag": "🇮🇶"
-  },
-  {
-    "code": "IE",
-    "name": "Ireland",
-    "flag": "🇮🇪"
-  },
-  {
-    "code": "IM",
-    "name": "Isle of Man",
-    "flag": "🇮🇲"
-  },
-  {
-    "code": "IL",
-    "name": "Israel",
-    "flag": "🇮🇱"
-  },
-  {
-    "code": "IT",
-    "name": "Italy",
-    "flag": "🇮🇹"
-  },
-  {
-    "code": "JM",
-    "name": "Jamaica",
-    "flag": "🇯🇲"
-  },
-  {
-    "code": "JP",
-    "name": "Japan",
-    "flag": "🇯🇵"
-  },
-  {
-    "code": "JE",
-    "name": "Jersey",
-    "flag": "🇯🇪"
-  },
-  {
-    "code": "JO",
-    "name": "Jordan",
-    "flag": "🇯🇴"
-  },
-  {
-    "code": "KZ",
-    "name": "Kazakhstan",
-    "flag": "🇰🇿"
-  },
-  {
-    "code": "KE",
-    "name": "Kenya",
-    "flag": "🇰🇪"
-  },
-  {
-    "code": "KI",
-    "name": "Kiribati",
-    "flag": "🇰🇮"
-  },
-  {
-    "code": "KP",
-    "name": "Korea, Democratic People's Republic of",
-    "flag": "🇰🇵"
-  },
-  {
-    "code": "KR",
-    "name": "Korea, Republic of",
-    "flag": "🇰🇷"
-  },
-  {
-    "code": "KW",
-    "name": "Kuwait",
-    "flag": "🇰🇼"
-  },
-  {
-    "code": "KG",
-    "name": "Kyrgyzstan",
-    "flag": "🇰🇬"
-  },
-  {
-    "code": "LA",
-    "name": "Lao People's Democratic Republic",
-    "flag": "🇱🇦"
-  },
-  {
-    "code": "LV",
-    "name": "Latvia",
-    "flag": "🇱🇻"
-  },
-  {
-    "code": "LB",
-    "name": "Lebanon",
-    "flag": "🇱🇧"
-  },
-  {
-    "code": "LS",
-    "name": "Lesotho",
-    "flag": "🇱🇸"
-  },
-  {
-    "code": "LR",
-    "name": "Liberia",
-    "flag": "🇱🇷"
-  },
-  {
-    "code": "LY",
-    "name": "Libya",
-    "flag": "🇱🇾"
-  },
-  {
-    "code": "LI",
-    "name": "Liechtenstein",
-    "flag": "🇱🇮"
-  },
-  {
-    "code": "LT",
-    "name": "Lithuania",
-    "flag": "🇱🇹"
-  },
-  {
-    "code": "LU",
-    "name": "Luxembourg",
-    "flag": "🇱🇺"
-  },
-  {
-    "code": "MO",
-    "name": "Macao",
-    "flag": "🇲🇴"
-  },
-  {
-    "code": "MG",
-    "name": "Madagascar",
-    "flag": "🇲🇬"
-  },
-  {
-    "code": "MW",
-    "name": "Malawi",
-    "flag": "🇲🇼"
-  },
-  {
-    "code": "MY",
-    "name": "Malaysia",
-    "flag": "🇲🇾"
-  },
-  {
-    "code": "MV",
-    "name": "Maldives",
-    "flag": "🇲🇻"
-  },
-  {
-    "code": "ML",
-    "name": "Mali",
-    "flag": "🇲🇱"
-  },
-  {
-    "code": "MT",
-    "name": "Malta",
-    "flag": "🇲🇹"
-  },
-  {
-    "code": "MH",
-    "name": "Marshall Islands",
-    "flag": "🇲🇭"
-  },
-  {
-    "code": "MQ",
-    "name": "Martinique",
-    "flag": "🇲🇶"
-  },
-  {
-    "code": "MR",
-    "name": "Mauritania",
-    "flag": "🇲🇷"
-  },
-  {
-    "code": "MU",
-    "name": "Mauritius",
-    "flag": "🇲🇺"
-  },
-  {
-    "code": "YT",
-    "name": "Mayotte",
-    "flag": "🇾🇹"
-  },
-  {
-    "code": "MX",
-    "name": "Mexico",
-    "flag": "🇲🇽"
-  },
-  {
-    "code": "FM",
-    "name": "Micronesia, Federated States of",
-    "flag": "🇫🇲"
-  },
-  {
-    "code": "MD",
-    "name": "Moldova, Republic of",
-    "flag": "🇲🇩"
-  },
-  {
-    "code": "MC",
-    "name": "Monaco",
-    "flag": "🇲🇨"
-  },
-  {
-    "code": "MN",
-    "name": "Mongolia",
-    "flag": "🇲🇳"
-  },
-  {
-    "code": "ME",
-    "name": "Montenegro",
-    "flag": "🇲🇪"
-  },
-  {
-    "code": "MS",
-    "name": "Montserrat",
-    "flag": "🇲🇸"
-  },
-  {
-    "code": "MA",
-    "name": "Morocco",
-    "flag": "🇲🇦"
-  },
-  {
-    "code": "MZ",
-    "name": "Mozambique",
-    "flag": "🇲🇿"
-  },
-  {
-    "code": "MM",
-    "name": "Myanmar",
-    "flag": "🇲🇲"
-  },
-  {
-    "code": "NA",
-    "name": "Namibia",
-    "flag": "🇳🇦"
-  },
-  {
-    "code": "NR",
-    "name": "Nauru",
-    "flag": "🇳🇷"
-  },
-  {
-    "code": "NP",
-    "name": "Nepal",
-    "flag": "🇳🇵"
-  },
-  {
-    "code": "NL",
-    "name": "Netherlands",
-    "flag": "🇳🇱"
-  },
-  {
-    "code": "NC",
-    "name": "New Caledonia",
-    "flag": "🇳🇨"
-  },
-  {
-    "code": "NZ",
-    "name": "New Zealand",
-    "flag": "🇳🇿"
-  },
-  {
-    "code": "NI",
-    "name": "Nicaragua",
-    "flag": "🇳🇮"
-  },
-  {
-    "code": "NE",
-    "name": "Niger",
-    "flag": "🇳🇪"
-  },
-  {
-    "code": "NG",
-    "name": "Nigeria",
-    "flag": "🇳🇬"
-  },
-  {
-    "code": "NU",
-    "name": "Niue",
-    "flag": "🇳🇺"
-  },
-  {
-    "code": "NF",
-    "name": "Norfolk Island",
-    "flag": "🇳🇫"
-  },
-  {
-    "code": "MK",
-    "name": "North Macedonia",
-    "flag": "🇲🇰"
-  },
-  {
-    "code": "MP",
-    "name": "Northern Mariana Islands",
-    "flag": "🇲🇵"
-  },
-  {
-    "code": "NO",
-    "name": "Norway",
-    "flag": "🇳🇴"
-  },
-  {
-    "code": "OM",
-    "name": "Oman",
-    "flag": "🇴🇲"
-  },
-  {
-    "code": "PK",
-    "name": "Pakistan",
-    "flag": "🇵🇰"
-  },
-  {
-    "code": "PW",
-    "name": "Palau",
-    "flag": "🇵🇼"
-  },
-  {
-    "code": "PS",
-    "name": "Palestine, State of",
-    "flag": "🇵🇸"
-  },
-  {
-    "code": "PA",
-    "name": "Panama",
-    "flag": "🇵🇦"
-  },
-  {
-    "code": "PG",
-    "name": "Papua New Guinea",
-    "flag": "🇵🇬"
-  },
-  {
-    "code": "PY",
-    "name": "Paraguay",
-    "flag": "🇵🇾"
-  },
-  {
-    "code": "PE",
-    "name": "Peru",
-    "flag": "🇵🇪"
-  },
-  {
-    "code": "PH",
-    "name": "Philippines",
-    "flag": "🇵🇭"
-  },
-  {
-    "code": "PN",
-    "name": "Pitcairn",
-    "flag": "🇵🇳"
-  },
-  {
-    "code": "PL",
-    "name": "Poland",
-    "flag": "🇵🇱"
-  },
-  {
-    "code": "PT",
-    "name": "Portugal",
-    "flag": "🇵🇹"
-  },
-  {
-    "code": "PR",
-    "name": "Puerto Rico",
-    "flag": "🇵🇷"
-  },
-  {
-    "code": "QA",
-    "name": "Qatar",
-    "flag": "🇶🇦"
-  },
-  {
-    "code": "RO",
-    "name": "Romania",
-    "flag": "🇷🇴"
-  },
-  {
-    "code": "RU",
-    "name": "Russian Federation",
-    "flag": "🇷🇺"
-  },
-  {
-    "code": "RW",
-    "name": "Rwanda",
-    "flag": "🇷🇼"
-  },
-  {
-    "code": "RE",
-    "name": "Réunion",
-    "flag": "🇷🇪"
-  },
-  {
-    "code": "BL",
-    "name": "Saint Barthélemy",
-    "flag": "🇧🇱"
-  },
-  {
-    "code": "SH",
-    "name": "Saint Helena, Ascension and Tristan da Cunha",
-    "flag": "🇸🇭"
-  },
-  {
-    "code": "KN",
-    "name": "Saint Kitts and Nevis",
-    "flag": "🇰🇳"
-  },
-  {
-    "code": "LC",
-    "name": "Saint Lucia",
-    "flag": "🇱🇨"
-  },
-  {
-    "code": "MF",
-    "name": "Saint Martin (French part)",
-    "flag": "🇲🇫"
-  },
-  {
-    "code": "PM",
-    "name": "Saint Pierre and Miquelon",
-    "flag": "🇵🇲"
-  },
-  {
-    "code": "VC",
-    "name": "Saint Vincent and the Grenadines",
-    "flag": "🇻🇨"
-  },
-  {
-    "code": "WS",
-    "name": "Samoa",
-    "flag": "🇼🇸"
-  },
-  {
-    "code": "SM",
-    "name": "San Marino",
-    "flag": "🇸🇲"
-  },
-  {
-    "code": "ST",
-    "name": "Sao Tome and Principe",
-    "flag": "🇸🇹"
-  },
-  {
-    "code": "SA",
-    "name": "Saudi Arabia",
-    "flag": "🇸🇦"
-  },
-  {
-    "code": "SN",
-    "name": "Senegal",
-    "flag": "🇸🇳"
-  },
-  {
-    "code": "RS",
-    "name": "Serbia",
-    "flag": "🇷🇸"
-  },
-  {
-    "code": "SC",
-    "name": "Seychelles",
-    "flag": "🇸🇨"
-  },
-  {
-    "code": "SL",
-    "name": "Sierra Leone",
-    "flag": "🇸🇱"
-  },
-  {
-    "code": "SG",
-    "name": "Singapore",
-    "flag": "🇸🇬"
-  },
-  {
-    "code": "SX",
-    "name": "Sint Maarten (Dutch part)",
-    "flag": "🇸🇽"
-  },
-  {
-    "code": "SK",
-    "name": "Slovakia",
-    "flag": "🇸🇰"
-  },
-  {
-    "code": "SI",
-    "name": "Slovenia",
-    "flag": "🇸🇮"
-  },
-  {
-    "code": "SB",
-    "name": "Solomon Islands",
-    "flag": "🇸🇧"
-  },
-  {
-    "code": "SO",
-    "name": "Somalia",
-    "flag": "🇸🇴"
-  },
-  {
-    "code": "ZA",
-    "name": "South Africa",
-    "flag": "🇿🇦"
-  },
-  {
-    "code": "GS",
-    "name": "South Georgia and the South Sandwich Islands",
-    "flag": "🇬🇸"
-  },
-  {
-    "code": "SS",
-    "name": "South Sudan",
-    "flag": "🇸🇸"
-  },
-  {
-    "code": "ES",
-    "name": "Spain",
-    "flag": "🇪🇸"
-  },
-  {
-    "code": "LK",
-    "name": "Sri Lanka",
-    "flag": "🇱🇰"
-  },
-  {
-    "code": "SD",
-    "name": "Sudan",
-    "flag": "🇸🇩"
-  },
-  {
-    "code": "SR",
-    "name": "Suriname",
-    "flag": "🇸🇷"
-  },
-  {
-    "code": "SJ",
-    "name": "Svalbard and Jan Mayen",
-    "flag": "🇸🇯"
-  },
-  {
-    "code": "SE",
-    "name": "Sweden",
-    "flag": "🇸🇪"
-  },
-  {
-    "code": "CH",
-    "name": "Switzerland",
-    "flag": "🇨🇭"
-  },
-  {
-    "code": "SY",
-    "name": "Syrian Arab Republic",
-    "flag": "🇸🇾"
-  },
-  {
-    "code": "TW",
-    "name": "Taiwan, Province of China",
-    "flag": "🇹🇼"
-  },
-  {
-    "code": "TJ",
-    "name": "Tajikistan",
-    "flag": "🇹🇯"
-  },
-  {
-    "code": "TZ",
-    "name": "Tanzania, United Republic of",
-    "flag": "🇹🇿"
-  },
-  {
-    "code": "TH",
-    "name": "Thailand",
-    "flag": "🇹🇭"
-  },
-  {
-    "code": "TL",
-    "name": "Timor-Leste",
-    "flag": "🇹🇱"
-  },
-  {
-    "code": "TG",
-    "name": "Togo",
-    "flag": "🇹🇬"
-  },
-  {
-    "code": "TK",
-    "name": "Tokelau",
-    "flag": "🇹🇰"
-  },
-  {
-    "code": "TO",
-    "name": "Tonga",
-    "flag": "🇹🇴"
-  },
-  {
-    "code": "TT",
-    "name": "Trinidad and Tobago",
-    "flag": "🇹🇹"
-  },
-  {
-    "code": "TN",
-    "name": "Tunisia",
-    "flag": "🇹🇳"
-  },
-  {
-    "code": "TM",
-    "name": "Turkmenistan",
-    "flag": "🇹🇲"
-  },
-  {
-    "code": "TC",
-    "name": "Turks and Caicos Islands",
-    "flag": "🇹🇨"
-  },
-  {
-    "code": "TV",
-    "name": "Tuvalu",
-    "flag": "🇹🇻"
-  },
-  {
-    "code": "TR",
-    "name": "Türkiye",
-    "flag": "🇹🇷"
-  },
-  {
-    "code": "UG",
-    "name": "Uganda",
-    "flag": "🇺🇬"
-  },
-  {
-    "code": "UA",
-    "name": "Ukraine",
-    "flag": "🇺🇦"
-  },
-  {
-    "code": "AE",
-    "name": "United Arab Emirates",
-    "flag": "🇦🇪"
-  },
-  {
-    "code": "GB",
-    "name": "United Kingdom",
-    "flag": "🇬🇧"
-  },
-  {
-    "code": "US",
-    "name": "United States",
-    "flag": "🇺🇸"
-  },
-  {
-    "code": "UM",
-    "name": "United States Minor Outlying Islands",
-    "flag": "🇺🇲"
-  },
-  {
-    "code": "UY",
-    "name": "Uruguay",
-    "flag": "🇺🇾"
-  },
-  {
-    "code": "UZ",
-    "name": "Uzbekistan",
-    "flag": "🇺🇿"
-  },
-  {
-    "code": "VU",
-    "name": "Vanuatu",
-    "flag": "🇻🇺"
-  },
-  {
-    "code": "VE",
-    "name": "Venezuela, Bolivarian Republic of",
-    "flag": "🇻🇪"
-  },
-  {
-    "code": "VN",
-    "name": "Viet Nam",
-    "flag": "🇻🇳"
-  },
-  {
-    "code": "VG",
-    "name": "Virgin Islands, British",
-    "flag": "🇻🇬"
-  },
-  {
-    "code": "VI",
-    "name": "Virgin Islands, U.S.",
-    "flag": "🇻🇮"
-  },
-  {
-    "code": "WF",
-    "name": "Wallis and Futuna",
-    "flag": "🇼🇫"
-  },
-  {
-    "code": "EH",
-    "name": "Western Sahara",
-    "flag": "🇪🇭"
-  },
-  {
-    "code": "YE",
-    "name": "Yemen",
-    "flag": "🇾🇪"
-  },
-  {
-    "code": "ZM",
-    "name": "Zambia",
-    "flag": "🇿🇲"
-  },
-  {
-    "code": "ZW",
-    "name": "Zimbabwe",
-    "flag": "🇿🇼"
-  },
-  {
-    "code": "AX",
-    "name": "Åland Islands",
-    "flag": "🇦🇽"
+export type Country = {
+  code: string;
+  name: string;
+  flag: string;
+  phoneCode: string;
+};
+
+export const countries: Country[] = [
+  { code: "AF", name: "Afghanistan", flag: "🇦🇫", phoneCode: "+93" },
+  { code: "AL", name: "Albania", flag: "🇦🇱", phoneCode: "+355" },
+  { code: "DZ", name: "Algeria", flag: "🇩🇿", phoneCode: "+213" },
+  { code: "AD", name: "Andorra", flag: "🇦🇩", phoneCode: "+376" },
+  { code: "AO", name: "Angola", flag: "🇦🇴", phoneCode: "+244" },
+  { code: "AG", name: "Antigua and Barbuda", flag: "🇦🇬", phoneCode: "+1-268" },
+  { code: "AR", name: "Argentina", flag: "🇦🇷", phoneCode: "+54" },
+  { code: "AM", name: "Armenia", flag: "🇦🇲", phoneCode: "+374" },
+  { code: "AU", name: "Australia", flag: "🇦🇺", phoneCode: "+61" },
+  { code: "AT", name: "Austria", flag: "🇦🇹", phoneCode: "+43" },
+  { code: "AZ", name: "Azerbaijan", flag: "🇦🇿", phoneCode: "+994" },
+  { code: "BS", name: "Bahamas", flag: "🇧🇸", phoneCode: "+1-242" },
+  { code: "BH", name: "Bahrain", flag: "🇧🇭", phoneCode: "+973" },
+  { code: "BD", name: "Bangladesh", flag: "🇧🇩", phoneCode: "+880" },
+  { code: "BB", name: "Barbados", flag: "🇧🇧", phoneCode: "+1-246" },
+  { code: "BY", name: "Belarus", flag: "🇧🇾", phoneCode: "+375" },
+  { code: "BE", name: "Belgium", flag: "🇧🇪", phoneCode: "+32" },
+  { code: "BZ", name: "Belize", flag: "🇧🇿", phoneCode: "+501" },
+  { code: "BJ", name: "Benin", flag: "🇧🇯", phoneCode: "+229" },
+  { code: "BT", name: "Bhutan", flag: "🇧🇹", phoneCode: "+975" },
+  { code: "BO", name: "Bolivia", flag: "🇧🇴", phoneCode: "+591" },
+  { code: "BA", name: "Bosnia and Herzegovina", flag: "🇧🇦", phoneCode: "+387" },
+  { code: "BW", name: "Botswana", flag: "🇧🇼", phoneCode: "+267" },
+  { code: "BR", name: "Brazil", flag: "🇧🇷", phoneCode: "+55" },
+  { code: "BN", name: "Brunei", flag: "🇧🇳", phoneCode: "+673" },
+  { code: "BG", name: "Bulgaria", flag: "🇧🇬", phoneCode: "+359" },
+  { code: "BF", name: "Burkina Faso", flag: "🇧🇫", phoneCode: "+226" },
+  { code: "BI", name: "Burundi", flag: "🇧🇮", phoneCode: "+257" },
+  { code: "CV", name: "Cabo Verde", flag: "🇨🇻", phoneCode: "+238" },
+  { code: "KH", name: "Cambodia", flag: "🇰🇭", phoneCode: "+855" },
+  { code: "CM", name: "Cameroon", flag: "🇨🇲", phoneCode: "+237" },
+  { code: "CA", name: "Canada", flag: "🇨🇦", phoneCode: "+1" },
+  { code: "CF", name: "Central African Republic", flag: "🇨🇫", phoneCode: "+236" },
+  { code: "TD", name: "Chad", flag: "🇹🇩", phoneCode: "+235" },
+  { code: "CL", name: "Chile", flag: "🇨🇱", phoneCode: "+56" },
+  { code: "CN", name: "China", flag: "🇨🇳", phoneCode: "+86" },
+  { code: "CO", name: "Colombia", flag: "🇨🇴", phoneCode: "+57" },
+  { code: "KM", name: "Comoros", flag: "🇰🇲", phoneCode: "+269" },
+  { code: "CG", name: "Republic of the Congo", flag: "🇨🇬", phoneCode: "+242" },
+  { code: "CD", name: "Democratic Republic of the Congo", flag: "🇨🇩", phoneCode: "+243" },
+  { code: "CR", name: "Costa Rica", flag: "🇨🇷", phoneCode: "+506" },
+  { code: "CI", name: "Côte d'Ivoire", flag: "🇨🇮", phoneCode: "+225" },
+  { code: "HR", name: "Croatia", flag: "🇭🇷", phoneCode: "+385" },
+  { code: "CU", name: "Cuba", flag: "🇨🇺", phoneCode: "+53" },
+  { code: "CY", name: "Cyprus", flag: "🇨🇾", phoneCode: "+357" },
+  { code: "CZ", name: "Czechia", flag: "🇨🇿", phoneCode: "+420" },
+  { code: "DK", name: "Denmark", flag: "🇩🇰", phoneCode: "+45" },
+  { code: "DJ", name: "Djibouti", flag: "🇩🇯", phoneCode: "+253" },
+  { code: "DM", name: "Dominica", flag: "🇩🇲", phoneCode: "+1-767" },
+  { code: "DO", name: "Dominican Republic", flag: "🇩🇴", phoneCode: "+1-809" },
+  { code: "EC", name: "Ecuador", flag: "🇪🇨", phoneCode: "+593" },
+  { code: "EG", name: "Egypt", flag: "🇪🇬", phoneCode: "+20" },
+  { code: "SV", name: "El Salvador", flag: "🇸🇻", phoneCode: "+503" },
+  { code: "GQ", name: "Equatorial Guinea", flag: "🇬🇶", phoneCode: "+240" },
+  { code: "ER", name: "Eritrea", flag: "🇪🇷", phoneCode: "+291" },
+  { code: "EE", name: "Estonia", flag: "🇪🇪", phoneCode: "+372" },
+  { code: "SZ", name: "Eswatini", flag: "🇸🇿", phoneCode: "+268" },
+  { code: "ET", name: "Ethiopia", flag: "🇪🇹", phoneCode: "+251" },
+  { code: "FJ", name: "Fiji", flag: "🇫🇯", phoneCode: "+679" },
+  { code: "FI", name: "Finland", flag: "🇫🇮", phoneCode: "+358" },
+  { code: "FR", name: "France", flag: "🇫🇷", phoneCode: "+33" },
+  { code: "GA", name: "Gabon", flag: "🇬🇦", phoneCode: "+241" },
+  { code: "GM", name: "Gambia", flag: "🇬🇲", phoneCode: "+220" },
+  { code: "GE", name: "Georgia", flag: "🇬🇪", phoneCode: "+995" },
+  { code: "DE", name: "Germany", flag: "🇩🇪", phoneCode: "+49" },
+  { code: "GH", name: "Ghana", flag: "🇬🇭", phoneCode: "+233" },
+  { code: "GR", name: "Greece", flag: "🇬🇷", phoneCode: "+30" },
+  { code: "GD", name: "Grenada", flag: "🇬🇩", phoneCode: "+1-473" },
+  { code: "GT", name: "Guatemala", flag: "🇬🇹", phoneCode: "+502" },
+  { code: "GN", name: "Guinea", flag: "🇬🇳", phoneCode: "+224" },
+  { code: "GW", name: "Guinea-Bissau", flag: "🇬🇼", phoneCode: "+245" },
+  { code: "GY", name: "Guyana", flag: "🇬🇾", phoneCode: "+592" },
+  { code: "HT", name: "Haiti", flag: "🇭🇹", phoneCode: "+509" },
+  { code: "HN", name: "Honduras", flag: "🇭🇳", phoneCode: "+504" },
+  { code: "HU", name: "Hungary", flag: "🇭🇺", phoneCode: "+36" },
+  { code: "IS", name: "Iceland", flag: "🇮🇸", phoneCode: "+354" },
+  { code: "IN", name: "India", flag: "🇮🇳", phoneCode: "+91" },
+  { code: "ID", name: "Indonesia", flag: "🇮🇩", phoneCode: "+62" },
+  { code: "IR", name: "Iran", flag: "🇮🇷", phoneCode: "+98" },
+  { code: "IQ", name: "Iraq", flag: "🇮🇶", phoneCode: "+964" },
+  { code: "IE", name: "Ireland", flag: "🇮🇪", phoneCode: "+353" },
+  { code: "IL", name: "Israel", flag: "🇮🇱", phoneCode: "+972" },
+  { code: "IT", name: "Italy", flag: "🇮🇹", phoneCode: "+39" },
+  { code: "JM", name: "Jamaica", flag: "🇯🇲", phoneCode: "+1-876" },
+  { code: "JP", name: "Japan", flag: "🇯🇵", phoneCode: "+81" },
+  { code: "JO", name: "Jordan", flag: "🇯🇴", phoneCode: "+962" },
+  { code: "KZ", name: "Kazakhstan", flag: "🇰🇿", phoneCode: "+7" },
+  { code: "KE", name: "Kenya", flag: "🇰🇪", phoneCode: "+254" },
+  { code: "KI", name: "Kiribati", flag: "🇰🇮", phoneCode: "+686" },
+  { code: "KP", name: "North Korea", flag: "🇰🇵", phoneCode: "+850" },
+  { code: "KR", name: "South Korea", flag: "🇰🇷", phoneCode: "+82" },
+  { code: "KW", name: "Kuwait", flag: "🇰🇼", phoneCode: "+965" },
+  { code: "KG", name: "Kyrgyzstan", flag: "🇰🇬", phoneCode: "+996" },
+  { code: "LA", name: "Laos", flag: "🇱🇦", phoneCode: "+856" },
+  { code: "LV", name: "Latvia", flag: "🇱🇻", phoneCode: "+371" },
+  { code: "LB", name: "Lebanon", flag: "🇱🇧", phoneCode: "+961" },
+  { code: "LS", name: "Lesotho", flag: "🇱🇸", phoneCode: "+266" },
+  { code: "LR", name: "Liberia", flag: "🇱🇷", phoneCode: "+231" },
+  { code: "LY", name: "Libya", flag: "🇱🇾", phoneCode: "+218" },
+  { code: "LI", name: "Liechtenstein", flag: "🇱🇮", phoneCode: "+423" },
+  { code: "LT", name: "Lithuania", flag: "🇱🇹", phoneCode: "+370" },
+  { code: "LU", name: "Luxembourg", flag: "🇱🇺", phoneCode: "+352" },
+  { code: "MG", name: "Madagascar", flag: "🇲🇬", phoneCode: "+261" },
+  { code: "MW", name: "Malawi", flag: "🇲🇼", phoneCode: "+265" },
+  { code: "MY", name: "Malaysia", flag: "🇲🇾", phoneCode: "+60" },
+  { code: "MV", name: "Maldives", flag: "🇲🇻", phoneCode: "+960" },
+  { code: "ML", name: "Mali", flag: "🇲🇱", phoneCode: "+223" },
+  { code: "MT", name: "Malta", flag: "🇲🇹", phoneCode: "+356" },
+  { code: "MH", name: "Marshall Islands", flag: "🇲🇭", phoneCode: "+692" },
+  { code: "MR", name: "Mauritania", flag: "🇲🇷", phoneCode: "+222" },
+  { code: "MU", name: "Mauritius", flag: "🇲🇺", phoneCode: "+230" },
+  { code: "MX", name: "Mexico", flag: "🇲🇽", phoneCode: "+52" },
+  { code: "FM", name: "Micronesia", flag: "🇫🇲", phoneCode: "+691" },
+  { code: "MD", name: "Moldova", flag: "🇲🇩", phoneCode: "+373" },
+  { code: "MC", name: "Monaco", flag: "🇲🇨", phoneCode: "+377" },
+  { code: "MN", name: "Mongolia", flag: "🇲🇳", phoneCode: "+976" },
+  { code: "ME", name: "Montenegro", flag: "🇲🇪", phoneCode: "+382" },
+  { code: "MA", name: "Morocco", flag: "🇲🇦", phoneCode: "+212" },
+  { code: "MZ", name: "Mozambique", flag: "🇲🇿", phoneCode: "+258" },
+  { code: "MM", name: "Myanmar", flag: "🇲🇲", phoneCode: "+95" },
+  { code: "NA", name: "Namibia", flag: "🇳🇦", phoneCode: "+264" },
+  { code: "NR", name: "Nauru", flag: "🇳🇷", phoneCode: "+674" },
+  { code: "NP", name: "Nepal", flag: "🇳🇵", phoneCode: "+977" },
+  { code: "NL", name: "Netherlands", flag: "🇳🇱", phoneCode: "+31" },
+  { code: "NZ", name: "New Zealand", flag: "🇳🇿", phoneCode: "+64" },
+  { code: "NI", name: "Nicaragua", flag: "🇳🇮", phoneCode: "+505" },
+  { code: "NE", name: "Niger", flag: "🇳🇪", phoneCode: "+227" },
+  { code: "NG", name: "Nigeria", flag: "🇳🇬", phoneCode: "+234" },
+  { code: "MK", name: "North Macedonia", flag: "🇲🇰", phoneCode: "+389" },
+  { code: "NO", name: "Norway", flag: "🇳🇴", phoneCode: "+47" },
+  { code: "OM", name: "Oman", flag: "🇴🇲", phoneCode: "+968" },
+  { code: "PK", name: "Pakistan", flag: "🇵🇰", phoneCode: "+92" },
+  { code: "PW", name: "Palau", flag: "🇵🇼", phoneCode: "+680" },
+  { code: "PS", name: "Palestine", flag: "🇵🇸", phoneCode: "+970" },
+  { code: "PA", name: "Panama", flag: "🇵🇦", phoneCode: "+507" },
+  { code: "PG", name: "Papua New Guinea", flag: "🇵🇬", phoneCode: "+675" },
+  { code: "PY", name: "Paraguay", flag: "🇵🇾", phoneCode: "+595" },
+  { code: "PE", name: "Peru", flag: "🇵🇪", phoneCode: "+51" },
+  { code: "PH", name: "Philippines", flag: "🇵🇭", phoneCode: "+63" },
+  { code: "PL", name: "Poland", flag: "🇵🇱", phoneCode: "+48" },
+  { code: "PT", name: "Portugal", flag: "🇵🇹", phoneCode: "+351" },
+  { code: "QA", name: "Qatar", flag: "🇶🇦", phoneCode: "+974" },
+  { code: "RO", name: "Romania", flag: "🇷🇴", phoneCode: "+40" },
+  { code: "RU", name: "Russia", flag: "🇷🇺", phoneCode: "+7" },
+  { code: "RW", name: "Rwanda", flag: "🇷🇼", phoneCode: "+250" },
+  { code: "KN", name: "Saint Kitts and Nevis", flag: "🇰🇳", phoneCode: "+1-869" },
+  { code: "LC", name: "Saint Lucia", flag: "🇱🇨", phoneCode: "+1-758" },
+  { code: "VC", name: "Saint Vincent and the Grenadines", flag: "🇻🇨", phoneCode: "+1-784" },
+  { code: "WS", name: "Samoa", flag: "🇼🇸", phoneCode: "+685" },
+  { code: "SM", name: "San Marino", flag: "🇸🇲", phoneCode: "+378" },
+  { code: "ST", name: "São Tomé and Príncipe", flag: "🇸🇹", phoneCode: "+239" },
+  { code: "SA", name: "Saudi Arabia", flag: "🇸🇦", phoneCode: "+966" },
+  { code: "SN", name: "Senegal", flag: "🇸🇳", phoneCode: "+221" },
+  { code: "RS", name: "Serbia", flag: "🇷🇸", phoneCode: "+381" },
+  { code: "SC", name: "Seychelles", flag: "🇸🇨", phoneCode: "+248" },
+  { code: "SL", name: "Sierra Leone", flag: "🇸🇱", phoneCode: "+232" },
+  { code: "SG", name: "Singapore", flag: "🇸🇬", phoneCode: "+65" },
+  { code: "SK", name: "Slovakia", flag: "🇸🇰", phoneCode: "+421" },
+  { code: "SI", name: "Slovenia", flag: "🇸🇮", phoneCode: "+386" },
+  { code: "SB", name: "Solomon Islands", flag: "🇸🇧", phoneCode: "+677" },
+  { code: "SO", name: "Somalia", flag: "🇸🇴", phoneCode: "+252" },
+  { code: "ZA", name: "South Africa", flag: "🇿🇦", phoneCode: "+27" },
+  { code: "SS", name: "South Sudan", flag: "🇸🇸", phoneCode: "+211" },
+  { code: "ES", name: "Spain", flag: "🇪🇸", phoneCode: "+34" },
+  { code: "LK", name: "Sri Lanka", flag: "🇱🇰", phoneCode: "+94" },
+  { code: "SD", name: "Sudan", flag: "🇸🇩", phoneCode: "+249" },
+  { code: "SR", name: "Suriname", flag: "🇸🇷", phoneCode: "+597" },
+  { code: "SE", name: "Sweden", flag: "🇸🇪", phoneCode: "+46" },
+  { code: "CH", name: "Switzerland", flag: "🇨🇭", phoneCode: "+41" },
+  { code: "SY", name: "Syria", flag: "🇸🇾", phoneCode: "+963" },
+  { code: "TW", name: "Taiwan", flag: "🇹🇼", phoneCode: "+886" },
+  { code: "TJ", name: "Tajikistan", flag: "🇹🇯", phoneCode: "+992" },
+  { code: "TZ", name: "Tanzania", flag: "🇹🇿", phoneCode: "+255" },
+  { code: "TH", name: "Thailand", flag: "🇹🇭", phoneCode: "+66" },
+  { code: "TL", name: "Timor-Leste", flag: "🇹🇱", phoneCode: "+670" },
+  { code: "TG", name: "Togo", flag: "🇹🇬", phoneCode: "+228" },
+  { code: "TO", name: "Tonga", flag: "🇹🇴", phoneCode: "+676" },
+  { code: "TT", name: "Trinidad and Tobago", flag: "🇹🇹", phoneCode: "+1-868" },
+  { code: "TN", name: "Tunisia", flag: "🇹🇳", phoneCode: "+216" },
+  { code: "TR", name: "Türkiye", flag: "🇹🇷", phoneCode: "+90" },
+  { code: "TM", name: "Turkmenistan", flag: "🇹🇲", phoneCode: "+993" },
+  { code: "TV", name: "Tuvalu", flag: "🇹🇻", phoneCode: "+688" },
+  { code: "UG", name: "Uganda", flag: "🇺🇬", phoneCode: "+256" },
+  { code: "UA", name: "Ukraine", flag: "🇺🇦", phoneCode: "+380" },
+  { code: "AE", name: "United Arab Emirates", flag: "🇦🇪", phoneCode: "+971" },
+  { code: "GB", name: "United Kingdom", flag: "🇬🇧", phoneCode: "+44" },
+  { code: "US", name: "United States", flag: "🇺🇸", phoneCode: "+1" },
+  { code: "UY", name: "Uruguay", flag: "🇺🇾", phoneCode: "+598" },
+  { code: "UZ", name: "Uzbekistan", flag: "🇺🇿", phoneCode: "+998" },
+  { code: "VU", name: "Vanuatu", flag: "🇻🇺", phoneCode: "+678" },
+  { code: "VA", name: "Vatican City", flag: "🇻🇦", phoneCode: "+39" },
+  { code: "VE", name: "Venezuela", flag: "🇻🇪", phoneCode: "+58" },
+  { code: "VN", name: "Vietnam", flag: "🇻🇳", phoneCode: "+84" },
+  { code: "YE", name: "Yemen", flag: "🇾🇪", phoneCode: "+967" },
+  { code: "ZM", name: "Zambia", flag: "🇿🇲", phoneCode: "+260" },
+  { code: "ZW", name: "Zimbabwe", flag: "🇿🇼", phoneCode: "+263" }
+];
+
+export const countryMap = new Map(
+  countries.map((country) => [country.code, country])
+);
+
+export function getCountryByCode(code: string) {
+  return countryMap.get(code);
   }
-] as const;
