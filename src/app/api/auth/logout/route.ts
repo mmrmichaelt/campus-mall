@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
+
 import { clearSession } from "../../../../lib/auth";
+
+export const dynamic = "force-dynamic";
 
 export async function POST() {
   try {
@@ -7,7 +10,7 @@ export async function POST() {
 
     return NextResponse.json({
       success: true,
-      message: "You have been logged out.",
+      message: "You have been logged out of Campus Mall.",
       redirectTo: "/",
     });
   } catch (error) {
@@ -15,7 +18,8 @@ export async function POST() {
 
     return NextResponse.json(
       {
-        error: "Unable to log out right now. Please try again.",
+        error:
+          "Unable to log out right now. Please try again.",
       },
       { status: 500 }
     );
