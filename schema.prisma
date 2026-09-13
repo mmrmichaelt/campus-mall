@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AccountType {
+  STUDENT
+  OUTSIDER
+}
+
+enum ListingStatus {
+  ACTIVE
+  SOLD
+  EXPIRED
+}
+
+enum OrderStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  COMPLETED
+}
+
+enum MessageStatus {
+  SENT
+  READ
+}
+
+model User {
+  id             String       @id @default(cuid())
+  email          String       @unique
+  phone          String?
+  passwordHash   String
+  name           String?
+  countryCode    String
+  university     String
+  accountType    AccountType  @default(STUDENT)
+  profilePicture String?
+  bio            String?
+  yearJoined     Int?
+  verification   String       @default("Pending")
+  rating         Float        @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  listings       Listing[]
+  cart           CartItem[]
+  orders         Order[]      @relation("BuyerOrders")
+  sales          Order[]      @relation("SellerOrders")
+  messagesSent   Message[]    @relation("SentMessages")
+  messagesGotten Message[]    @relation("ReceivedMessages")
+  notifications  Notification[]
+}
+
+model Listing {
+  id          String        @id @default(cuid())
+  sellerId    String
+  seller      User          @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  title       String
+  description String
+  category    String
+  condition   String
+  brand       String?
+  pictureUrl  String?
+  price       Float
+  location    String
+  availability String      @default("Available")
+  status      ListingStatus @default(ACTIVE)
+  promoted    Boolean       @default(false)
+  promotedUntil DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  cartItems   CartItem[]
+  orders      Order[]
+}
+
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String
+  listingId String
+  quantity  Int      @default(1)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  @@unique([userId, listingId])
+}
+
+model Order {
+  id        String      @id @default(cuid())
+  buyerId   String
+  sellerId  String
+  listingId String
+  amount    Float
+  status    OrderStatus @default(PENDING)
+  paymentMethod String?
+  createdAt DateTime    @default(now())
+  buyer     User        @relation("BuyerOrders", fields: [buyerId], references: [id])
+  seller    User        @relation("SellerOrders", fields: [sellerId], references: [id])
+  listing   Listing     @relation(fields: [listingId], references: [id])
+}
+
+model Message {
+  id         String        @id @default(cuid())
+  senderId   String
+  receiverId String
+  text       String
+  status     MessageStatus @default(SENT)
+  createdAt  DateTime      @default(now())
+  sender     User          @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User          @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
