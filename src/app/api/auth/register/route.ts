@@ -1,21 +1,16 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { Prisma } from "@prisma/client";
 
 import { prisma } from "../../../../lib/prisma";
 import { createSession } from "../../../../lib/auth";
-import {
-  registerSchema,
-} from "../../../../lib/validation";
+import { registerSchema } from "../../../../lib/validation";
 import {
   sendEmailVerificationCode,
   sendPhoneVerificationCode,
 } from "../../../../lib/verification";
-import { countries } from "../../../../data/countries";
+import { getCountryByCode } from "../../../../data/countries";
 
-function normalizePhone(phone: string): string {
-  return phone.replace(/[^\d+]/g, "");
-}
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
@@ -26,49 +21,17 @@ export async function POST(request: Request) {
     if (!parsed.success) {
       return NextResponse.json(
         {
-          error: parsed.error.issues[0]?.message ?? "Invalid registration details.",
+          error: parsed.error.issues[0]?.message || "Invalid registration details.",
         },
         { status: 400 }
       );
     }
 
-    const {
-      name,
-      country,
-      university,
-      accountType,
-      phone,
-      email,
-      password,
-    } = parsed.data;
+    const data = parsed.data;
 
-    const normalizedEmail = email.trim().toLowerCase();
-    const normalizedPhone = normalizePhone(phone);
+    const country = getCountryByCode(data.country);
 
-    /*
-     * Campus Mall uses international phone numbers because
-     * phone verification is handled through SMS.
-     */
-    if (!normalizedPhone.startsWith("+")) {
-      return NextResponse.json(
-        {
-          error:
-            "Please enter your phone number with the international country code, for example +254712345678.",
-        },
-        { status: 400 }
-      );
-    }
-
-    /*
-     * Confirm that the selected country actually exists
-     * in the Campus Mall country list.
-     */
-    const selectedCountry = countries.find(
-      (item) =>
-        item.name.toLowerCase() === country.trim().toLowerCase()
-    );
-
-    if (!selectedCountry) {
+    if (!country) {
       return NextResponse.json(
         {
           error: "Please select a valid country.",
@@ -77,18 +40,30 @@ export async function POST(request: Request) {
       );
     }
 
-    /*
-     * Check whether the email or phone number is already
-     * registered before creating the account.
-     */
+    const email = data.email.trim().toLowerCase();
+
+    const phone = data.phone
+      .trim()
+      .replace(/[^\d+]/g, "");
+
+    if (!phone.startsWith("+")) {
+      return NextResponse.json(
+        {
+          error:
+            "Please enter your phone number with the international country code.",
+        },
+        { status: 400 }
+      );
+    }
+
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [
           {
-            email: normalizedEmail,
+            email,
           },
           {
-            phone: normalizedPhone,
+            phone,
           },
         ],
       },
@@ -99,54 +74,40 @@ export async function POST(request: Request) {
     });
 
     if (existingUser) {
-      if (existingUser.email === normalizedEmail) {
+      if (existingUser.email === email) {
         return NextResponse.json(
           {
             error:
-              "An account with this email address already exists.",
+              "An account with this email address already exists. Please log in instead.",
           },
           { status: 409 }
         );
       }
 
-      if (existingUser.phone === normalizedPhone) {
+      if (existingUser.phone === phone) {
         return NextResponse.json(
           {
             error:
-              "An account with this phone number already exists.",
+              "An account with this phone number already exists. Please use another number.",
           },
           { status: 409 }
         );
       }
-
-      return NextResponse.json(
-        {
-          error:
-            "An account with these details already exists.",
-        },
-        { status: 409 }
-      );
     }
 
-    /*
-     * Passwords are never stored directly.
-     */
-    const passwordHash = await bcrypt.hash(password, 12);
+    const passwordHash = await bcrypt.hash(data.password, 12);
 
-    /*
-     * Create the user and their real settings record
-     * together in the database.
-     */
     const user = await prisma.user.create({
       data: {
-        name: name.trim(),
-        country: selectedCountry.name,
-        university: university.trim(),
-        accountType,
-        phone: normalizedPhone,
-        email: normalizedEmail,
+        name: data.name.trim(),
+        country: country.name,
+        university: data.university.trim(),
+        accountType: data.accountType,
+        phone,
+        email,
         passwordHash,
-
+        emailVerified: false,
+        phoneVerified: false,
         setting: {
           create: {
             emailAlerts: true,
@@ -164,86 +125,65 @@ export async function POST(request: Request) {
       },
     });
 
-    /*
-     * Create the authenticated session immediately.
-     *
-     * The user is allowed to reach the verification page,
-     * but chat APIs will require both emailVerified and
-     * phoneVerified to be true.
-     */
     await createSession(user.id);
 
-    /*
-     * Send both verification codes.
-     *
-     * Promise.allSettled is intentional:
-     * if one provider temporarily fails, the account is
-     * still safely created and the user can use the
-     * resend-verification endpoint later.
-     */
     const verificationResults = await Promise.allSettled([
       sendEmailVerificationCode(user.id),
       sendPhoneVerificationCode(user.id),
     ]);
 
-    const emailResult = verificationResults[0];
-    const phoneResult = verificationResults[1];
+    const emailSent =
+      verificationResults[0]?.status === "fulfilled";
 
-    const emailSent = emailResult.status === "fulfilled";
-    const phoneSent = phoneResult.status === "fulfilled";
+    const phoneSent =
+      verificationResults[1]?.status === "fulfilled";
 
-    let message =
-      "Account created successfully. Verification codes have been sent to your email and phone.";
-
-    if (emailSent && !phoneSent) {
-      message =
-        "Account created. Your email verification code was sent, but the phone verification message could not be sent. You can request a new phone code.";
+    if (!emailSent) {
+      console.error(
+        "Campus Mall email verification delivery failed:",
+        verificationResults[0]?.status === "rejected"
+          ? verificationResults[0].reason
+          : "Unknown error"
+      );
     }
 
-    if (!emailSent && phoneSent) {
-      message =
-        "Account created. Your phone verification code was sent, but the email verification message could not be sent. You can request a new email code.";
-    }
-
-    if (!emailSent && !phoneSent) {
-      message =
-        "Account created, but the verification messages could not be sent. Please check your verification settings and request new codes.";
+    if (!phoneSent) {
+      console.error(
+        "Campus Mall phone verification delivery failed:",
+        verificationResults[1]?.status === "rejected"
+          ? verificationResults[1].reason
+          : "Unknown error"
+      );
     }
 
     return NextResponse.json(
       {
         success: true,
-        message,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-        },
+        message:
+          emailSent && phoneSent
+            ? "Account created. Verification codes have been sent to your email and phone."
+            : "Account created. Please open the verification page to complete verification.",
+        redirectTo: "/verify",
         verification: {
           emailSent,
           phoneSent,
         },
-        redirectTo: "/verify",
       },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Campus Mall registration error:", error);
 
-    /*
-     * Handle Prisma unique-constraint errors as well.
-     * This protects against two registration requests
-     * arriving at almost exactly the same time.
-     */
     if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
       error.code === "P2002"
     ) {
       return NextResponse.json(
         {
           error:
-            "An account with this email address or phone number already exists.",
+            "An account with these details already exists.",
         },
         { status: 409 }
       );
@@ -252,7 +192,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error:
-          "We could not create your account right now. Please try again.",
+          "Unable to create your Campus Mall account right now. Please try again.",
       },
       { status: 500 }
     );
