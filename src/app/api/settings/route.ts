@@ -4,6 +4,8 @@ import { getCurrentUser } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import { settingsSchema } from "../../../lib/validation";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const user = await getCurrentUser();
@@ -21,23 +23,15 @@ export async function GET() {
       where: {
         userId: user.id,
       },
-      update: {},
       create: {
         userId: user.id,
-        emailAlerts: true,
-        messageAlerts: true,
-        marketing: false,
-        publicProfile: true,
       },
+      update: {},
       select: {
-        id: true,
-        userId: true,
         emailAlerts: true,
         messageAlerts: true,
         marketing: true,
         publicProfile: true,
-        createdAt: true,
-        updatedAt: true,
       },
     });
 
@@ -50,7 +44,8 @@ export async function GET() {
 
     return NextResponse.json(
       {
-        error: "Unable to load your settings.",
+        error:
+          "Unable to load your settings right now. Please try again.",
       },
       { status: 500 }
     );
@@ -78,46 +73,35 @@ export async function PUT(request: Request) {
       return NextResponse.json(
         {
           error:
-            parsed.error.issues[0]?.message ??
+            parsed.error.issues[0]?.message ||
             "Invalid settings.",
         },
         { status: 400 }
       );
     }
 
-    const {
-      emailAlerts,
-      messageAlerts,
-      marketing,
-      publicProfile,
-    } = parsed.data;
-
     const settings = await prisma.userSetting.upsert({
       where: {
         userId: user.id,
       },
-      update: {
-        emailAlerts,
-        messageAlerts,
-        marketing,
-        publicProfile,
-      },
       create: {
         userId: user.id,
-        emailAlerts,
-        messageAlerts,
-        marketing,
-        publicProfile,
+        emailAlerts: parsed.data.emailAlerts,
+        messageAlerts: parsed.data.messageAlerts,
+        marketing: parsed.data.marketing,
+        publicProfile: parsed.data.publicProfile,
+      },
+      update: {
+        emailAlerts: parsed.data.emailAlerts,
+        messageAlerts: parsed.data.messageAlerts,
+        marketing: parsed.data.marketing,
+        publicProfile: parsed.data.publicProfile,
       },
       select: {
-        id: true,
-        userId: true,
         emailAlerts: true,
         messageAlerts: true,
         marketing: true,
         publicProfile: true,
-        createdAt: true,
-        updatedAt: true,
       },
     });
 
@@ -131,7 +115,8 @@ export async function PUT(request: Request) {
 
     return NextResponse.json(
       {
-        error: "Unable to save your settings right now.",
+        error:
+          "Unable to save your settings right now. Please try again.",
       },
       { status: 500 }
     );
