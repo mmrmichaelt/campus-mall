@@ -1,22 +1,9 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 
 import { getCurrentUser } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 
-const profileSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(2, "Name must contain at least 2 characters")
-    .max(100, "Name is too long"),
-
-  university: z
-    .string()
-    .trim()
-    .min(2, "University / college is required")
-    .max(200, "University / college name is too long"),
-});
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
@@ -48,12 +35,12 @@ export async function GET() {
         country: user.country,
         university: user.university,
         accountType: user.accountType,
-        phone: user.phone,
         email: user.email,
+        phone: user.phone,
         emailVerified: user.emailVerified,
         phoneVerified: user.phoneVerified,
-        createdAt: user.createdAt,
         publicProfile: settings?.publicProfile ?? true,
+        createdAt: user.createdAt,
       },
     });
   } catch (error) {
@@ -61,7 +48,8 @@ export async function GET() {
 
     return NextResponse.json(
       {
-        error: "Unable to load your profile.",
+        error:
+          "Unable to load your profile right now. Please try again.",
       },
       { status: 500 }
     );
@@ -83,14 +71,50 @@ export async function PUT(request: Request) {
 
     const body = await request.json();
 
-    const parsed = profileSchema.safeParse(body);
+    const name =
+      typeof body?.name === "string"
+        ? body.name.trim()
+        : "";
 
-    if (!parsed.success) {
+    const university =
+      typeof body?.university === "string"
+        ? body.university.trim()
+        : "";
+
+    if (name.length < 2) {
       return NextResponse.json(
         {
           error:
-            parsed.error.issues[0]?.message ??
-            "Invalid profile details.",
+            "Your name must contain at least 2 characters.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (name.length > 100) {
+      return NextResponse.json(
+        {
+          error: "Your name is too long.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (university.length < 2) {
+      return NextResponse.json(
+        {
+          error:
+            "Please enter your university or college.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (university.length > 200) {
+      return NextResponse.json(
+        {
+          error:
+            "University or college name is too long.",
         },
         { status: 400 }
       );
@@ -101,8 +125,8 @@ export async function PUT(request: Request) {
         id: user.id,
       },
       data: {
-        name: parsed.data.name,
-        university: parsed.data.university,
+        name,
+        university,
       },
       select: {
         id: true,
@@ -110,8 +134,8 @@ export async function PUT(request: Request) {
         country: true,
         university: true,
         accountType: true,
-        phone: true,
         email: true,
+        phone: true,
         emailVerified: true,
         phoneVerified: true,
         createdAt: true,
@@ -121,7 +145,7 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Your profile has been updated.",
+      message: "Your profile has been updated successfully.",
       profile: updatedUser,
     });
   } catch (error) {
@@ -129,7 +153,8 @@ export async function PUT(request: Request) {
 
     return NextResponse.json(
       {
-        error: "Unable to update your profile right now.",
+        error:
+          "Unable to update your profile right now. Please try again.",
       },
       { status: 500 }
     );
