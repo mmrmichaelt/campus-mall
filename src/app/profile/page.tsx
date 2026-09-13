@@ -1,5 +1,151 @@
-"use client";import {useEffect,useState} from "react";
-export default function Profile(){const [u,setU]=useState<any>(null);const [d,setD]=useState<any>({});const [msg,setMsg]=useState("");useEffect(()=>{fetch("/api/me").then(r=>r.json()).then(x=>{setU(x.user);setD(x.user||{})})},[]);
-async function save(e:any){e.preventDefault();const r=await fetch("/api/profile",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});setMsg(r.ok?"Profile updated.":"Could not update profile.");}
-if(!u)return <div className="panel"><h2>Profile</h2><p>Log in to manage your profile.</p></div>;
-return <div className="profile-grid"><aside className="avatar-box"><div className="avatar-circle">{(u.name||"U").slice(0,1).toUpperCase()}</div><h2>{u.name}</h2><p className="note">{u.university}</p><p>Verification: {u.verification}</p><p>Rating: {u.rating}</p></aside><section className="panel"><h2>Update profile</h2><form className="form" onSubmit={save}><label>Name<input value={d.name||""} onChange={e=>setD({...d,name:e.target.value})}/></label><label>Phone<input value={d.phone||""} onChange={e=>setD({...d,phone:e.target.value})}/></label><label>University / College<input value={d.university||""} onChange={e=>setD({...d,university:e.target.value})}/></label><label>Bio<textarea value={d.bio||""} onChange={e=>setD({...d,bio:e.target.value})}/></label>{msg&&<div className="success">{msg}</div>}<button className="primary-btn">Save profile</button></form></section></div>}
+import Link from "next/link";
+
+import { getCurrentUser } from "../../lib/auth";
+import ProfileForm from "../../components/ProfileForm";
+
+export const dynamic = "force-dynamic";
+
+export default async function ProfilePage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return (
+      <main className="page-shell">
+        <section className="protected-page">
+          <div className="protected-card">
+            <p className="eyebrow">CAMPUS MALL</p>
+
+            <h1>Sign in to edit your profile</h1>
+
+            <p>
+              Log in to your Campus Mall account to
+              manage your profile information.
+            </p>
+
+            <Link
+              href="/account"
+              className="primary-button"
+            >
+              Join or log in
+            </Link>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  return (
+    <main className="page-shell">
+      <section className="profile-page">
+        <div className="profile-header">
+          <div>
+            <p className="eyebrow">ACCOUNT</p>
+
+            <h1>Your profile</h1>
+
+            <p>
+              Update the information other Campus Mall
+              users see when they view your profile.
+            </p>
+          </div>
+
+          <Link
+            href="/account"
+            className="secondary-button"
+          >
+            Back to account
+          </Link>
+        </div>
+
+        <div className="profile-layout">
+          <aside className="profile-summary-card">
+            <div className="profile-avatar">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+
+            <h2>{user.name}</h2>
+
+            <p>{user.university}</p>
+
+            <p>{user.country}</p>
+
+            <span className="profile-account-type">
+              {user.accountType === "STUDENT"
+                ? "Student"
+                : "Outsider"}
+            </span>
+
+            <div className="profile-verification">
+              <span>
+                {user.emailVerified
+                  ? "✓ Email verified"
+                  : "Email not verified"}
+              </span>
+
+              <span>
+                {user.phoneVerified
+                  ? "✓ Phone verified"
+                  : "Phone not verified"}
+              </span>
+            </div>
+
+            <Link
+              href={`/profile/${user.id}`}
+              className="secondary-button"
+            >
+              View public profile
+            </Link>
+          </aside>
+
+          <ProfileForm
+            initialName={user.name}
+            initialUniversity={user.university}
+          />
+        </div>
+
+        <section className="profile-private-info">
+          <p className="eyebrow">
+            PRIVATE ACCOUNT INFORMATION
+          </p>
+
+          <h2>Contact information</h2>
+
+          <p>
+            Your email address and phone number are
+            protected and cannot be changed from this
+            profile editor.
+          </p>
+
+          <div className="private-contact-grid">
+            <div>
+              <strong>Email</strong>
+              <span>{user.email}</span>
+            </div>
+
+            <div>
+              <strong>Phone</strong>
+              <span>{user.phone}</span>
+            </div>
+          </div>
+
+          <Link
+            href="/verify"
+            className="text-link"
+          >
+            Manage verification
+          </Link>
+        </section>
+
+        <div className="profile-support">
+          <p>
+            Need help updating your account?
+          </p>
+
+          <a href="mailto:campusmallsupport@gmail.com">
+            campusmallsupport@gmail.com
+          </a>
+        </div>
+      </section>
+    </main>
+  );
+}
