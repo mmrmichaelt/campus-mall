@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 
-import { prisma } from "../../../../lib/prisma";
 import { getCurrentUser } from "../../../../lib/auth";
+import { prisma } from "../../../../lib/prisma";
 import { listingSchema } from "../../../../lib/validation";
+
+export const dynamic = "force-dynamic";
 
 type RouteContext = {
   params: Promise<{
@@ -31,42 +33,22 @@ function serializeListing(listing: {
     country: string;
     university: string;
     accountType: string;
+    emailVerified: boolean;
+    phoneVerified: boolean;
   };
 }) {
   return {
-    id: listing.id,
-    sellerId: listing.sellerId,
-    title: listing.title,
-    description: listing.description,
-    price: Number(listing.price),
-    currency: listing.currency,
-    category: listing.category,
-    imageUrl: listing.imageUrl,
-    location: listing.location,
-    status: listing.status,
-    soldAt: listing.soldAt,
-    createdAt: listing.createdAt,
-    updatedAt: listing.updatedAt,
-    seller: listing.seller,
+    ...listing,
+    price: listing.price.toString(),
   };
 }
 
-async function getListingId(context: RouteContext) {
-  const params = await context.params;
-  return params.id;
-}
-
-/*
- * GET /api/listings/[id]
- *
- * Gets one marketplace listing.
- */
 export async function GET(
-  _request: Request,
+  request: Request,
   context: RouteContext
 ) {
   try {
-    const id = await getListingId(context);
+    const { id } = await context.params;
 
     if (!id) {
       return NextResponse.json(
@@ -76,6 +58,8 @@ export async function GET(
         { status: 400 }
       );
     }
+
+    const currentUser = await getCurrentUser();
 
     const listing = await prisma.listing.findUnique({
       where: {
@@ -102,6 +86,8 @@ export async function GET(
             country: true,
             university: true,
             accountType: true,
+            emailVerified: true,
+            phoneVerified: true,
           },
         },
       },
@@ -116,21 +102,16 @@ export async function GET(
       );
     }
 
-    /*
-     * Sold/expired listings are no longer publicly available.
-     * The seller can still access their own listing for management.
-     */
-    if (listing.status !== "ACTIVE") {
-      const currentUser = await getCurrentUser();
+    const isSeller =
+      currentUser?.id === listing.sellerId;
 
-      if (!currentUser || currentUser.id !== listing.sellerId) {
-        return NextResponse.json(
-          {
-            error: "This listing is no longer available.",
-          },
-          { status: 404 }
-        );
-      }
+    if (!isSeller && listing.status !== "ACTIVE") {
+      return NextResponse.json(
+        {
+          error: "This listing is no longer available.",
+        },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({
@@ -138,61 +119,51 @@ export async function GET(
       listing: serializeListing(listing),
     });
   } catch (error) {
-    console.error("Campus Mall listing lookup error:", error);
+    console.error(
+      "Campus Mall listing GET error:",
+      error
+    );
 
     return NextResponse.json(
       {
-        error: "Unable to load this listing.",
+        error:
+          "Unable to load this listing right now.",
       },
       { status: 500 }
     );
   }
 }
 
-/*
- * PUT /api/listings/[id]
- *
- * Updates a listing.
- *
- * Only the original seller can update it.
- */
 export async function PUT(
   request: Request,
   context: RouteContext
 ) {
   try {
-    const user = await getCurrentUser();
+    const { id } = await context.params;
 
-    if (!user) {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
       return NextResponse.json(
         {
-          error: "You must be logged in to update a listing.",
+          error:
+            "You must be logged in to edit a listing.",
         },
         { status: 401 }
       );
     }
 
-    const id = await getListingId(context);
-
-    if (!id) {
-      return NextResponse.json(
-        {
-          error: "Listing ID is required.",
+    const existingListing =
+      await prisma.listing.findUnique({
+        where: {
+          id,
         },
-        { status: 400 }
-      );
-    }
-
-    const existingListing = await prisma.listing.findUnique({
-      where: {
-        id,
-      },
-      select: {
-        id: true,
-        sellerId: true,
-        status: true,
-      },
-    });
+        select: {
+          id: true,
+          sellerId: true,
+          status: true,
+        },
+      });
 
     if (!existingListing) {
       return NextResponse.json(
@@ -203,21 +174,23 @@ export async function PUT(
       );
     }
 
-    if (existingListing.sellerId !== user.id) {
+    if (existingListing.sellerId !== currentUser.id) {
       return NextResponse.json(
         {
-          error: "You do not have permission to edit this listing.",
+          error:
+            "You do not have permission to edit this listing.",
         },
         { status: 403 }
       );
     }
 
-    if (existingListing.status !== "ACTIVE") {
+    if (existingListing.status === "SOLD") {
       return NextResponse.json(
         {
-          error: "Sold or expired listings cannot be edited.",
+          error:
+            "Sold listings cannot be edited or reactivated.",
         },
-        { status: 400 }
+        { status: 409 }
       );
     }
 
@@ -229,134 +202,92 @@ export async function PUT(
       return NextResponse.json(
         {
           error:
-            parsed.error.issues[0]?.message ??
+            parsed.error.issues[0]?.message ||
             "Invalid listing details.",
         },
         { status: 400 }
       );
     }
 
-    const {
-      title,
-      description,
-      price,
-      currency,
-      category,
-      imageUrl,
-      location,
-    } = parsed.data;
+    const data = parsed.data;
 
     const listing = await prisma.listing.update({
       where: {
         id,
       },
       data: {
-        title: title.trim(),
-        description: description.trim(),
-        price: new Prisma.Decimal(price),
-        currency: currency.trim().toUpperCase(),
-        category: category.trim(),
+        title: data.title.trim(),
+        description: data.description.trim(),
+        price: new Prisma.Decimal(data.price),
+        currency: data.currency
+          .trim()
+          .toUpperCase(),
+        category: data.category
+          .trim()
+          .toLowerCase(),
         imageUrl:
-          imageUrl && imageUrl.trim()
-            ? imageUrl.trim()
-            : null,
-        location: location.trim(),
+          data.imageUrl?.trim() || null,
+        location: data.location.trim(),
       },
       select: {
         id: true,
-        sellerId: true,
         title: true,
-        description: true,
-        price: true,
-        currency: true,
-        category: true,
-        imageUrl: true,
-        location: true,
         status: true,
-        soldAt: true,
-        createdAt: true,
         updatedAt: true,
-        seller: {
-          select: {
-            id: true,
-            name: true,
-            country: true,
-            university: true,
-            accountType: true,
-          },
-        },
       },
     });
 
     return NextResponse.json({
       success: true,
       message: "Your listing has been updated.",
-      listing: serializeListing(listing),
+      listing,
     });
   } catch (error) {
-    console.error("Campus Mall listing update error:", error);
+    console.error(
+      "Campus Mall listing update error:",
+      error
+    );
 
     return NextResponse.json(
       {
         error:
-          "We could not update this listing right now.",
+          "Unable to update this listing right now.",
       },
       { status: 500 }
     );
   }
 }
 
-/*
- * PATCH /api/listings/[id]
- *
- * Used for listing status changes.
- *
- * Supported:
- * {
- *   "status": "SOLD"
- * }
- *
- * Once SOLD, the listing immediately disappears from
- * the public marketplace because marketplace searches
- * only return ACTIVE listings.
- */
 export async function PATCH(
   request: Request,
   context: RouteContext
 ) {
   try {
-    const user = await getCurrentUser();
+    const { id } = await context.params;
 
-    if (!user) {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
       return NextResponse.json(
         {
-          error: "You must be logged in.",
+          error:
+            "You must be logged in to change a listing.",
         },
         { status: 401 }
       );
     }
 
-    const id = await getListingId(context);
-
-    if (!id) {
-      return NextResponse.json(
-        {
-          error: "Listing ID is required.",
+    const existingListing =
+      await prisma.listing.findUnique({
+        where: {
+          id,
         },
-        { status: 400 }
-      );
-    }
-
-    const existingListing = await prisma.listing.findUnique({
-      where: {
-        id,
-      },
-      select: {
-        id: true,
-        sellerId: true,
-        status: true,
-      },
-    });
+        select: {
+          id: true,
+          sellerId: true,
+          status: true,
+        },
+      });
 
     if (!existingListing) {
       return NextResponse.json(
@@ -367,7 +298,7 @@ export async function PATCH(
       );
     }
 
-    if (existingListing.sellerId !== user.id) {
+    if (existingListing.sellerId !== currentUser.id) {
       return NextResponse.json(
         {
           error:
@@ -379,12 +310,12 @@ export async function PATCH(
 
     const body = await request.json();
 
-    const status =
-      typeof body?.status === "string"
-        ? body.status.toUpperCase()
-        : "";
+    const requestedStatus = body?.status;
 
-    if (status !== "SOLD" && status !== "ACTIVE") {
+    if (
+      requestedStatus !== "SOLD" &&
+      requestedStatus !== "ACTIVE"
+    ) {
       return NextResponse.json(
         {
           error:
@@ -394,127 +325,112 @@ export async function PATCH(
       );
     }
 
-    /*
-     * Prevent reopening a sold listing accidentally.
-     * A new listing should be created instead.
-     */
+    if (existingListing.status === "SOLD") {
+      return NextResponse.json(
+        {
+          error:
+            "A sold listing cannot be reactivated.",
+        },
+        { status: 409 }
+      );
+    }
+
     if (
-      existingListing.status === "SOLD" &&
-      status === "ACTIVE"
+      existingListing.status === "EXPIRED"
     ) {
       return NextResponse.json(
         {
           error:
-            "A sold listing cannot be reactivated. Create a new listing instead.",
+            "An expired listing cannot be reactivated.",
         },
-        { status: 400 }
+        { status: 409 }
       );
     }
 
-    const listing = await prisma.listing.update({
-      where: {
-        id,
-      },
-      data:
-        status === "SOLD"
-          ? {
+    const listing =
+      requestedStatus === "SOLD"
+        ? await prisma.listing.update({
+            where: {
+              id,
+            },
+            data: {
               status: "SOLD",
               soldAt: new Date(),
-            }
-          : {
+            },
+            select: {
+              id: true,
+              status: true,
+              soldAt: true,
+            },
+          })
+        : await prisma.listing.update({
+            where: {
+              id,
+            },
+            data: {
               status: "ACTIVE",
               soldAt: null,
             },
-      select: {
-        id: true,
-        sellerId: true,
-        title: true,
-        description: true,
-        price: true,
-        currency: true,
-        category: true,
-        imageUrl: true,
-        location: true,
-        status: true,
-        soldAt: true,
-        createdAt: true,
-        updatedAt: true,
-        seller: {
-          select: {
-            id: true,
-            name: true,
-            country: true,
-            university: true,
-            accountType: true,
-          },
-        },
-      },
-    });
+            select: {
+              id: true,
+              status: true,
+              soldAt: true,
+            },
+          });
 
     return NextResponse.json({
       success: true,
       message:
-        status === "SOLD"
-          ? "Listing marked as sold and removed from the marketplace."
+        requestedStatus === "SOLD"
+          ? "Listing marked as sold and removed from the public marketplace."
           : "Listing is active again.",
-      listing: serializeListing(listing),
+      listing,
     });
   } catch (error) {
-    console.error("Campus Mall listing status error:", error);
+    console.error(
+      "Campus Mall listing status error:",
+      error
+    );
 
     return NextResponse.json(
       {
         error:
-          "We could not change this listing right now.",
+          "Unable to change the listing status right now.",
       },
       { status: 500 }
     );
   }
 }
 
-/*
- * DELETE /api/listings/[id]
- *
- * Permanently deletes a listing.
- *
- * Only the seller who owns the listing can delete it.
- */
 export async function DELETE(
-  _request: Request,
+  request: Request,
   context: RouteContext
 ) {
   try {
-    const user = await getCurrentUser();
+    const { id } = await context.params;
 
-    if (!user) {
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
       return NextResponse.json(
         {
-          error: "You must be logged in to delete a listing.",
+          error:
+            "You must be logged in to delete a listing.",
         },
         { status: 401 }
       );
     }
 
-    const id = await getListingId(context);
-
-    if (!id) {
-      return NextResponse.json(
-        {
-          error: "Listing ID is required.",
+    const listing =
+      await prisma.listing.findUnique({
+        where: {
+          id,
         },
-        { status: 400 }
-      );
-    }
-
-    const listing = await prisma.listing.findUnique({
-      where: {
-        id,
-      },
-      select: {
-        id: true,
-        sellerId: true,
-      },
-    });
+        select: {
+          id: true,
+          sellerId: true,
+        },
+      });
 
     if (!listing) {
       return NextResponse.json(
@@ -525,7 +441,7 @@ export async function DELETE(
       );
     }
 
-    if (listing.sellerId !== user.id) {
+    if (listing.sellerId !== currentUser.id) {
       return NextResponse.json(
         {
           error:
@@ -544,14 +460,18 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
       message: "Listing deleted successfully.",
+      redirectTo: "/listings",
     });
   } catch (error) {
-    console.error("Campus Mall listing deletion error:", error);
+    console.error(
+      "Campus Mall listing deletion error:",
+      error
+    );
 
     return NextResponse.json(
       {
         error:
-          "We could not delete this listing right now.",
+          "Unable to delete this listing right now.",
       },
       { status: 500 }
     );
