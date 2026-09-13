@@ -1,4 +1,97 @@
-"use client";import {useEffect,useState} from "react";
-export default function Chats(){const [msgs,setMsgs]=useState<any[]>([]);const [me,setMe]=useState<any>(null);const [text,setText]=useState("");const [receiver,setReceiver]=useState("");useEffect(()=>{fetch("/api/me").then(r=>r.json()).then(x=>setMe(x.user));fetch("/api/messages").then(r=>r.ok?r.json():{messages:[]}).then(x=>setMsgs(x.messages));},[]);
-async function send(){if(!receiver||!text.trim())return;const r=await fetch("/api/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({receiverId:receiver,text})});if(r.ok){setText("");const x=await fetch("/api/messages").then(r=>r.json());setMsgs(x.messages)}}
-return <><h1>Chats</h1><div className="panel"><p className="note">To start a chat from a listing, use the seller's user ID. The API is ready for a listing-detail chat UI.</p><div className="chat"><div className="chat-list"><b>Conversations</b><p className="note">Messages appear here.</p></div><div className="chat-main"><div className="messages">{msgs.map(m=><div key={m.id} className={"bubble "+(m.senderId===me?.id?"mine":"")}><b>{m.sender?.name||"User"}</b><br/>{m.text}</div>)}</div><div className="composer"><input placeholder="Receiver user ID" value={receiver} onChange={e=>setReceiver(e.target.value)}/><input placeholder="Write a message..." value={text} onChange={e=>setText(e.target.value)} onKeyDown={e=>e.key==="Enter"&&send()}/><button className="primary-btn" onClick={send}>Send</button></div></div></div></div></>}
+import Link from "next/link";
+
+import { getCurrentUser } from "../../lib/auth";
+import ChatsClient from "../../components/ChatsClient";
+
+export const dynamic = "force-dynamic";
+
+export default async function ChatsPage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return (
+      <main className="page-shell">
+        <section className="protected-page">
+          <div className="protected-card">
+            <p className="eyebrow">CAMPUS MALL</p>
+
+            <h1>Sign in to view your chats</h1>
+
+            <p>
+              Log in to your Campus Mall account to
+              communicate with sellers and buyers.
+            </p>
+
+            <Link
+              href="/account"
+              className="primary-button"
+            >
+              Join or log in
+            </Link>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  const fullyVerified =
+    user.emailVerified &&
+    user.phoneVerified;
+
+  if (!fullyVerified) {
+    return (
+      <main className="page-shell">
+        <section className="protected-page">
+          <div className="protected-card">
+            <p className="eyebrow">
+              VERIFICATION REQUIRED
+            </p>
+
+            <h1>Verify your account to use chats</h1>
+
+            <p>
+              Both your email address and phone number
+              must be verified before you can send or
+              receive marketplace messages.
+            </p>
+
+            <Link
+              href="/verify"
+              className="primary-button"
+            >
+              Verify my account
+            </Link>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  return (
+    <main className="page-shell">
+      <section className="chats-page">
+        <div className="chats-header">
+          <div>
+            <p className="eyebrow">CAMPUS MALL</p>
+
+            <h1>Your chats</h1>
+
+            <p>
+              Communicate directly with buyers and
+              sellers about active listings.
+            </p>
+          </div>
+
+          <Link
+            href="/listings"
+            className="secondary-button"
+          >
+            Browse listings
+          </Link>
+        </div>
+
+        <ChatsClient />
+      </section>
+    </main>
+  );
+}
