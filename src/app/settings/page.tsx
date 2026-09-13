@@ -1,4 +1,116 @@
-"use client";import {useState} from "react";
-export default function Settings(){const [uni,setUni]=useState("");const [msg,setMsg]=useState("");
-async function change(){const r=await fetch("/api/university",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({university:uni})});setMsg(r.ok?"University switched. The marketplace will now show the selected university.":"Log in first.");}
-return <><h1>Settings</h1><div className="two-col"><section className="panel"><h2>Account</h2><p>Manage your account, notification preferences and billing-related settings.</p><p className="note">Free plan: one active account. You can switch the university shown to you, but listings can only be posted under the university currently selected on your account.</p></section><section className="panel"><h2>Change university</h2><input style={{width:"100%",padding:11,border:"1px solid #ddd",borderRadius:10}} value={uni} onChange={e=>setUni(e.target.value)} placeholder="Enter university / college"/><button className="primary-btn" style={{marginTop:10}} onClick={change}>Switch university</button>{msg&&<p className="success">{msg}</p>}</section></div><div className="panel"><h2>Help & legal</h2><p>Feedback · Terms of service · About Campus Mall · FAQ · Dark mode</p><p>Support: campusmallsupport@gmail.com</p></div></>}
+import Link from "next/link";
+
+import { getCurrentUser } from "../../lib/auth";
+import SettingsForm from "../../components/SettingsForm";
+
+export const dynamic = "force-dynamic";
+
+export default async function SettingsPage() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return (
+      <main className="page-shell">
+        <section className="protected-page">
+          <div className="protected-card">
+            <p className="eyebrow">CAMPUS MALL</p>
+
+            <h1>Sign in to access settings</h1>
+
+            <p>
+              Your Campus Mall settings are private to
+              your account. Please log in to continue.
+            </p>
+
+            <Link
+              href="/account"
+              className="primary-button"
+            >
+              Join or log in
+            </Link>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  return (
+    <main className="page-shell">
+      <section className="settings-page">
+        <div className="settings-header">
+          <div>
+            <p className="eyebrow">ACCOUNT</p>
+
+            <h1>Settings</h1>
+
+            <p>
+              Control your Campus Mall notifications and
+              profile visibility.
+            </p>
+          </div>
+
+          <Link
+            href="/account"
+            className="secondary-button"
+          >
+            Back to account
+          </Link>
+        </div>
+
+        <SettingsForm />
+
+        <section className="settings-account-card">
+          <div>
+            <p className="eyebrow">ACCOUNT</p>
+
+            <h2>{user.name}</h2>
+
+            <p>{user.email}</p>
+
+            <p>{user.phone}</p>
+          </div>
+
+          <div className="settings-verification">
+            <span>
+              Email{" "}
+              {user.emailVerified
+                ? "✓ Verified"
+                : "Not verified"}
+            </span>
+
+            <span>
+              Phone{" "}
+              {user.phoneVerified
+                ? "✓ Verified"
+                : "Not verified"}
+            </span>
+          </div>
+        </section>
+
+        <div className="settings-links">
+          <Link href="/profile">
+            Edit profile
+          </Link>
+
+          <Link href="/verify">
+            Verification
+          </Link>
+
+          <Link href="/chats">
+            Chats
+          </Link>
+        </div>
+
+        <div className="settings-support">
+          <p>
+            Need help with your account?
+          </p>
+
+          <a href="mailto:campusmallsupport@gmail.com">
+            campusmallsupport@gmail.com
+          </a>
+        </div>
+      </section>
+    </main>
+  );
+}
