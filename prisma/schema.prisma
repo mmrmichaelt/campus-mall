@@ -24,24 +24,25 @@ enum ListingStatus {
 }
 
 model User {
-  id              String       @id @default(cuid())
-  name            String
-  country         String
-  university      String
-  accountType     AccountType
-  phone           String       @unique
-  email           String       @unique
-  passwordHash    String
-  emailVerified   Boolean      @default(false)
-  phoneVerified   Boolean      @default(false)
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  id               String       @id @default(cuid())
+  name             String
+  country          String
+  university       String
+  accountType      AccountType
+  phone            String       @unique
+  email            String       @unique
+  passwordHash     String
+  emailVerified    Boolean      @default(false)
+  phoneVerified    Boolean      @default(false)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
-  listings        Listing[]
-  sentMessages    Message[]    @relation("SentMessages")
-  receivedMessages Message[]   @relation("ReceivedMessages")
+  listings         Listing[]
+  sentMessages     Message[]    @relation("SentMessages")
+  receivedMessages Message[]    @relation("ReceivedMessages")
   verificationCodes VerificationCode[]
-  setting         UserSetting?
+  setting          UserSetting?
+  cartItems        CartItem[]
 
   @@index([country])
   @@index([university])
@@ -50,12 +51,12 @@ model User {
 }
 
 model VerificationCode {
-  id         String           @id @default(cuid())
-  userId     String
-  type       VerificationType
-  code       String
-  expiresAt  DateTime
-  createdAt  DateTime         @default(now())
+  id        String           @id @default(cuid())
+  userId    String
+  type      VerificationType
+  code      String
+  expiresAt DateTime
+  createdAt DateTime         @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -78,8 +79,9 @@ model Listing {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  seller   User      @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  messages Message[]
+  seller    User       @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  messages  Message[]
+  cartItems CartItem[]
 
   @@index([sellerId])
   @@index([category])
@@ -88,13 +90,13 @@ model Listing {
 }
 
 model Message {
-  id         String    @id @default(cuid())
+  id         String   @id @default(cuid())
   listingId  String
   senderId   String
   receiverId String
   body       String
   readAt     DateTime?
-  createdAt  DateTime  @default(now())
+  createdAt  DateTime @default(now())
 
   listing  Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
   sender   User    @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
@@ -117,6 +119,7 @@ model UserSetting {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
 model CartItem {
   id        String   @id @default(cuid())
   userId    String
