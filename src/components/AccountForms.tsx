@@ -57,9 +57,26 @@ export default function AccountForms() {
   const [showPassword, setShowPassword] =
     useState(false);
 
-  const universityOptions = useMemo(() => {
-    return getUniversitiesByCountry(country);
+  const selectedCountryName = useMemo(() => {
+    return (
+      countries.find(
+        (item) => item.code === country
+      )?.name ?? country
+    );
   }, [country]);
+
+  const universityOptions = useMemo(() => {
+    const byCode =
+      getUniversitiesByCountry(country);
+
+    if (byCode.length > 0) {
+      return byCode;
+    }
+
+    return getUniversitiesByCountry(
+      selectedCountryName
+    );
+  }, [country, selectedCountryName]);
 
   function handleCountryChange(
     value: string
@@ -97,11 +114,8 @@ export default function AccountForms() {
           body: JSON.stringify({
             name: name.trim(),
 
-            /*
-             * IMPORTANT:
-             * Send the country CODE, e.g. "KE",
-             * not the country name "Kenya".
-             */
+            // Send country CODE to the API.
+            // Example: KE instead of Kenya.
             country,
 
             university:
@@ -182,6 +196,7 @@ export default function AccountForms() {
               email
                 .trim()
                 .toLowerCase(),
+
             password,
           }),
         }
@@ -479,7 +494,7 @@ export default function AccountForms() {
                 required
                 style={{
                   paddingRight:
-                    "48px",
+                    "50px",
                 }}
               />
 
@@ -508,7 +523,7 @@ export default function AccountForms() {
                   top: "50%",
                   transform:
                     "translateY(-50%)",
-                  border: 0,
+                  border: "none",
                   background:
                     "transparent",
                   cursor: "pointer",
@@ -605,7 +620,7 @@ export default function AccountForms() {
                 required
                 style={{
                   paddingRight:
-                    "48px",
+                    "50px",
                 }}
               />
 
@@ -634,7 +649,7 @@ export default function AccountForms() {
                   top: "50%",
                   transform:
                     "translateY(-50%)",
-                  border: 0,
+                  border: "none",
                   background:
                     "transparent",
                   cursor: "pointer",
