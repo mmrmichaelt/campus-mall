@@ -1,5 +1,7 @@
 import Link from "next/link";
+
 import { prisma } from "../../lib/prisma";
+import ListingCard from "../../components/ListingCard";
 
 export const dynamic = "force-dynamic";
 
@@ -10,18 +12,17 @@ type SearchParams = Promise<{
   university?: string;
 }>;
 
-function formatPrice(price: unknown, currency: string) {
-  const numericPrice = Number(price);
-
-  if (!Number.isFinite(numericPrice)) {
-    return `${currency} 0`;
-  }
-
-  return `${currency} ${numericPrice.toLocaleString("en-US", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  })}`;
-}
+const categories = [
+  "Accommodation",
+  "Beauty & dressing",
+  "Electronics",
+  "Food",
+  "Furniture",
+  "Jobs",
+  "Printing & photography",
+  "Stationery",
+  "Utensils",
+];
 
 export default async function ListingsPage({
   searchParams,
@@ -35,6 +36,31 @@ export default async function ListingsPage({
   const country = params.country?.trim() || "";
   const university = params.university?.trim() || "";
 
+  const sellerFilters: {
+    country?: {
+      equals: string;
+      mode: "insensitive";
+    };
+    university?: {
+      equals: string;
+      mode: "insensitive";
+    };
+  } = {};
+
+  if (country) {
+    sellerFilters.country = {
+      equals: country,
+      mode: "insensitive",
+    };
+  }
+
+  if (university) {
+    sellerFilters.university = {
+      equals: university,
+      mode: "insensitive",
+    };
+  }
+
   const listings = await prisma.listing.findMany({
     where: {
       status: "ACTIVE",
@@ -43,30 +69,14 @@ export default async function ListingsPage({
         ? {
             category: {
               equals: category,
-              mode: "insensitive",
+              mode: "insensitive" as const,
             },
           }
         : {}),
 
-      ...(country
+      ...(Object.keys(sellerFilters).length > 0
         ? {
-            seller: {
-              country: {
-                equals: country,
-                mode: "insensitive",
-              },
-            },
-          }
-        : {}),
-
-      ...(university
-        ? {
-            seller: {
-              university: {
-                equals: university,
-                mode: "insensitive",
-              },
-            },
+            seller: sellerFilters,
           }
         : {}),
 
@@ -76,25 +86,25 @@ export default async function ListingsPage({
               {
                 title: {
                   contains: q,
-                  mode: "insensitive",
+                  mode: "insensitive" as const,
                 },
               },
               {
                 description: {
                   contains: q,
-                  mode: "insensitive",
+                  mode: "insensitive" as const,
                 },
               },
               {
                 category: {
                   contains: q,
-                  mode: "insensitive",
+                  mode: "insensitive" as const,
                 },
               },
               {
                 location: {
                   contains: q,
-                  mode: "insensitive",
+                  mode: "insensitive" as const,
                 },
               },
             ],
@@ -102,9 +112,14 @@ export default async function ListingsPage({
         : {}),
     },
 
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: [
+      {
+        promoted: "desc",
+      },
+      {
+        createdAt: "desc",
+      },
+    ],
 
     take: 60,
 
@@ -117,6 +132,7 @@ export default async function ListingsPage({
       category: true,
       imageUrl: true,
       location: true,
+      promoted: true,
       createdAt: true,
       seller: {
         select: {
@@ -124,6 +140,8 @@ export default async function ListingsPage({
           name: true,
           university: true,
           country: true,
+          emailVerified: true,
+          phoneVerified: true,
         },
       },
     },
@@ -136,207 +154,200 @@ export default async function ListingsPage({
     Boolean(university);
 
   return (
-    <main className="page-shell">
-      <section className="listings-page">
-        <div className="listings-header">
-          <div>
-            <p className="eyebrow">MARKETPLACE</p>
+    <div className="panel">
+      <div className="section-title">
+        <div>
+          <p className="category">MARKETPLACE</p>
 
-            <h1>Campus Mall listings</h1>
+          <h1>Campus Mall listings</h1>
 
-            <p>
-              Discover items, food, jobs and services from
-              people around campus.
-            </p>
-          </div>
-
-          <Link
-            href="/listings/new"
-            className="primary-button"
-          >
-            Add listing
-          </Link>
+          <p className="note">
+            Discover items, food, jobs and services from
+            people around campus.
+          </p>
         </div>
 
-        <form
-          action="/listings"
-          method="GET"
-          className="listing-search-form"
+        <Link
+          href="/sell"
+          className="primary-btn"
         >
-          <div className="search-field">
-            <label htmlFor="listing-search">
-              Search
-            </label>
+          Add listing
+        </Link>
+      </div>
 
-            <input
-              id="listing-search"
-              name="q"
-              type="search"
-              placeholder="Search items, food, jobs, services..."
-              defaultValue={q}
-            />
-          </div>
-
-          <div className="search-field">
-            <label htmlFor="listing-category">
-              Category
-            </label>
-
-            <select
-              id="listing-category"
-              name="category"
-              defaultValue={category}
-            >
-              <option value="">All categories</option>
-              <option value="items">Items</option>
-              <option value="food">Food</option>
-              <option value="jobs">Jobs</option>
-              <option value="services">Services</option>
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            className="primary-button"
+      <form
+        action="/listings"
+        method="GET"
+        className="filterbar"
+      >
+        <div
+          style={{
+            flex: 1,
+            minWidth: "220px",
+          }}
+        >
+          <label
+            htmlFor="listing-search"
+            className="note"
           >
             Search
-          </button>
+          </label>
 
-          {hasFilters && (
-            <Link
-              href="/listings"
-              className="secondary-button"
-            >
-              Clear filters
-            </Link>
-          )}
-        </form>
-
-        <div className="listing-results-header">
-          <div>
-            <p className="eyebrow">RESULTS</p>
-
-            <h2>
-              {listings.length}{" "}
-              {listings.length === 1
-                ? "listing"
-                : "listings"}{" "}
-              available
-            </h2>
-          </div>
-
-          {hasFilters && (
-            <p className="filter-summary">
-              Showing filtered results
-            </p>
-          )}
+          <input
+            id="listing-search"
+            name="q"
+            type="search"
+            placeholder="Search items, food, jobs, services..."
+            defaultValue={q}
+          />
         </div>
 
-        {listings.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">🔎</div>
+        <div
+          style={{
+            minWidth: "190px",
+          }}
+        >
+          <label
+            htmlFor="listing-category"
+            className="note"
+          >
+            Category
+          </label>
+
+          <select
+            id="listing-category"
+            name="category"
+            defaultValue={category}
+          >
+            <option value="">
+              All categories
+            </option>
+
+            {categories.map((itemCategory) => (
+              <option
+                key={itemCategory}
+                value={itemCategory}
+              >
+                {itemCategory}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {country && (
+          <input
+            type="hidden"
+            name="country"
+            value={country}
+          />
+        )}
+
+        {university && (
+          <input
+            type="hidden"
+            name="university"
+            value={university}
+          />
+        )}
+
+        <button
+          type="submit"
+          className="primary-btn"
+        >
+          Search
+        </button>
+
+        {hasFilters && (
+          <Link
+            href="/listings"
+            className="secondary-btn"
+          >
+            Clear
+          </Link>
+        )}
+      </form>
+
+      <div className="section-title">
+        <div>
+          <p className="category">RESULTS</p>
+
+          <h2>
+            {listings.length}{" "}
+            {listings.length === 1
+              ? "listing"
+              : "listings"}{" "}
+            available
+          </h2>
+        </div>
+
+        {hasFilters && (
+          <span className="note">
+            Showing filtered results
+          </span>
+        )}
+      </div>
+
+      {listings.length === 0 ? (
+        <div className="panel">
+          <div
+            style={{
+              textAlign: "center",
+              padding: "30px 15px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "42px",
+                marginBottom: "12px",
+              }}
+            >
+              🔎
+            </div>
 
             <h2>No listings found</h2>
 
-            <p>
+            <p className="note">
               Try another search or remove some filters.
             </p>
 
             <Link
               href="/listings"
-              className="secondary-button"
+              className="secondary-btn"
             >
               View all listings
             </Link>
           </div>
-        ) : (
-          <div className="listing-grid">
-            {listings.map((listing) => (
-              <article
-                key={listing.id}
-                className="listing-card"
-              >
-                <Link
-                  href={`/listings/${listing.id}`}
-                  className="listing-image-link"
-                >
-                  {listing.imageUrl ? (
-                    <img
-                      src={listing.imageUrl}
-                      alt={listing.title}
-                      className="listing-image"
-                    />
-                  ) : (
-                    <div
-                      className="listing-image-placeholder"
-                      aria-label="No listing image"
-                    >
-                      🛍️
-                    </div>
-                  )}
-                </Link>
-
-                <div className="listing-card-body">
-                  <div className="listing-category">
-                    {listing.category}
-                  </div>
-
-                  <h3>
-                    <Link
-                      href={`/listings/${listing.id}`}
-                    >
-                      {listing.title}
-                    </Link>
-                  </h3>
-
-                  <p className="listing-description">
-                    {listing.description.length > 110
-                      ? `${listing.description.slice(
-                          0,
-                          110
-                        )}...`
-                      : listing.description}
-                  </p>
-
-                  <strong className="listing-price">
-                    {formatPrice(
-                      listing.price,
-                      listing.currency
-                    )}
-                  </strong>
-
-                  <div className="listing-meta">
-                    <span>
-                      📍 {listing.location}
-                    </span>
-
-                    <span>
-                      {listing.seller.university}
-                    </span>
-                  </div>
-
-                  <div className="listing-seller">
-                    <span>
-                      Seller: {listing.seller.name}
-                    </span>
-
-                    <span>
-                      {listing.seller.country}
-                    </span>
-                  </div>
-
-                  <Link
-                    href={`/listings/${listing.id}`}
-                    className="listing-view-link"
-                  >
-                    View listing →
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
-      </section>
-    </main>
+        </div>
+      ) : (
+        <div className="listing-grid">
+          {listings.map((listing) => (
+            <ListingCard
+              key={listing.id}
+              item={{
+                id: listing.id,
+                title: listing.title,
+                description: listing.description,
+                price: listing.price.toString(),
+                currency: listing.currency,
+                category: listing.category,
+                imageUrl: listing.imageUrl,
+                location: listing.location,
+                promoted: listing.promoted,
+                seller: {
+                  id: listing.seller.id,
+                  name: listing.seller.name,
+                  university:
+                    listing.seller.university,
+                  emailVerified:
+                    listing.seller.emailVerified,
+                  phoneVerified:
+                    listing.seller.phoneVerified,
+                },
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
-              }
+}
