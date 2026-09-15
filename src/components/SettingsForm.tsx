@@ -1,6 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  Bell,
+  Check,
+  Globe,
+  Mail,
+  MessageCircle,
+  Megaphone,
+  RotateCcw,
+  Save,
+} from "lucide-react";
 
 type Settings = {
   emailAlerts: boolean;
@@ -15,6 +25,42 @@ const defaultSettings: Settings = {
   marketing: false,
   publicProfile: true,
 };
+
+const options: {
+  key: keyof Settings;
+  title: string;
+  description: string;
+  icon: typeof Bell;
+}[] = [
+  {
+    key: "emailAlerts",
+    title: "Email notifications",
+    description:
+      "Receive important Campus Mall account and marketplace notifications by email.",
+    icon: Mail,
+  },
+  {
+    key: "messageAlerts",
+    title: "Message notifications",
+    description:
+      "Receive notifications when someone sends you a Campus Mall chat message.",
+    icon: MessageCircle,
+  },
+  {
+    key: "marketing",
+    title: "Marketing messages",
+    description:
+      "Allow Campus Mall to send occasional promotional and marketplace updates.",
+    icon: Megaphone,
+  },
+  {
+    key: "publicProfile",
+    title: "Public profile",
+    description:
+      "Allow other Campus Mall users to view your public profile and marketplace information.",
+    icon: Globe,
+  },
+];
 
 export default function SettingsForm() {
   const [settings, setSettings] =
@@ -37,7 +83,9 @@ export default function SettingsForm() {
         }
       );
 
-      const data = await response.json();
+      const data = await response
+        .json()
+        .catch(() => ({}));
 
       if (!response.ok) {
         throw new Error(
@@ -47,14 +95,18 @@ export default function SettingsForm() {
       }
 
       setSettings({
-        emailAlerts:
-          Boolean(data.settings?.emailAlerts),
-        messageAlerts:
-          Boolean(data.settings?.messageAlerts),
-        marketing:
-          Boolean(data.settings?.marketing),
-        publicProfile:
-          Boolean(data.settings?.publicProfile),
+        emailAlerts: Boolean(
+          data.settings?.emailAlerts
+        ),
+        messageAlerts: Boolean(
+          data.settings?.messageAlerts
+        ),
+        marketing: Boolean(
+          data.settings?.marketing
+        ),
+        publicProfile: Boolean(
+          data.settings?.publicProfile
+        ),
       });
     } catch (err) {
       setError(
@@ -84,6 +136,12 @@ export default function SettingsForm() {
     setError("");
   }
 
+  function resetSettings() {
+    setSettings(defaultSettings);
+    setSuccess("");
+    setError("");
+  }
+
   async function saveSettings() {
     setSaving(true);
     setError("");
@@ -101,7 +159,9 @@ export default function SettingsForm() {
         }
       );
 
-      const data = await response.json();
+      const data = await response
+        .json()
+        .catch(() => ({}));
 
       if (!response.ok) {
         throw new Error(
@@ -112,14 +172,18 @@ export default function SettingsForm() {
 
       if (data.settings) {
         setSettings({
-          emailAlerts:
-            Boolean(data.settings.emailAlerts),
-          messageAlerts:
-            Boolean(data.settings.messageAlerts),
-          marketing:
-            Boolean(data.settings.marketing),
-          publicProfile:
-            Boolean(data.settings.publicProfile),
+          emailAlerts: Boolean(
+            data.settings.emailAlerts
+          ),
+          messageAlerts: Boolean(
+            data.settings.messageAlerts
+          ),
+          marketing: Boolean(
+            data.settings.marketing
+          ),
+          publicProfile: Boolean(
+            data.settings.publicProfile
+          ),
         });
       }
 
@@ -139,18 +203,21 @@ export default function SettingsForm() {
 
   if (loading) {
     return (
-      <div className="loading-card">
-        <p>Loading your settings...</p>
+      <div className="panel">
+        <p className="note">
+          Loading your settings...
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="settings-form-card">
+    <div>
       {error && (
         <div
-          className="form-error"
+          className="error"
           role="alert"
+          style={{ marginBottom: "18px" }}
         >
           {error}
         </div>
@@ -158,158 +225,165 @@ export default function SettingsForm() {
 
       {success && (
         <div
-          className="form-success"
+          className="success"
           role="status"
+          style={{ marginBottom: "18px" }}
         >
+          <Check size={17} />
           {success}
         </div>
       )}
 
-      <div className="settings-option">
-        <div>
-          <h2>Email notifications</h2>
+      <div className="settings-list">
+        {options.map((option) => {
+          const Icon = option.icon;
+          const enabled = settings[option.key];
 
-          <p>
-            Receive important Campus Mall account and
-            marketplace notifications by email.
-          </p>
-        </div>
+          return (
+            <div
+              key={option.key}
+              className="panel"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "20px",
+                marginBottom: "14px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "14px",
+                  minWidth: 0,
+                }}
+              >
+                <div
+                  style={{
+                    display: "grid",
+                    placeItems: "center",
+                    minWidth: "40px",
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "12px",
+                    background:
+                      "var(--red-light)",
+                  }}
+                >
+                  <Icon
+                    size={19}
+                    aria-hidden="true"
+                  />
+                </div>
 
-        <label className="toggle">
-          <input
-            type="checkbox"
-            checked={settings.emailAlerts}
-            onChange={(event) =>
-              updateSetting(
-                "emailAlerts",
-                event.target.checked
-              )
-            }
-          />
+                <div>
+                  <h3
+                    style={{
+                      margin: 0,
+                      marginBottom: "5px",
+                    }}
+                  >
+                    {option.title}
+                  </h3>
 
-          <span className="toggle-slider" />
+                  <p className="note">
+                    {option.description}
+                  </p>
+                </div>
+              </div>
 
-          <span className="sr-only">
-            Enable email notifications
-          </span>
-        </label>
+              <label
+                style={{
+                  position: "relative",
+                  flexShrink: 0,
+                  cursor: "pointer",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={enabled}
+                  onChange={(event) =>
+                    updateSetting(
+                      option.key,
+                      event.target.checked
+                    )
+                  }
+                  aria-label={option.title}
+                  style={{
+                    position: "absolute",
+                    opacity: 0,
+                    pointerEvents: "none",
+                  }}
+                />
+
+                <span
+                  aria-hidden="true"
+                  style={{
+                    display: "block",
+                    width: "48px",
+                    height: "27px",
+                    borderRadius: "999px",
+                    background: enabled
+                      ? "var(--red)"
+                      : "#d1d5db",
+                    position: "relative",
+                    transition:
+                      "background 0.2s ease",
+                  }}
+                >
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: "3px",
+                      left: enabled
+                        ? "24px"
+                        : "3px",
+                      width: "21px",
+                      height: "21px",
+                      borderRadius: "50%",
+                      background: "#fff",
+                      boxShadow:
+                        "0 1px 3px rgba(0,0,0,.2)",
+                      transition:
+                        "left 0.2s ease",
+                    }}
+                  />
+                </span>
+              </label>
+            </div>
+          );
+        })}
       </div>
 
-      <div className="settings-option">
-        <div>
-          <h2>Message notifications</h2>
+      <div
+        className="panel"
+        style={{ marginTop: "20px" }}
+      >
+        <div className="hero-actions">
+          <button
+            type="button"
+            className="secondary-btn"
+            onClick={resetSettings}
+            disabled={saving}
+          >
+            <RotateCcw size={17} />
+            Reset
+          </button>
 
-          <p>
-            Receive notifications when someone sends you
-            a Campus Mall chat message.
-          </p>
+          <button
+            type="button"
+            className="primary-btn"
+            onClick={saveSettings}
+            disabled={saving}
+          >
+            <Save size={17} />
+            {saving
+              ? "Saving..."
+              : "Save settings"}
+          </button>
         </div>
-
-        <label className="toggle">
-          <input
-            type="checkbox"
-            checked={settings.messageAlerts}
-            onChange={(event) =>
-              updateSetting(
-                "messageAlerts",
-                event.target.checked
-              )
-            }
-          />
-
-          <span className="toggle-slider" />
-
-          <span className="sr-only">
-            Enable message notifications
-          </span>
-        </label>
-      </div>
-
-      <div className="settings-option">
-        <div>
-          <h2>Marketing messages</h2>
-
-          <p>
-            Allow Campus Mall to send occasional
-            promotional and marketplace updates.
-          </p>
-        </div>
-
-        <label className="toggle">
-          <input
-            type="checkbox"
-            checked={settings.marketing}
-            onChange={(event) =>
-              updateSetting(
-                "marketing",
-                event.target.checked
-              )
-            }
-          />
-
-          <span className="toggle-slider" />
-
-          <span className="sr-only">
-            Enable marketing messages
-          </span>
-        </label>
-      </div>
-
-      <div className="settings-option">
-        <div>
-          <h2>Public profile</h2>
-
-          <p>
-            Allow other Campus Mall users to view your
-            public profile and marketplace information.
-          </p>
-        </div>
-
-        <label className="toggle">
-          <input
-            type="checkbox"
-            checked={settings.publicProfile}
-            onChange={(event) =>
-              updateSetting(
-                "publicProfile",
-                event.target.checked
-              )
-            }
-          />
-
-          <span className="toggle-slider" />
-
-          <span className="sr-only">
-            Make profile public
-          </span>
-        </label>
-      </div>
-
-      <div className="settings-actions">
-        <button
-          type="button"
-          className="secondary-button"
-          onClick={() => {
-            setSettings(defaultSettings);
-            setSuccess("");
-            setError("");
-          }}
-          disabled={saving}
-        >
-          Reset
-        </button>
-
-        <button
-          type="button"
-          className="primary-button"
-          onClick={saveSettings}
-          disabled={saving}
-        >
-          {saving
-            ? "Saving..."
-            : "Save settings"}
-        </button>
       </div>
     </div>
   );
-          }
+}
