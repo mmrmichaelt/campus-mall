@@ -209,13 +209,18 @@ export default function VerifyPage() {
 
   if (!status) {
     return (
-      <main className="page-shell">
-        <section className="verify-page">
-          <div className="loading-card">
-            <p>Loading verification...</p>
-          </div>
-        </section>
-      </main>
+      <div className="auth-wrap">
+        <div className="auth-card">
+          <div className="brand-mark">CM</div>
+
+          <h1>Loading verification...</h1>
+
+          <p className="note">
+            Please wait while we load your account
+            verification status.
+          </p>
+        </div>
+      </div>
     );
   }
 
@@ -224,90 +229,131 @@ export default function VerifyPage() {
     status.phoneVerified;
 
   return (
-    <main className="page-shell">
-      <section className="verify-page">
-        <div className="verify-header">
-          <p className="eyebrow">CAMPUS MALL</p>
+    <div className="panel">
+      <div className="section-title">
+        <div>
+          <p className="category">CAMPUS MALL</p>
 
           <h1>Verify your account</h1>
 
-          <p>
+          <p className="note">
             Verify your email address and phone number
             before using Campus Mall chats.
           </p>
         </div>
+      </div>
 
-        {error && (
-          <div className="form-error" role="alert">
-            {error}
-          </div>
-        )}
+      {error && (
+        <div
+          className="error"
+          role="alert"
+          style={{ marginBottom: "20px" }}
+        >
+          {error}
+        </div>
+      )}
 
-        {fullyVerified ? (
-          <div className="verification-complete">
-            <div className="success-icon">✓</div>
+      {fullyVerified ? (
+        <div className="panel">
+          <div
+            style={{
+              textAlign: "center",
+              padding: "20px",
+            }}
+          >
+            <div
+              style={{
+                width: "60px",
+                height: "60px",
+                borderRadius: "50%",
+                margin: "0 auto 15px",
+                display: "grid",
+                placeItems: "center",
+                background: "#e9f8ef",
+                color: "#16803c",
+                fontSize: "30px",
+                fontWeight: 800,
+              }}
+            >
+              ✓
+            </div>
 
             <h2>Account fully verified</h2>
 
-            <p>
+            <p className="note">
               Your email and phone number have both
               been verified.
             </p>
 
             <button
               type="button"
-              className="primary-button"
+              className="primary-btn"
               onClick={() => router.replace("/")}
             >
               Continue to Campus Mall
             </button>
           </div>
-        ) : (
-          <div className="verification-grid">
-            <section className="verification-card">
-              <div className="verification-card-header">
-                <span className="verification-icon">
-                  ✉️
-                </span>
+        </div>
+      ) : (
+        <div className="two-col">
+          <section className="panel">
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                alignItems: "center",
+                marginBottom: "18px",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "28px",
+                }}
+              >
+                ✉️
+              </span>
 
-                <div>
-                  <h2>Email verification</h2>
+              <div>
+                <p className="category">
+                  EMAIL
+                </p>
 
-                  <p>
-                    {status.email}
-                  </p>
-                </div>
+                <h2>Email verification</h2>
+
+                <p className="note">
+                  {status.email}
+                </p>
               </div>
+            </div>
 
-              {status.emailVerified ? (
-                <div className="verified-box">
-                  ✓ Email verified
-                </div>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    className="secondary-button"
-                    disabled={sendingEmail}
-                    onClick={() =>
-                      sendCode("EMAIL")
-                    }
-                  >
-                    {sendingEmail
-                      ? "Sending..."
-                      : "Send email code"}
-                  </button>
+            {status.emailVerified ? (
+              <div className="success">
+                ✓ Email verified
+              </div>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="secondary-btn"
+                  disabled={sendingEmail}
+                  onClick={() =>
+                    sendCode("EMAIL")
+                  }
+                >
+                  {sendingEmail
+                    ? "Sending..."
+                    : "Send email code"}
+                </button>
 
-                  <form
-                    onSubmit={(event) =>
-                      verify(event, "EMAIL")
-                    }
-                    className="verification-form"
-                  >
-                    <label htmlFor="email-code">
-                      Enter email code
-                    </label>
-
+                <form
+                  onSubmit={(event) =>
+                    verify(event, "EMAIL")
+                  }
+                  className="form"
+                  style={{ marginTop: "16px" }}
+                >
+                  <label htmlFor="email-code">
+                    Enter email code
                     <input
                       id="email-code"
                       type="text"
@@ -324,74 +370,89 @@ export default function VerifyPage() {
                         )
                       }
                     />
+                  </label>
 
-                    <button
-                      type="submit"
-                      className="primary-button"
-                      disabled={
-                        verifyingEmail ||
-                        emailCode.length !== 6
-                      }
-                    >
-                      {verifyingEmail
-                        ? "Verifying..."
-                        : "Verify email"}
-                    </button>
-                  </form>
-
-                  {emailMessage && (
-                    <p className="form-success">
-                      {emailMessage}
-                    </p>
-                  )}
-                </>
-              )}
-            </section>
-
-            <section className="verification-card">
-              <div className="verification-card-header">
-                <span className="verification-icon">
-                  📱
-                </span>
-
-                <div>
-                  <h2>Phone verification</h2>
-
-                  <p>
-                    {status.phone}
-                  </p>
-                </div>
-              </div>
-
-              {status.phoneVerified ? (
-                <div className="verified-box">
-                  ✓ Phone verified
-                </div>
-              ) : (
-                <>
                   <button
-                    type="button"
-                    className="secondary-button"
-                    disabled={sendingPhone}
-                    onClick={() =>
-                      sendCode("PHONE")
+                    type="submit"
+                    className="primary-btn"
+                    disabled={
+                      verifyingEmail ||
+                      emailCode.length !== 6
                     }
                   >
-                    {sendingPhone
-                      ? "Sending..."
-                      : "Send SMS code"}
+                    {verifyingEmail
+                      ? "Verifying..."
+                      : "Verify email"}
                   </button>
+                </form>
 
-                  <form
-                    onSubmit={(event) =>
-                      verify(event, "PHONE")
-                    }
-                    className="verification-form"
-                  >
-                    <label htmlFor="phone-code">
-                      Enter SMS code
-                    </label>
+                {emailMessage && (
+                  <p className="success">
+                    {emailMessage}
+                  </p>
+                )}
+              </>
+            )}
+          </section>
 
+          <section className="panel">
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                alignItems: "center",
+                marginBottom: "18px",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "28px",
+                }}
+              >
+                📱
+              </span>
+
+              <div>
+                <p className="category">
+                  PHONE
+                </p>
+
+                <h2>Phone verification</h2>
+
+                <p className="note">
+                  {status.phone}
+                </p>
+              </div>
+            </div>
+
+            {status.phoneVerified ? (
+              <div className="success">
+                ✓ Phone verified
+              </div>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="secondary-btn"
+                  disabled={sendingPhone}
+                  onClick={() =>
+                    sendCode("PHONE")
+                  }
+                >
+                  {sendingPhone
+                    ? "Sending..."
+                    : "Send SMS code"}
+                </button>
+
+                <form
+                  onSubmit={(event) =>
+                    verify(event, "PHONE")
+                  }
+                  className="form"
+                  style={{ marginTop: "16px" }}
+                >
+                  <label htmlFor="phone-code">
+                    Enter SMS code
                     <input
                       id="phone-code"
                       type="text"
@@ -408,49 +469,65 @@ export default function VerifyPage() {
                         )
                       }
                     />
+                  </label>
 
-                    <button
-                      type="submit"
-                      className="primary-button"
-                      disabled={
-                        verifyingPhone ||
-                        phoneCode.length !== 6
-                      }
-                    >
-                      {verifyingPhone
-                        ? "Verifying..."
-                        : "Verify phone"}
-                    </button>
-                  </form>
+                  <button
+                    type="submit"
+                    className="primary-btn"
+                    disabled={
+                      verifyingPhone ||
+                      phoneCode.length !== 6
+                    }
+                  >
+                    {verifyingPhone
+                      ? "Verifying..."
+                      : "Verify phone"}
+                  </button>
+                </form>
 
-                  {phoneMessage && (
-                    <p className="form-success">
-                      {phoneMessage}
-                    </p>
-                  )}
-                </>
-              )}
-            </section>
-          </div>
-        )}
-
-        <div className="verify-note">
-          <strong>Why verify?</strong>
-
-          <p>
-            Campus Mall requires both email and phone
-            verification to help protect accounts and
-            make marketplace conversations safer.
-          </p>
+                {phoneMessage && (
+                  <p className="success">
+                    {phoneMessage}
+                  </p>
+                )}
+              </>
+            )}
+          </section>
         </div>
+      )}
 
-        <p className="support-text">
-          Need help?{" "}
-          <a href="mailto:campusmallsupport@gmail.com">
-            campusmallsupport@gmail.com
-          </a>
+      <section
+        className="panel"
+        style={{ marginTop: "20px" }}
+      >
+        <p className="category">
+          WHY VERIFY?
+        </p>
+
+        <h2>Protecting Campus Mall accounts</h2>
+
+        <p className="note">
+          Campus Mall requires both email and phone
+          verification to help protect accounts and
+          make marketplace conversations safer.
         </p>
       </section>
-    </main>
+
+      <p
+        className="note"
+        style={{
+          marginTop: "20px",
+          textAlign: "center",
+        }}
+      >
+        Need help?{" "}
+        <a
+          href="mailto:campusmall.support@gmail.com"
+          className="text-link"
+        >
+          campusmall.support@gmail.com
+        </a>
+      </p>
+    </div>
   );
-    }
+}
