@@ -52,7 +52,6 @@ export default async function PublicProfilePage({
   }
 
   const currentUser = await getCurrentUser();
-
   const isOwner = currentUser?.id === profile.id;
 
   if (
@@ -61,27 +60,27 @@ export default async function PublicProfilePage({
     !profile.setting.publicProfile
   ) {
     return (
-      <main className="page-shell">
-        <section className="protected-page">
-          <div className="protected-card">
-            <p className="eyebrow">CAMPUS MALL</p>
+      <div className="auth-wrap">
+        <div className="auth-card">
+          <div className="brand-mark">CM</div>
 
-            <h1>Profile unavailable</h1>
+          <p className="category">CAMPUS MALL</p>
 
-            <p>
-              This user has chosen to keep their
-              profile private.
-            </p>
+          <h1>Profile unavailable</h1>
 
-            <Link
-              href="/listings"
-              className="primary-button"
-            >
-              Browse listings
-            </Link>
-          </div>
-        </section>
-      </main>
+          <p className="note">
+            This user has chosen to keep their profile
+            private.
+          </p>
+
+          <Link
+            href="/listings"
+            className="primary-btn"
+          >
+            Browse listings
+          </Link>
+        </div>
+      </div>
     );
   }
 
@@ -89,7 +88,9 @@ export default async function PublicProfilePage({
     .trim()
     .split(/\s+/)
     .slice(0, 2)
-    .map((part) => part.charAt(0).toUpperCase())
+    .map((part) =>
+      part.charAt(0).toUpperCase()
+    )
     .join("");
 
   const memberSince = new Intl.DateTimeFormat(
@@ -101,141 +102,232 @@ export default async function PublicProfilePage({
   ).format(profile.createdAt);
 
   return (
-    <main className="page-shell">
-      <section className="public-profile-page">
-        <div className="public-profile-header">
-          <div>
-            <p className="eyebrow">CAMPUS MALL PROFILE</p>
+    <div className="panel">
+      <div className="section-title">
+        <div>
+          <p className="category">
+            CAMPUS MALL PROFILE
+          </p>
 
-            <h1>{profile.name}</h1>
+          <h1>{profile.name}</h1>
 
-            <p>
-              View this user's public Campus Mall
-              information and active listings.
-            </p>
-          </div>
-
-          <div className="profile-header-actions">
-            <Link
-              href="/listings"
-              className="secondary-button"
-            >
-              Browse marketplace
-            </Link>
-
-            {isOwner && (
-              <Link
-                href="/profile"
-                className="primary-button"
-              >
-                Edit profile
-              </Link>
-            )}
-          </div>
+          <p className="note">
+            View this user's public Campus Mall
+            information and active listings.
+          </p>
         </div>
 
-        <div className="public-profile-layout">
-          <section className="public-profile-card">
-            <div className="public-profile-avatar">
+        <div
+          className="hero-actions"
+          style={{ marginTop: 0 }}
+        >
+          <Link
+            href="/"
+            className="secondary-btn"
+          >
+            Browse marketplace
+          </Link>
+
+          {isOwner && (
+            <Link
+              href="/profile"
+              className="primary-btn"
+            >
+              Edit profile
+            </Link>
+          )}
+        </div>
+      </div>
+
+      <div className="profile-grid">
+        <section className="panel">
+          <div className="avatar-box">
+            <div className="avatar-circle">
               {initials || "CM"}
             </div>
 
             <h2>{profile.name}</h2>
 
-            <span className="profile-account-type">
+            <span className="category">
               {profile.accountType === "STUDENT"
                 ? "Student"
                 : "Outsider"}
             </span>
+          </div>
 
-            <div className="public-profile-details">
-              <div className="public-profile-detail">
-                <span>Country</span>
-                <strong>{profile.country}</strong>
-              </div>
-
-              <div className="public-profile-detail">
-                <span>University / College</span>
-                <strong>{profile.university}</strong>
-              </div>
-
-              <div className="public-profile-detail">
-                <span>Member since</span>
-                <strong>{memberSince}</strong>
-              </div>
-
-              <div className="public-profile-detail">
-                <span>Active listings</span>
-                <strong>{profile._count.listings}</strong>
-              </div>
-            </div>
-
-            <div className="profile-verification">
-              <span>
-                {profile.emailVerified
-                  ? "✓ Email verified"
-                  : "Email not verified"}
+          <div
+            style={{
+              display: "grid",
+              gap: "14px",
+              marginTop: "20px",
+            }}
+          >
+            <div>
+              <span className="note">
+                Country
               </span>
 
-              <span>
-                {profile.phoneVerified
-                  ? "✓ Phone verified"
-                  : "Phone not verified"}
-              </span>
+              <strong
+                style={{
+                  display: "block",
+                  marginTop: "3px",
+                }}
+              >
+                {profile.country}
+              </strong>
             </div>
 
-            <p className="public-profile-privacy">
-              Email addresses and phone numbers are
-              kept private by Campus Mall.
-            </p>
-          </section>
+            <div>
+              <span className="note">
+                University / College
+              </span>
 
-          <section className="public-profile-listings">
-            <div className="public-profile-listings-header">
-              <div>
-                <p className="eyebrow">MARKETPLACE</p>
+              <strong
+                style={{
+                  display: "block",
+                  marginTop: "3px",
+                }}
+              >
+                {profile.university}
+              </strong>
+            </div>
 
-                <h2>
-                  {isOwner
-                    ? "Your active listings"
-                    : `${profile.name}'s active listings`}
-                </h2>
-              </div>
+            <div>
+              <span className="note">
+                Member since
+              </span>
 
-              <span className="listing-count">
+              <strong
+                style={{
+                  display: "block",
+                  marginTop: "3px",
+                }}
+              >
+                {memberSince}
+              </strong>
+            </div>
+
+            <div>
+              <span className="note">
+                Active listings
+              </span>
+
+              <strong
+                style={{
+                  display: "block",
+                  marginTop: "3px",
+                }}
+              >
                 {profile._count.listings}
-              </span>
+              </strong>
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gap: "8px",
+              marginTop: "20px",
+            }}
+          >
+            <div
+              className={
+                profile.emailVerified
+                  ? "success"
+                  : "note"
+              }
+            >
+              {profile.emailVerified
+                ? "✓ Email verified"
+                : "Email not verified"}
             </div>
 
-            {profile._count.listings === 0 ? (
-              <div className="empty-state">
-                <div className="empty-icon">🛍️</div>
+            <div
+              className={
+                profile.phoneVerified
+                  ? "success"
+                  : "note"
+              }
+            >
+              {profile.phoneVerified
+                ? "✓ Phone verified"
+                : "Phone not verified"}
+            </div>
+          </div>
+
+          <p
+            className="note"
+            style={{ marginTop: "18px" }}
+          >
+            Email addresses and phone numbers are kept
+            private by Campus Mall.
+          </p>
+        </section>
+
+        <section>
+          <div className="section-title">
+            <div>
+              <p className="category">
+                MARKETPLACE
+              </p>
+
+              <h2>
+                {isOwner
+                  ? "Your active listings"
+                  : `${profile.name}'s active listings`}
+              </h2>
+            </div>
+
+            <span className="category">
+              {profile._count.listings} listing
+              {profile._count.listings === 1
+                ? ""
+                : "s"}
+            </span>
+          </div>
+
+          {profile._count.listings === 0 ? (
+            <div className="panel">
+              <div
+                style={{
+                  textAlign: "center",
+                  padding: "20px",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: "40px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  🛍️
+                </div>
 
                 <h3>No active listings</h3>
 
-                <p>
+                <p className="note">
                   This user currently has no active
                   marketplace listings.
                 </p>
 
                 {isOwner && (
                   <Link
-                    href="/listings/new"
-                    className="primary-button"
+                    href="/sell"
+                    className="primary-btn"
                   >
                     Add your first listing
                   </Link>
                 )}
               </div>
-            ) : (
-              <PublicProfileListings
-                userId={profile.id}
-              />
-            )}
-          </section>
-        </div>
-      </section>
-    </main>
+            </div>
+          ) : (
+            <PublicProfileListings
+              userId={profile.id}
+            />
+          )}
+        </section>
+      </div>
+    </div>
   );
 }
 
@@ -272,19 +364,20 @@ async function PublicProfileListings({
   return (
     <div className="listing-grid">
       {listings.map((listing) => {
-        const numericPrice = Number(listing.price);
+        const numericPrice = Number(
+          listing.price
+        );
 
-        const formattedPrice = Number.isFinite(
-          numericPrice
-        )
-          ? `${listing.currency} ${numericPrice.toLocaleString(
-              "en-US",
-              {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 2,
-              }
-            )}`
-          : `${listing.currency} 0`;
+        const formattedPrice =
+          Number.isFinite(numericPrice)
+            ? `${listing.currency} ${numericPrice.toLocaleString(
+                "en-US",
+                {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                }
+              )}`
+            : `${listing.currency} 0`;
 
         return (
           <article
@@ -293,27 +386,40 @@ async function PublicProfileListings({
           >
             <Link
               href={`/listings/${listing.id}`}
-              className="listing-image-link"
+              className="listing-photo"
             >
               {listing.imageUrl ? (
                 <img
                   src={listing.imageUrl}
                   alt={listing.title}
-                  className="listing-image"
+                  loading="lazy"
                 />
               ) : (
-                <div
-                  className="listing-image-placeholder"
-                  aria-label="No listing image"
-                >
-                  🛍️
+                <div className="photo-placeholder">
+                  <span
+                    style={{
+                      fontSize: "30px",
+                    }}
+                  >
+                    🛍️
+                  </span>
+
+                  <span>
+                    Campus Mall
+                  </span>
                 </div>
               )}
             </Link>
 
-            <div className="listing-card-body">
-              <div className="listing-category">
-                {listing.category}
+            <div className="listing-body">
+              <div className="listing-top">
+                <span className="category">
+                  {listing.category}
+                </span>
+
+                <strong>
+                  {formattedPrice}
+                </strong>
               </div>
 
               <h3>
@@ -324,7 +430,7 @@ async function PublicProfileListings({
                 </Link>
               </h3>
 
-              <p className="listing-description">
+              <p>
                 {listing.description.length > 110
                   ? `${listing.description.slice(
                       0,
@@ -333,11 +439,7 @@ async function PublicProfileListings({
                   : listing.description}
               </p>
 
-              <strong className="listing-price">
-                {formattedPrice}
-              </strong>
-
-              <div className="listing-meta">
+              <div className="meta">
                 <span>
                   📍 {listing.location}
                 </span>
@@ -345,7 +447,7 @@ async function PublicProfileListings({
 
               <Link
                 href={`/listings/${listing.id}`}
-                className="listing-view-link"
+                className="text-link"
               >
                 View listing →
               </Link>
@@ -355,4 +457,4 @@ async function PublicProfileListings({
       })}
     </div>
   );
-                         }
+}
