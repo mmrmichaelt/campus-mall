@@ -10,27 +10,27 @@ export default async function ChatsPage() {
 
   if (!user) {
     return (
-      <main className="page-shell">
-        <section className="protected-page">
-          <div className="protected-card">
-            <p className="eyebrow">CAMPUS MALL</p>
+      <div className="auth-wrap">
+        <div className="auth-card">
+          <div className="brand-mark">CM</div>
 
-            <h1>Sign in to view your chats</h1>
+          <p className="category">CAMPUS MALL</p>
 
-            <p>
-              Log in to your Campus Mall account to
-              communicate with sellers and buyers.
-            </p>
+          <h1>Sign in to view your chats</h1>
 
-            <Link
-              href="/account"
-              className="primary-button"
-            >
-              Join or log in
-            </Link>
-          </div>
-        </section>
-      </main>
+          <p className="note">
+            Log in to your Campus Mall account to
+            communicate with sellers and buyers.
+          </p>
+
+          <Link
+            href="/account"
+            className="primary-btn"
+          >
+            Join or log in
+          </Link>
+        </div>
+      </div>
     );
   }
 
@@ -40,58 +40,67 @@ export default async function ChatsPage() {
 
   if (!fullyVerified) {
     return (
-      <main className="page-shell">
-        <section className="protected-page">
-          <div className="protected-card">
-            <p className="eyebrow">
-              VERIFICATION REQUIRED
-            </p>
+      <div className="auth-wrap">
+        <div className="auth-card">
+          <div className="brand-mark">CM</div>
 
-            <h1>Verify your account to use chats</h1>
+          <p className="category">
+            VERIFICATION REQUIRED
+          </p>
 
-            <p>
-              Both your email address and phone number
-              must be verified before you can send or
-              receive marketplace messages.
-            </p>
+          <h1>
+            Verify your account to use chats
+          </h1>
 
-            <Link
-              href="/verify"
-              className="primary-button"
-            >
-              Verify my account
-            </Link>
-          </div>
-        </section>
-      </main>
+          <p className="note">
+            Both your email address and phone number
+            must be verified before you can send or
+            receive marketplace messages.
+          </p>
+
+          <Link
+            href="/verify"
+            className="primary-btn"
+          >
+            Verify my account
+          </Link>
+
+          <Link
+            href="/"
+            className="text-link"
+          >
+            ← Back to marketplace
+          </Link>
+        </div>
+      </div>
     );
   }
 
   return (
-    <main className="page-shell">
-      <section className="chats-page">
-        <div className="chats-header">
-          <div>
-            <p className="eyebrow">CAMPUS MALL</p>
+    <div className="panel">
+      <div className="section-title">
+        <div>
+          <p className="category">CAMPUS MALL</p>
 
-            <h1>Your chats</h1>
+          <h1>Your chats</h1>
 
-            <p>
-              Communicate directly with buyers and
-              sellers about active listings.
-            </p>
-          </div>
-
-          <Link
-            href="/listings"
-            className="secondary-button"
-          >
-            Browse listings
-          </Link>
+          <p className="note">
+            Communicate directly with buyers and
+            sellers about active listings.
+          </p>
         </div>
 
+        <Link
+          href="/listings"
+          className="secondary-btn"
+        >
+          Browse listings
+        </Link>
+      </div>
+
+      <div className="panel">
         <ChatsClient />
-      </section>
-    </main>
+      </div>
+    </div>
   );
 }
