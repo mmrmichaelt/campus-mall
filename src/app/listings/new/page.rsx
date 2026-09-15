@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { getCurrentUser } from "../../../lib/auth";
 import NewListingForm from "../../../components/NewListingForm";
 
@@ -8,28 +10,28 @@ export default async function NewListingPage() {
 
   if (!user) {
     return (
-      <main className="page-shell">
-        <section className="protected-page">
-          <div className="protected-card">
-            <p className="eyebrow">CAMPUS MALL</p>
+      <div className="auth-wrap">
+        <div className="auth-card">
+          <div className="brand-mark">CM</div>
 
-            <h1>Sign in to add a listing</h1>
+          <p className="category">CAMPUS MALL</p>
 
-            <p>
-              You need a Campus Mall account before you
-              can sell items, offer food, advertise jobs,
-              or provide services.
-            </p>
+          <h1>Sign in to add a listing</h1>
 
-            <a
-              href="/account"
-              className="primary-button"
-            >
-              Join or log in
-            </a>
-          </div>
-        </section>
-      </main>
+          <p className="note">
+            You need a Campus Mall account before you
+            can sell items, offer food, advertise jobs,
+            or provide services.
+          </p>
+
+          <Link
+            href="/account"
+            className="primary-btn"
+          >
+            Join or log in
+          </Link>
+        </div>
+      </div>
     );
   }
 
@@ -39,39 +41,50 @@ export default async function NewListingPage() {
 
   if (!fullyVerified) {
     return (
-      <main className="page-shell">
-        <section className="protected-page">
-          <div className="protected-card">
-            <p className="eyebrow">VERIFICATION REQUIRED</p>
+      <div className="auth-wrap">
+        <div className="auth-card">
+          <div className="brand-mark">CM</div>
 
-            <h1>Verify your account first</h1>
+          <p className="category">
+            VERIFICATION REQUIRED
+          </p>
 
-            <p>
-              Please verify both your email address and
-              phone number before creating a listing.
-            </p>
+          <h1>Verify your account first</h1>
 
-            <a
-              href="/verify"
-              className="primary-button"
-            >
-              Verify my account
-            </a>
-          </div>
-        </section>
-      </main>
+          <p className="note">
+            Please verify both your email address and
+            phone number before creating a listing.
+          </p>
+
+          <Link
+            href="/verify"
+            className="primary-btn"
+          >
+            Verify my account
+          </Link>
+
+          <Link
+            href="/"
+            className="text-link"
+          >
+            ← Back to marketplace
+          </Link>
+        </div>
+      </div>
     );
   }
 
   return (
-    <main className="page-shell">
-      <section className="new-listing-page">
-        <div className="new-listing-header">
-          <p className="eyebrow">SELL ON CAMPUS MALL</p>
+    <div className="panel">
+      <div className="section-title">
+        <div>
+          <p className="category">
+            SELL ON CAMPUS MALL
+          </p>
 
           <h1>Add a listing</h1>
 
-          <p>
+          <p className="note">
             Create a listing for an item, food, job or
             service. You can mark it sold later and it
             will immediately stop appearing in the
@@ -79,12 +92,21 @@ export default async function NewListingPage() {
           </p>
         </div>
 
+        <Link
+          href="/listings"
+          className="secondary-btn"
+        >
+          Browse listings
+        </Link>
+      </div>
+
+      <div className="panel">
         <NewListingForm
           sellerName={user.name}
           sellerCountry={user.country}
           sellerUniversity={user.university}
         />
-      </section>
-    </main>
+      </div>
+    </div>
   );
 }
