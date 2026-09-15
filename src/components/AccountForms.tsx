@@ -19,9 +19,8 @@ export default function AccountForms() {
   const [name, setName] = useState("");
   const [country, setCountry] = useState("KE");
   const [university, setUniversity] = useState("");
-  const [accountType, setAccountType] = useState<"STUDENT" | "OUTSIDER">(
-    "STUDENT"
-  );
+  const [accountType, setAccountType] =
+    useState<"STUDENT" | "OUTSIDER">("STUDENT");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,7 +40,9 @@ export default function AccountForms() {
     setPassword("");
   }
 
-  async function handleRegister(event: FormEvent<HTMLFormElement>) {
+  async function handleRegister(
+    event: FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
 
     setMessage(null);
@@ -54,22 +55,29 @@ export default function AccountForms() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name,
-          country: countries.find((item) => item.code === country)?.name ?? country,
-          university,
+          name: name.trim(),
+          country:
+            countries.find(
+              (item) => item.code === country
+            )?.name ?? country,
+          university: university.trim(),
           accountType,
-          phone,
-          email,
+          phone: phone.trim(),
+          email: email.trim().toLowerCase(),
           password,
         }),
       });
 
-      const data = await response.json();
+      const data = await response
+        .json()
+        .catch(() => ({}));
 
       if (!response.ok) {
         setMessage({
           type: "error",
-          text: data.error ?? "Unable to create your account.",
+          text:
+            data.error ??
+            "Unable to create your account.",
         });
         return;
       }
@@ -87,14 +95,17 @@ export default function AccountForms() {
     } catch {
       setMessage({
         type: "error",
-        text: "Something went wrong. Please try again.",
+        text:
+          "Unable to connect to Campus Mall. Please try again.",
       });
     } finally {
       setLoading(false);
     }
   }
 
-  async function handleLogin(event: FormEvent<HTMLFormElement>) {
+  async function handleLogin(
+    event: FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
 
     setMessage(null);
@@ -107,12 +118,14 @@ export default function AccountForms() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email,
+          email: email.trim().toLowerCase(),
           password,
         }),
       });
 
-      const data = await response.json();
+      const data = await response
+        .json()
+        .catch(() => ({}));
 
       if (!response.ok) {
         setMessage({
@@ -127,11 +140,13 @@ export default function AccountForms() {
         text: "Login successful. Redirecting...",
       });
 
-      window.location.href = data.redirectTo ?? "/";
+      window.location.href =
+        data.redirectTo ?? "/";
     } catch {
       setMessage({
         type: "error",
-        text: "Something went wrong. Please try again.",
+        text:
+          "Unable to connect to Campus Mall. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -139,20 +154,53 @@ export default function AccountForms() {
   }
 
   return (
-    <section className="account-card">
-      <div className="account-tabs">
+    <section className="auth-card">
+      <div className="brand-mark">CM</div>
+
+      <p className="category">
+        CAMPUS MALL ACCOUNT
+      </p>
+
+      <h1>
+        {mode === "register"
+          ? "Join campus mall"
+          : "Welcome back"}
+      </h1>
+
+      <p className="note">
+        {mode === "register"
+          ? "Create an account as a student or outsider and select your campus."
+          : "Log in to continue shopping, selling and connecting on Campus Mall."}
+      </p>
+
+      <div
+        className="hero-actions"
+        style={{ marginBottom: "20px" }}
+      >
         <button
           type="button"
-          className={mode === "register" ? "active" : ""}
-          onClick={() => switchMode("register")}
+          className={
+            mode === "register"
+              ? "primary-btn"
+              : "secondary-btn"
+          }
+          onClick={() =>
+            switchMode("register")
+          }
         >
           Create Account
         </button>
 
         <button
           type="button"
-          className={mode === "login" ? "active" : ""}
-          onClick={() => switchMode("login")}
+          className={
+            mode === "login"
+              ? "primary-btn"
+              : "secondary-btn"
+          }
+          onClick={() =>
+            switchMode("login")
+          }
         >
           Log In
         </button>
@@ -160,64 +208,70 @@ export default function AccountForms() {
 
       {message && (
         <div
-          className={`form-message ${
+          className={
             message.type === "success"
-              ? "form-message-success"
-              : "form-message-error"
-          }`}
+              ? "success"
+              : "error"
+          }
           role="alert"
+          style={{ marginBottom: "18px" }}
         >
           {message.text}
         </div>
       )}
 
       {mode === "register" ? (
-        <form onSubmit={handleRegister} className="account-form">
-          <div className="form-group">
-            <label htmlFor="name">Name</label>
+        <form
+          onSubmit={handleRegister}
+          className="form"
+        >
+          <label>
+            Name
             <input
-              id="name"
               name="name"
               type="text"
               value={name}
-              onChange={(event) => setName(event.target.value)}
+              onChange={(event) =>
+                setName(event.target.value)
+              }
               placeholder="Your full name"
               autoComplete="name"
               required
             />
-          </div>
+          </label>
 
-          <div className="form-group">
-            <label htmlFor="country">Country</label>
-
+          <label>
+            Country
             <select
-              id="country"
               name="country"
               value={country}
               onChange={(event) =>
-                handleCountryChange(event.target.value)
+                handleCountryChange(
+                  event.target.value
+                )
               }
               required
             >
               {countries.map((item) => (
-                <option key={item.code} value={item.code}>
-                  {item.flag} {item.name} ({item.phoneCode})
+                <option
+                  key={item.code}
+                  value={item.code}
+                >
+                  {item.flag} {item.name}
                 </option>
               ))}
             </select>
-          </div>
+          </label>
 
-          <div className="form-group">
-            <label htmlFor="university">
-              University / College
-            </label>
-
+          <label>
+            University / College
             <select
-              id="university"
               name="university"
               value={university}
               onChange={(event) =>
-                setUniversity(event.target.value)
+                setUniversity(
+                  event.target.value
+                )
               }
               required
             >
@@ -225,80 +279,86 @@ export default function AccountForms() {
                 Select your university / college
               </option>
 
-              {universityOptions.map((item, index) => (
-                <option
-                  key={`${item.countryCode}-${item.name}-${index}`}
-                  value={item.name}
-                >
-                  {item.name}
-                </option>
-              ))}
+              {universityOptions.map(
+                (item, index) => (
+                  <option
+                    key={`${item.countryCode}-${item.name}-${index}`}
+                    value={item.name}
+                  >
+                    {item.name}
+                  </option>
+                )
+              )}
             </select>
 
-            <small>
-              Choose your country first to see available
-              institutions.
+            <small className="note">
+              Choose your country first to see
+              available institutions.
             </small>
-          </div>
+          </label>
 
-          <div className="form-group">
-            <label htmlFor="accountType">Account type</label>
-
+          <label>
+            Account type
             <select
-              id="accountType"
               name="accountType"
               value={accountType}
               onChange={(event) =>
                 setAccountType(
-                  event.target.value as "STUDENT" | "OUTSIDER"
+                  event.target.value as
+                    | "STUDENT"
+                    | "OUTSIDER"
                 )
               }
               required
             >
-              <option value="STUDENT">Student</option>
-              <option value="OUTSIDER">Outsider</option>
+              <option value="STUDENT">
+                Student
+              </option>
+
+              <option value="OUTSIDER">
+                Outsider
+              </option>
             </select>
-          </div>
+          </label>
 
-          <div className="form-group">
-            <label htmlFor="phone">Phone number</label>
-
+          <label>
+            Phone number
             <input
-              id="phone"
               name="phone"
               type="tel"
               value={phone}
-              onChange={(event) => setPhone(event.target.value)}
+              onChange={(event) =>
+                setPhone(event.target.value)
+              }
               placeholder="+254712345678"
               autoComplete="tel"
               required
             />
 
-            <small>
-              Include your international country code.
+            <small className="note">
+              Include your international country
+              code.
             </small>
-          </div>
+          </label>
 
-          <div className="form-group">
-            <label htmlFor="register-email">Email</label>
-
+          <label>
+            Email
             <input
-              id="register-email"
               name="email"
               type="email"
               value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              onChange={(event) =>
+                setEmail(event.target.value)
+              }
               placeholder="you@example.com"
               autoComplete="email"
               required
             />
-          </div>
+          </label>
 
-          <div className="form-group">
-            <label htmlFor="register-password">Password</label>
-
+          <label>
+            Password
             <input
-              id="register-password"
               name="password"
               type="password"
               value={password}
@@ -310,43 +370,49 @@ export default function AccountForms() {
               minLength={8}
               required
             />
-          </div>
+          </label>
 
           <button
             type="submit"
-            className="primary-button"
+            className="primary-btn"
             disabled={loading}
           >
-            {loading ? "Creating account..." : "Create account"}
+            {loading
+              ? "Creating account..."
+              : "Create account"}
           </button>
 
-          <p className="verification-note">
-            Your email and phone number will need to be verified
-            before you can use Campus Mall chats.
-          </p>
+          <div className="panel">
+            <p className="note">
+              Your email and phone number must be
+              verified before you can use Campus Mall
+              chats and other protected features.
+            </p>
+          </div>
         </form>
       ) : (
-        <form onSubmit={handleLogin} className="account-form">
-          <div className="form-group">
-            <label htmlFor="login-email">Email</label>
-
+        <form
+          onSubmit={handleLogin}
+          className="form"
+        >
+          <label>
+            Email
             <input
-              id="login-email"
               name="email"
               type="email"
               value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              onChange={(event) =>
+                setEmail(event.target.value)
+              }
               placeholder="you@example.com"
               autoComplete="email"
               required
             />
-          </div>
+          </label>
 
-          <div className="form-group">
-            <label htmlFor="login-password">Password</label>
-
+          <label>
+            Password
             <input
-              id="login-password"
               name="password"
               type="password"
               value={password}
@@ -357,17 +423,29 @@ export default function AccountForms() {
               autoComplete="current-password"
               required
             />
-          </div>
+          </label>
 
           <button
             type="submit"
-            className="primary-button"
+            className="primary-btn"
             disabled={loading}
           >
-            {loading ? "Logging in..." : "Log In"}
+            {loading
+              ? "Logging in..."
+              : "Log in"}
           </button>
         </form>
       )}
+
+      <p
+        className="note"
+        style={{
+          marginTop: "20px",
+          textAlign: "center",
+        }}
+      >
+        Support: campusmall.support@gmail.com
+      </p>
     </section>
   );
-        }
+}
