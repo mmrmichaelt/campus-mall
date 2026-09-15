@@ -10,107 +10,168 @@ export default async function SettingsPage() {
 
   if (!user) {
     return (
-      <main className="page-shell">
-        <section className="protected-page">
-          <div className="protected-card">
-            <p className="eyebrow">CAMPUS MALL</p>
+      <div className="auth-wrap">
+        <div className="auth-card">
+          <div className="brand-mark">CM</div>
 
-            <h1>Sign in to access settings</h1>
+          <p className="category">CAMPUS MALL</p>
 
-            <p>
-              Your Campus Mall settings are private to
-              your account. Please log in to continue.
-            </p>
+          <h1>Sign in to access settings</h1>
 
-            <Link
-              href="/account"
-              className="primary-button"
-            >
-              Join or log in
-            </Link>
-          </div>
-        </section>
-      </main>
+          <p className="note">
+            Your Campus Mall settings are private to your
+            account. Please log in to continue.
+          </p>
+
+          <Link
+            href="/account"
+            className="primary-btn"
+          >
+            Join or log in
+          </Link>
+        </div>
+      </div>
     );
   }
 
   return (
-    <main className="page-shell">
-      <section className="settings-page">
-        <div className="settings-header">
-          <div>
-            <p className="eyebrow">ACCOUNT</p>
+    <div className="panel">
+      <div className="section-title">
+        <div>
+          <p className="category">ACCOUNT</p>
 
-            <h1>Settings</h1>
+          <h1>Settings</h1>
 
-            <p>
-              Control your Campus Mall notifications and
-              profile visibility.
-            </p>
-          </div>
-
-          <Link
-            href="/account"
-            className="secondary-button"
-          >
-            Back to account
-          </Link>
+          <p className="note">
+            Control your Campus Mall notifications and
+            profile visibility.
+          </p>
         </div>
 
-        <SettingsForm />
+        <Link
+          href="/account"
+          className="secondary-btn"
+        >
+          Back to account
+        </Link>
+      </div>
 
-        <section className="settings-account-card">
+      <div className="panel">
+        <p className="category">
+          PREFERENCES
+        </p>
+
+        <h2>Account settings</h2>
+
+        <p className="note">
+          Choose which notifications you receive and
+          control whether other Campus Mall users can
+          view your public profile.
+        </p>
+
+        <SettingsForm />
+      </div>
+
+      <section
+        className="panel"
+        style={{ marginTop: "20px" }}
+      >
+        <div className="section-title">
           <div>
-            <p className="eyebrow">ACCOUNT</p>
+            <p className="category">ACCOUNT</p>
 
             <h2>{user.name}</h2>
 
-            <p>{user.email}</p>
+            <p className="note">
+              {user.email}
+            </p>
 
-            <p>{user.phone}</p>
+            <p className="note">
+              {user.phone}
+            </p>
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gap: "10px",
+            marginTop: "16px",
+          }}
+        >
+          <div
+            className={
+              user.emailVerified
+                ? "success"
+                : "note"
+            }
+          >
+            {user.emailVerified
+              ? "✓ Email verified"
+              : "Email not verified"}
           </div>
 
-          <div className="settings-verification">
-            <span>
-              Email{" "}
-              {user.emailVerified
-                ? "✓ Verified"
-                : "Not verified"}
-            </span>
-
-            <span>
-              Phone{" "}
-              {user.phoneVerified
-                ? "✓ Verified"
-                : "Not verified"}
-            </span>
+          <div
+            className={
+              user.phoneVerified
+                ? "success"
+                : "note"
+            }
+          >
+            {user.phoneVerified
+              ? "✓ Phone verified"
+              : "Phone not verified"}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <div className="settings-links">
-          <Link href="/profile">
+      <section
+        className="panel"
+        style={{ marginTop: "20px" }}
+      >
+        <p className="category">ACCOUNT LINKS</p>
+
+        <h2>Manage your account</h2>
+
+        <div className="hero-actions">
+          <Link
+            href="/profile"
+            className="secondary-btn"
+          >
             Edit profile
           </Link>
 
-          <Link href="/verify">
+          <Link
+            href="/verify"
+            className="secondary-btn"
+          >
             Verification
           </Link>
 
-          <Link href="/chats">
+          <Link
+            href="/chats"
+            className="secondary-btn"
+          >
             Chats
           </Link>
         </div>
-
-        <div className="settings-support">
-          <p>
-            Need help with your account?
-          </p>
-
-          <a href="mailto:campusmallsupport@gmail.com">
-            campusmallsupport@gmail.com
-          </a>
-        </div>
       </section>
-    </main>
+
+      <div
+        className="panel"
+        style={{ marginTop: "20px" }}
+      >
+        <p className="note">
+          Need help with your account?
+        </p>
+
+        <a
+          href="mailto:campusmall.support@gmail.com"
+          className="text-link"
+        >
+          campusmall.support@gmail.com
+        </a>
+      </div>
+    </div>
   );
 }
