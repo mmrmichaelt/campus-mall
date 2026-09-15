@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { LogOut, Save } from "lucide-react";
 
 type ProfileFormProps = {
   initialName: string;
@@ -18,12 +19,19 @@ export default function ProfileForm({
   initialUniversity,
 }: ProfileFormProps) {
   const [name, setName] = useState(initialName);
-  const [university, setUniversity] = useState(initialUniversity);
+  const [university, setUniversity] =
+    useState(initialUniversity);
+
   const [saving, setSaving] = useState(false);
+  const [loggingOut, setLoggingOut] =
+    useState(false);
+
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>
+  ) {
     event.preventDefault();
 
     setSaving(true);
@@ -31,18 +39,24 @@ export default function ProfileForm({
     setError("");
 
     try {
-      const response = await fetch("/api/profile", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: name.trim(),
-          university: university.trim(),
-        }),
-      });
+      const response = await fetch(
+        "/api/profile",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: name.trim(),
+            university: university.trim(),
+          }),
+        }
+      );
 
-      const data = (await response.json()) as ProfileResponse;
+      const data =
+        (await response
+          .json()
+          .catch(() => ({}))) as ProfileResponse;
 
       if (!response.ok) {
         setError(
@@ -53,10 +67,14 @@ export default function ProfileForm({
       }
 
       setMessage(
-        data.message || "Your profile has been updated successfully."
+        data.message ||
+          "Your profile has been updated successfully."
       );
     } catch (requestError) {
-      console.error("Profile update error:", requestError);
+      console.error(
+        "Profile update error:",
+        requestError
+      );
 
       setError(
         "A network error occurred. Please check your internet connection and try again."
@@ -75,138 +93,169 @@ export default function ProfileForm({
       return;
     }
 
-    try {
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-      });
+    setLoggingOut(true);
+    setError("");
 
-      const data = (await response.json()) as {
+    try {
+      const response = await fetch(
+        "/api/auth/logout",
+        {
+          method: "POST",
+        }
+      );
+
+      const data = (await response
+        .json()
+        .catch(() => ({}))) as {
         redirectTo?: string;
         error?: string;
       };
 
       if (!response.ok) {
-        setError(data.error || "Unable to log out right now.");
+        setError(
+          data.error ||
+            "Unable to log out right now."
+        );
         return;
       }
 
-      window.location.href = data.redirectTo || "/";
+      window.location.href =
+        data.redirectTo || "/";
     } catch (requestError) {
-      console.error("Logout error:", requestError);
+      console.error(
+        "Logout error:",
+        requestError
+      );
 
       setError(
         "A network error occurred while logging out."
       );
+    } finally {
+      setLoggingOut(false);
     }
   }
 
   return (
-    <div className="profile-form-card">
-      <div className="profile-form-header">
-        <p className="eyebrow">EDIT PROFILE</p>
+    <div>
+      <div className="panel">
+        <div className="section-title">
+          <div>
+            <p className="category">
+              EDIT PROFILE
+            </p>
 
-        <h2>Personal information</h2>
+            <h2>Personal information</h2>
 
-        <p>
-          Keep your Campus Mall profile information
-          accurate so other users know who they are
-          dealing with.
-        </p>
-      </div>
+            <p className="note">
+              Keep your Campus Mall profile
+              information accurate so other users
+              know who they are dealing with.
+            </p>
+          </div>
+        </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="profile-form"
-      >
-        <div className="form-field">
-          <label htmlFor="profile-name">
+        <form
+          onSubmit={handleSubmit}
+          className="form"
+        >
+          <label>
             Full name
+            <input
+              id="profile-name"
+              name="name"
+              type="text"
+              value={name}
+              onChange={(event) =>
+                setName(event.target.value)
+              }
+              placeholder="Enter your full name"
+              autoComplete="name"
+              maxLength={100}
+              required
+            />
           </label>
 
-          <input
-            id="profile-name"
-            name="name"
-            type="text"
-            value={name}
-            onChange={(event) =>
-              setName(event.target.value)
-            }
-            placeholder="Enter your full name"
-            autoComplete="name"
-            maxLength={100}
-            required
-          />
-        </div>
-
-        <div className="form-field">
-          <label htmlFor="profile-university">
+          <label>
             University / College
+            <input
+              id="profile-university"
+              name="university"
+              type="text"
+              value={university}
+              onChange={(event) =>
+                setUniversity(
+                  event.target.value
+                )
+              }
+              placeholder="Enter your university or college"
+              maxLength={200}
+              required
+            />
+
+            <small className="note">
+              You can enter your exact university
+              or college name.
+            </small>
           </label>
 
-          <input
-            id="profile-university"
-            name="university"
-            type="text"
-            value={university}
-            onChange={(event) =>
-              setUniversity(event.target.value)
-            }
-            placeholder="Enter your university or college"
-            maxLength={200}
-            required
-          />
+          {error && (
+            <div
+              className="error"
+              role="alert"
+            >
+              {error}
+            </div>
+          )}
 
-          <small>
-            You can enter your exact university or
-            college name.
-          </small>
-        </div>
+          {message && (
+            <div
+              className="success"
+              role="status"
+            >
+              {message}
+            </div>
+          )}
 
-        {error && (
-          <div
-            className="form-message form-message-error"
-            role="alert"
-          >
-            {error}
-          </div>
-        )}
-
-        {message && (
-          <div
-            className="form-message form-message-success"
-            role="status"
-          >
-            {message}
-          </div>
-        )}
-
-        <div className="profile-form-actions">
           <button
             type="submit"
-            className="primary-button"
+            className="primary-btn"
             disabled={saving}
           >
-            {saving ? "Saving..." : "Save changes"}
+            <Save size={17} />
+
+            {saving
+              ? "Saving..."
+              : "Save changes"}
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
 
-      <div className="profile-danger-zone">
-        <p className="eyebrow">ACCOUNT SESSION</p>
+      <div
+        className="panel"
+        style={{ marginTop: "20px" }}
+      >
+        <p className="category">
+          ACCOUNT SESSION
+        </p>
 
-        <h3>Log out</h3>
+        <h2>Log out</h2>
 
-        <p>
-          Log out of this Campus Mall account on this
-          device.
+        <p className="note">
+          Log out of this Campus Mall account on
+          this device.
         </p>
 
         <button
           type="button"
-          className="secondary-button"
+          className="secondary-btn"
           onClick={handleLogout}
+          disabled={loggingOut}
         >
-          Log out
+          <LogOut size={17} />
+
+          {loggingOut
+            ? "Logging out..."
+            : "Log out"}
         </button>
       </div>
     </div>
