@@ -20,10 +20,13 @@ function formatPrice(price: unknown, currency: string) {
     return `${currency} 0`;
   }
 
-  return `${currency} ${numericPrice.toLocaleString("en-US", {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  })}`;
+  return `${currency} ${numericPrice.toLocaleString(
+    "en-US",
+    {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }
+  )}`;
 }
 
 export default async function ListingPage({
@@ -89,200 +92,265 @@ export default async function ListingPage({
     user?.phoneVerified;
 
   return (
-    <main className="page-shell">
-      <section className="listing-detail-page">
-        <div className="listing-detail-top">
-          <Link
-            href="/listings"
-            className="back-link"
-          >
-            ← Back to listings
-          </Link>
+    <div className="panel">
+      <div
+        className="section-title"
+        style={{ marginBottom: "20px" }}
+      >
+        <Link
+          href="/"
+          className="text-link"
+        >
+          ← Back to marketplace
+        </Link>
 
-          <span className="listing-detail-category">
-            {listing.category}
-          </span>
-        </div>
+        <span className="category">
+          {listing.category}
+        </span>
+      </div>
 
-        <div className="listing-detail-layout">
-          <div className="listing-detail-media">
+      <div className="two-col">
+        <div>
+          <div className="listing-photo">
             {listing.imageUrl ? (
               <img
                 src={listing.imageUrl}
                 alt={listing.title}
-                className="listing-detail-image"
               />
             ) : (
-              <div
-                className="listing-detail-placeholder"
-                aria-label="No listing image"
-              >
-                🛍️
+              <div className="photo-placeholder">
+                <span
+                  style={{
+                    fontSize: "48px",
+                  }}
+                >
+                  🛍️
+                </span>
+
+                <span>
+                  Campus Mall
+                </span>
               </div>
             )}
           </div>
+        </div>
 
-          <div className="listing-detail-content">
-            {listing.status === "SOLD" && (
-              <div className="sold-banner">
-                This listing has been sold.
-              </div>
+        <div>
+          {listing.status === "SOLD" && (
+            <div
+              className="error"
+              style={{ marginBottom: "14px" }}
+            >
+              This listing has been sold.
+            </div>
+          )}
+
+          {listing.status === "EXPIRED" && (
+            <div
+              className="error"
+              style={{ marginBottom: "14px" }}
+            >
+              This listing is no longer available.
+            </div>
+          )}
+
+          <p className="category">
+            {listing.category}
+          </p>
+
+          <h1>{listing.title}</h1>
+
+          <div
+            style={{
+              fontSize: "1.35rem",
+              fontWeight: 800,
+              margin: "12px 0",
+            }}
+          >
+            {formatPrice(
+              listing.price,
+              listing.currency
             )}
+          </div>
 
-            {listing.status === "EXPIRED" && (
-              <div className="sold-banner">
-                This listing is no longer available.
-              </div>
-            )}
+          <div className="meta">
+            <span>
+              📍 {listing.location}
+            </span>
 
-            <p className="eyebrow">
-              {listing.category}
+            <span>
+              Listed{" "}
+              {listing.createdAt.toLocaleDateString()}
+            </span>
+          </div>
+
+          <section
+            className="panel"
+            style={{
+              marginTop: "20px",
+              padding: "18px",
+            }}
+          >
+            <h2>Description</h2>
+
+            <p>
+              {listing.description}
             </p>
+          </section>
 
-            <h1>{listing.title}</h1>
-
-            <strong className="listing-detail-price">
-              {formatPrice(
-                listing.price,
-                listing.currency
-              )}
-            </strong>
-
-            <div className="listing-detail-meta">
-              <span>
-                📍 {listing.location}
-              </span>
-
-              <span>
-                Listed{" "}
-                {listing.createdAt.toLocaleDateString()}
-              </span>
-            </div>
-
-            <div className="listing-description-full">
-              <h2>Description</h2>
-
-              <p>
-                {listing.description}
-              </p>
-            </div>
-
-            <div className="seller-card">
-              <div className="seller-card-avatar">
+          <section
+            className="panel"
+            style={{
+              marginTop: "20px",
+              padding: "18px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "14px",
+                flexWrap: "wrap",
+              }}
+            >
+              <div className="avatar-circle">
                 {listing.seller.name
                   .charAt(0)
                   .toUpperCase()}
               </div>
 
-              <div className="seller-card-info">
-                <p className="eyebrow">SELLER</p>
+              <div style={{ flex: 1 }}>
+                <p className="category">
+                  SELLER
+                </p>
 
                 <h2>
                   {listing.seller.name}
                 </h2>
 
-                <p>
+                <p className="note">
                   {listing.seller.university}
                 </p>
 
-                <p>
+                <p className="note">
                   {listing.seller.country} ·{" "}
                   {listing.seller.accountType ===
                   "STUDENT"
                     ? "Student"
                     : "Outsider"}
                 </p>
-
-                <div className="seller-verification">
-                  <span>
-                    {sellerFullyVerified
-                      ? "✓ Verified account"
-                      : "Verification incomplete"}
-                  </span>
-                </div>
               </div>
 
               <Link
                 href={`/profile/${listing.seller.id}`}
-                className="secondary-button"
+                className="secondary-btn"
               >
                 View profile
               </Link>
             </div>
 
+            <div
+              style={{
+                marginTop: "14px",
+              }}
+            >
+              <span
+                className={
+                  sellerFullyVerified
+                    ? "success"
+                    : "note"
+                }
+              >
+                {sellerFullyVerified
+                  ? "✓ Verified account"
+                  : "Verification incomplete"}
+              </span>
+            </div>
+          </section>
+
+          <div style={{ marginTop: "20px" }}>
             {isSeller ? (
               <ListingActions
                 listingId={listing.id}
                 status={listing.status}
               />
             ) : listing.status === "ACTIVE" ? (
-              <div className="listing-contact-area">
+              <div className="panel">
                 {!user ? (
-                  <div className="contact-notice">
-                    <h3>Want to contact the seller?</h3>
+                  <>
+                    <h3>
+                      Want to contact the seller?
+                    </h3>
 
-                    <p>
-                      Join Campus Mall and verify your
-                      email and phone number to start a
-                      conversation.
+                    <p className="note">
+                      Join Campus Mall and verify
+                      your email and phone number
+                      to start a conversation.
                     </p>
 
                     <Link
-                      href="/account"
-                      className="primary-button"
+                      href="/join"
+                      className="primary-btn"
                     >
                       Join Campus Mall
                     </Link>
-                  </div>
+                  </>
                 ) : !currentUserFullyVerified ? (
-                  <div className="contact-notice">
-                    <h3>Verification required</h3>
+                  <>
+                    <h3>
+                      Verification required
+                    </h3>
 
-                    <p>
-                      Your email and phone number must both
-                      be verified before you can contact
-                      sellers.
+                    <p className="note">
+                      Your email and phone number
+                      must both be verified before
+                      you can contact sellers.
                     </p>
 
                     <Link
                       href="/verify"
-                      className="primary-button"
+                      className="primary-btn"
                     >
                       Verify my account
                     </Link>
-                  </div>
+                  </>
                 ) : !sellerFullyVerified ? (
-                  <div className="contact-notice">
-                    <h3>Seller verification incomplete</h3>
+                  <>
+                    <h3>
+                      Seller verification incomplete
+                    </h3>
 
-                    <p>
-                      This seller cannot receive marketplace
-                      messages until their account is fully
-                      verified.
+                    <p className="note">
+                      This seller cannot receive
+                      marketplace messages until
+                      their account is fully verified.
                     </p>
-                  </div>
+                  </>
                 ) : (
-                  <div className="contact-notice">
-                    <h3>Interested in this listing?</h3>
+                  <>
+                    <h3>
+                      Interested in this listing?
+                    </h3>
 
-                    <p>
-                      Start a private conversation with the
-                      seller through Campus Mall Chats.
+                    <p className="note">
+                      Start a private conversation
+                      with the seller through Campus
+                      Mall Chats.
                     </p>
 
                     <Link
                       href={`/chats?listingId=${listing.id}&withUserId=${listing.seller.id}`}
-                      className="primary-button"
+                      className="primary-btn"
                     >
                       Message seller
                     </Link>
-                  </div>
+                  </>
                 )}
               </div>
             ) : null}
           </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </div>
   );
 }
