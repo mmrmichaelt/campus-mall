@@ -40,17 +40,13 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
 
     const q = searchParams.get("q")?.trim() || "";
-    const category =
-      searchParams.get("category")?.trim() || "";
-    const country =
-      searchParams.get("country")?.trim() || "";
+    const category = searchParams.get("category")?.trim() || "";
+    const country = searchParams.get("country")?.trim() || "";
     const university =
       searchParams.get("university")?.trim() || "";
 
     const rawPage = Number(searchParams.get("page") || "1");
-    const rawLimit = Number(
-      searchParams.get("limit") || "30"
-    );
+    const rawLimit = Number(searchParams.get("limit") || "30");
 
     const page =
       Number.isInteger(rawPage) && rawPage > 0
@@ -196,8 +192,13 @@ export async function GET(request: Request) {
 
     return NextResponse.json(
       {
+        success: false,
         error:
           "Unable to load marketplace listings right now.",
+        diagnostic:
+          error instanceof Error
+            ? error.message
+            : String(error),
       },
       { status: 500 }
     );
@@ -294,4 +295,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-                }
+        }
