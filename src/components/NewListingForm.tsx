@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Image as ImageIcon, ShieldCheck } from "lucide-react";
 
 type Props = {
   sellerName: string;
@@ -11,24 +12,49 @@ type Props = {
 
 const categories = [
   {
-    value: "items",
-    label: "Items",
-    description: "Electronics, clothes, books and other products",
+    value: "Accommodation",
+    description:
+      "Hostels, rooms, apartments and accommodation",
   },
   {
-    value: "food",
-    label: "Food",
-    description: "Meals, snacks, drinks and other food",
+    value: "Beauty & dressing",
+    description:
+      "Beauty products, clothing and dressing",
   },
   {
-    value: "jobs",
-    label: "Jobs",
-    description: "Part-time jobs and opportunities",
+    value: "Electronics",
+    description:
+      "Phones, laptops, accessories and electronics",
   },
   {
-    value: "services",
-    label: "Services",
-    description: "Skills, repairs, tutoring and other services",
+    value: "Food",
+    description:
+      "Meals, snacks, drinks and other food",
+  },
+  {
+    value: "Furniture",
+    description:
+      "Beds, chairs, tables and other furniture",
+  },
+  {
+    value: "Jobs",
+    description:
+      "Part-time jobs and other opportunities",
+  },
+  {
+    value: "Printing & photography",
+    description:
+      "Printing, photography and related services",
+  },
+  {
+    value: "Stationery",
+    description:
+      "Books, pens, papers and school supplies",
+  },
+  {
+    value: "Utensils",
+    description:
+      "Kitchen utensils and household items",
   },
 ];
 
@@ -43,7 +69,8 @@ export default function NewListingForm({
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [currency, setCurrency] = useState("KES");
-  const [category, setCategory] = useState("items");
+  const [category, setCategory] =
+    useState("Electronics");
   const [imageUrl, setImageUrl] = useState("");
   const [location, setLocation] = useState("");
 
@@ -67,21 +94,34 @@ export default function NewListingForm({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          title,
-          description,
+          title: title.trim(),
+          description: description.trim(),
           price,
           currency,
           category,
-          imageUrl,
-          location,
+          imageUrl: imageUrl.trim(),
+          location: location.trim(),
         }),
       });
 
-      const data = await response.json();
+      const data = await response
+        .json()
+        .catch(() => ({}));
 
       if (!response.ok) {
+        if (response.status === 401) {
+          router.push("/account");
+          return;
+        }
+
+        if (response.status === 403) {
+          router.push("/verify");
+          return;
+        }
+
         throw new Error(
-          data.error || "Unable to create listing."
+          data.error ||
+            "Unable to create listing."
         );
       }
 
@@ -91,9 +131,13 @@ export default function NewListingForm({
         );
       }
 
-      setSuccess("Your listing has been created.");
+      setSuccess(
+        "Your listing has been created successfully."
+      );
 
-      router.push(`/listings/${data.listing.id}`);
+      router.push(
+        `/listings/${data.listing.id}`
+      );
       router.refresh();
     } catch (err) {
       setError(
@@ -106,46 +150,53 @@ export default function NewListingForm({
     }
   }
 
+  const selectedCategory = categories.find(
+    (item) => item.value === category
+  );
+
   return (
-    <div className="new-listing-layout">
+    <div className="two-col">
       <form
         onSubmit={handleSubmit}
-        className="new-listing-form"
+        className="panel"
       >
         {error && (
           <div
-            className="form-error"
+            className="error"
             role="alert"
+            style={{ marginBottom: "18px" }}
           >
             {error}
           </div>
         )}
 
         {success && (
-          <div className="form-success">
+          <div
+            className="success"
+            style={{ marginBottom: "18px" }}
+          >
             {success}
           </div>
         )}
 
-        <div className="form-section">
-          <div className="form-section-heading">
-            <p className="eyebrow">LISTING DETAILS</p>
+        <div className="form">
+          <div>
+            <p className="category">
+              LISTING DETAILS
+            </p>
 
             <h2>What are you offering?</h2>
 
-            <p>
-              Give buyers enough information to understand
-              what you are selling or offering.
+            <p className="note">
+              Give buyers enough information to
+              understand what you are selling or
+              offering.
             </p>
           </div>
 
-          <div className="form-field">
-            <label htmlFor="listing-title">
-              Title
-            </label>
-
+          <label>
+            Title
             <input
-              id="listing-title"
               name="title"
               type="text"
               placeholder="e.g. Used HP laptop"
@@ -156,19 +207,14 @@ export default function NewListingForm({
               maxLength={150}
               required
             />
-
-            <small>
+            <small className="note">
               {title.length}/150 characters
             </small>
-          </div>
+          </label>
 
-          <div className="form-field">
-            <label htmlFor="listing-description">
-              Description
-            </label>
-
+          <label>
+            Description
             <textarea
-              id="listing-description"
               name="description"
               placeholder="Describe the item, food, job or service..."
               value={description}
@@ -179,19 +225,14 @@ export default function NewListingForm({
               rows={7}
               required
             />
-
-            <small>
+            <small className="note">
               {description.length}/5000 characters
             </small>
-          </div>
+          </label>
 
-          <div className="form-field">
-            <label htmlFor="listing-category">
-              Category
-            </label>
-
+          <label>
+            Category
             <select
-              id="listing-category"
               name="category"
               value={category}
               onChange={(event) =>
@@ -204,40 +245,32 @@ export default function NewListingForm({
                   key={item.value}
                   value={item.value}
                 >
-                  {item.label}
+                  {item.value}
                 </option>
               ))}
             </select>
 
-            <small>
-              {
-                categories.find(
-                  (item) => item.value === category
-                )?.description
-              }
-            </small>
-          </div>
-        </div>
+            {selectedCategory && (
+              <small className="note">
+                {selectedCategory.description}
+              </small>
+            )}
+          </label>
 
-        <div className="form-section">
-          <div className="form-section-heading">
-            <p className="eyebrow">PRICE</p>
+          <div>
+            <p className="category">PRICE</p>
 
             <h2>Set your price</h2>
 
-            <p>
+            <p className="note">
               Enter zero if the listing is free.
             </p>
           </div>
 
-          <div className="form-row">
-            <div className="form-field">
-              <label htmlFor="listing-price">
-                Price
-              </label>
-
+          <div className="two-col">
+            <label>
+              Price
               <input
-                id="listing-price"
                 name="price"
                 type="number"
                 inputMode="decimal"
@@ -250,15 +283,11 @@ export default function NewListingForm({
                 }
                 required
               />
-            </div>
+            </label>
 
-            <div className="form-field">
-              <label htmlFor="listing-currency">
-                Currency
-              </label>
-
+            <label>
+              Currency
               <select
-                id="listing-currency"
                 name="currency"
                 value={currency}
                 onChange={(event) =>
@@ -268,53 +297,40 @@ export default function NewListingForm({
                 <option value="KES">
                   KES — Kenyan Shilling
                 </option>
-
                 <option value="USD">
                   USD — US Dollar
                 </option>
-
                 <option value="GBP">
                   GBP — British Pound
                 </option>
-
                 <option value="EUR">
                   EUR — Euro
                 </option>
-
                 <option value="UGX">
                   UGX — Ugandan Shilling
                 </option>
-
                 <option value="TZS">
                   TZS — Tanzanian Shilling
                 </option>
-
                 <option value="NGN">
                   NGN — Nigerian Naira
                 </option>
-
                 <option value="ZAR">
                   ZAR — South African Rand
                 </option>
               </select>
-            </div>
+            </label>
           </div>
-        </div>
 
-        <div className="form-section">
-          <div className="form-section-heading">
-            <p className="eyebrow">LOCATION</p>
+          <div>
+            <p className="category">LOCATION</p>
 
             <h2>Where is it available?</h2>
           </div>
 
-          <div className="form-field">
-            <label htmlFor="listing-location">
-              Location
-            </label>
-
+          <label>
+            Location
             <input
-              id="listing-location"
               name="location"
               type="text"
               placeholder="e.g. Kisii University"
@@ -325,32 +341,26 @@ export default function NewListingForm({
               maxLength={200}
               required
             />
-
-            <small>
-              Give buyers a useful campus, town or area.
+            <small className="note">
+              Give buyers a useful campus, town or
+              area.
             </small>
-          </div>
-        </div>
+          </label>
 
-        <div className="form-section">
-          <div className="form-section-heading">
-            <p className="eyebrow">IMAGE</p>
+          <div>
+            <p className="category">IMAGE</p>
 
             <h2>Add a listing image</h2>
 
-            <p>
-              You can provide an image URL. Image uploads
-              can be connected to cloud storage later.
+            <p className="note">
+              Add an image URL if you have a publicly
+              accessible image.
             </p>
           </div>
 
-          <div className="form-field">
-            <label htmlFor="listing-image">
-              Image URL
-            </label>
-
+          <label>
+            Image URL
             <input
-              id="listing-image"
               name="imageUrl"
               type="url"
               placeholder="https://example.com/image.jpg"
@@ -360,16 +370,28 @@ export default function NewListingForm({
               }
             />
 
-            <small>
-              Leave this empty if you do not have an image.
+            <small className="note">
+              Leave this empty if you do not have an
+              image.
             </small>
-          </div>
+          </label>
 
           {imageUrl && (
-            <div className="image-preview">
+            <div
+              className="listing-photo"
+              style={{
+                maxHeight: "320px",
+                overflow: "hidden",
+              }}
+            >
               <img
                 src={imageUrl}
                 alt="Listing preview"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
                 onError={(event) => {
                   event.currentTarget.style.display =
                     "none";
@@ -377,61 +399,101 @@ export default function NewListingForm({
               />
             </div>
           )}
-        </div>
 
-        <div className="seller-information">
-          <p className="eyebrow">SELLER</p>
+          <div className="panel">
+            <p className="category">SELLER</p>
 
-          <h2>Your listing will show</h2>
+            <h2>Your listing will show</h2>
 
-          <div className="seller-preview">
-            <strong>{sellerName}</strong>
-
-            <span>{sellerUniversity}</span>
-
-            <span>{sellerCountry}</span>
+            <div
+              className="seller"
+              style={{
+                marginTop: "12px",
+              }}
+            >
+              <strong>{sellerName}</strong>
+              <small>{sellerUniversity}</small>
+              <small>{sellerCountry}</small>
+            </div>
           </div>
-        </div>
 
-        <div className="listing-form-actions">
-          <button
-            type="button"
-            className="secondary-button"
-            onClick={() => router.back()}
-            disabled={submitting}
-          >
-            Cancel
-          </button>
+          <div className="hero-actions">
+            <button
+              type="button"
+              className="secondary-btn"
+              onClick={() => router.back()}
+              disabled={submitting}
+            >
+              Cancel
+            </button>
 
-          <button
-            type="submit"
-            className="primary-button"
-            disabled={submitting}
-          >
-            {submitting
-              ? "Creating listing..."
-              : "Publish listing"}
-          </button>
+            <button
+              type="submit"
+              className="primary-btn"
+              disabled={submitting}
+            >
+              {submitting
+                ? "Creating listing..."
+                : "Publish listing"}
+            </button>
+          </div>
         </div>
       </form>
 
-      <aside className="listing-help-card">
-        <p className="eyebrow">SELL SAFELY</p>
+      <aside className="panel">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          <ShieldCheck size={22} />
+
+          <p className="category">
+            SELL SAFELY
+          </p>
+        </div>
 
         <h2>Good listings get attention.</h2>
 
-        <ul>
+        <ul
+          style={{
+            paddingLeft: "20px",
+            lineHeight: 1.8,
+          }}
+        >
           <li>Use a clear and honest title.</li>
-          <li>Describe the condition accurately.</li>
+          <li>
+            Describe the condition accurately.
+          </li>
           <li>Use a useful location.</li>
           <li>Set a realistic price.</li>
           <li>Never share your password.</li>
           <li>
-            Mark the listing as sold when it is no longer
-            available.
+            Mark the listing as sold when it is no
+            longer available.
           </li>
         </ul>
+
+        <div
+          className="panel"
+          style={{
+            marginTop: "18px",
+            background: "var(--red-light)",
+          }}
+        >
+          <ImageIcon
+            size={20}
+            style={{ marginBottom: "8px" }}
+          />
+
+          <p className="note">
+            A clear image can help buyers understand
+            your listing before contacting you.
+          </p>
+        </div>
       </aside>
     </div>
   );
-              }
+}
