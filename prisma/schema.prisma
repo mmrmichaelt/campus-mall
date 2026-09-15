@@ -24,26 +24,28 @@ enum ListingStatus {
 }
 
 model User {
-  id                String       @id @default(cuid())
+  id                String             @id @default(cuid())
   name              String
   country           String
   university        String
   accountType       AccountType
-  phone             String       @unique
-  email             String       @unique
+  phone             String             @unique
+  email             String             @unique
   passwordHash      String
-  emailVerified     Boolean      @default(false)
-  phoneVerified     Boolean      @default(false)
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  emailVerified     Boolean            @default(false)
+  phoneVerified     Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
 
   listings          Listing[]
-  sentMessages      Message[]    @relation("SentMessages")
-  receivedMessages  Message[]    @relation("ReceivedMessages")
+  sentMessages      Message[]          @relation("SentMessages")
+  receivedMessages  Message[]          @relation("ReceivedMessages")
   verificationCodes VerificationCode[]
   setting           UserSetting?
   cartItems         CartItem[]
   notifications     Notification[]
+  buyerOrders       Order[]            @relation("BuyerOrders")
+  sellerOrders      Order[]            @relation("SellerOrders")
 
   @@index([country])
   @@index([university])
@@ -83,6 +85,7 @@ model Listing {
   seller    User       @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   messages  Message[]
   cartItems CartItem[]
+  orders    Order[]
 
   @@index([sellerId])
   @@index([category])
@@ -152,6 +155,7 @@ model Notification {
   @@index([userId, createdAt])
   @@index([userId, readAt])
 }
+
 model Order {
   id         String   @id @default(cuid())
   listingId  String
