@@ -1,17 +1,14 @@
-import { NextResponse } from "next/server";
-import crypto from "node:crypto";
+import crypto from "crypto";
+import { NextRequest } from "next/server";
 
-import { prisma } from "../../../../src/lib/Prisma";
-import { vendDigitalProduct } from "../../../../src/lib/digital-provider";
+import { prisma } from "../../../../src/lib/prisma";
 
-function validSignature(
+function verifySignature(
   rawBody: string,
   signature: string | null,
+  secret: string
 ) {
-  const secret =
-    process.env.DIGITAL_PROVIDER_WEBHOOK_SECRET;
-
-  if (!secret || !signature) {
+  if (!signature) {
     return false;
   }
 
@@ -20,229 +17,228 @@ function validSignature(
     .update(rawBody)
     .digest("hex");
 
-  const expectedBuffer = Buffer.from(expected);
-  const receivedBuffer = Buffer.from(signature);
+  const receivedBuffer = Buffer.from(signature, "utf8");
+  const expectedBuffer = Buffer.from(expected, "utf8");
 
-  if (
-    expectedBuffer.length !==
-    receivedBuffer.length
-  ) {
+  if (receivedBuffer.length !== expectedBuffer.length) {
     return false;
   }
 
   return crypto.timingSafeEqual(
-    expectedBuffer,
     receivedBuffer,
+    expectedBuffer
   );
 }
 
-export async function POST(request: Request) {
-  const rawBody = await request.text();
-
-  const signature =
-    request.headers.get("x-provider-signature");
-
-  if (!validSignature(rawBody, signature)) {
-    return NextResponse.json(
-      {
-        error: "Invalid webhook signature.",
-      },
-      {
-        status: 401,
-      },
-    );
-  }
-
-  let body: {
-    orderId?: string;
-    status?: "SUCCESS" | "FAILED";
-    paymentReference?: string;
-    providerReference?: string;
-    message?: string;
-  };
-
+export async function POST(request: NextRequest) {
   try {
-    body = JSON.parse(rawBody);
-  } catch {
-    return NextResponse.json(
-      {
-        error: "Invalid webhook payload.",
-      },
-      {
-        status: 400,
-      },
-    );
-  }
+    const secret =
+      process.env.DIGITAL_PROVIDER_WEBHOOK_SECRET;
 
-  if (!body.orderId || !body.status) {
-    return NextResponse.json(
-      {
-        error: "Missing webhook fields.",
-      },
-      {
-        status: 400,
-      },
-    );
-  }
+    if (!secret) {
+      console.error(
+        "DIGITAL_PROVIDER_WEBHOOK_SECRET is not configured"
+      );
 
-  const order =
-    await prisma.digitalOrder.findUnique({
-      where: {
-        id: body.orderId,
-      },
+      return Response.json(
+        {
+          success: false,
+          error: "Webhook is not configured",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
 
-      include: {
-        product: true,
-      },
-    });
+    const rawBody = await request.text();
 
-  if (!order) {
-    return NextResponse.json(
-      {
-        error: "Order not found.",
-      },
-      {
-        status: 404,
-      },
-    );
-  }
+    const signature =
+      request.headers.get(
+        "x-digital-provider-signature"
+      ) ??
+      request.headers.get(
+        "x-webhook-signature"
+      );
 
-  /*
-   * Idempotency:
-   *
-   * Do not process an already completed/refunded
-   * order again.
-   */
+    if (
+      !verifySignature(
+        rawBody,
+        signature,
+        secret
+      )
+    ) {
+      return Response.json(
+        {
+          success: false,
+          error: "Invalid webhook signature",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
 
-  if (
-    order.status === "SUCCESS" ||
-    order.status === "REFUNDED"
-  ) {
-    return NextResponse.json({
-      ok: true,
-    });
-  }
+    let body: {
+      orderId?: string;
+      reference?: string;
+      status?: string;
+      providerReference?: string;
+      message?: string;
+    };
 
-  if (body.status === "FAILED") {
-    await prisma.digitalOrder.update({
-      where: {
-        id: order.id,
-      },
+    try {
+      body = JSON.parse(rawBody);
+    } catch {
+      return Response.json(
+        {
+          success: false,
+          error: "Invalid webhook payload",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
-      data: {
-        status: "FAILED",
+    const orderId =
+      typeof body.orderId === "string"
+        ? body.orderId.trim()
+        : "";
 
-        paymentReference:
-          body.paymentReference,
+    const providerReference =
+      typeof body.providerReference === "string"
+        ? body.providerReference.trim()
+        : typeof body.reference === "string"
+          ? body.reference.trim()
+          : "";
 
-        providerReference:
-          body.providerReference,
+    const incomingStatus =
+      typeof body.status === "string"
+        ? body.status.toUpperCase()
+        : "";
 
-        providerMessage:
-          body.message,
+    if (!orderId) {
+      return Response.json(
+        {
+          success: false,
+          error: "Order ID is required",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
-        callbackPayload: body,
-      },
-    });
-
-    return NextResponse.json({
-      ok: true,
-    });
-  }
-
-  await prisma.digitalOrder.update({
-    where: {
-      id: order.id,
-    },
-
-    data: {
-      status: "PROCESSING",
-
-      paymentReference:
-        body.paymentReference,
-
-      paidAt: new Date(),
-
-      callbackPayload: body,
-    },
-  });
-
-  if (!order.product) {
-    await prisma.digitalOrder.update({
-      where: {
-        id: order.id,
-      },
-
-      data: {
-        status: "FAILED",
-
-        providerMessage:
-          "Digital product is missing.",
-      },
-    });
-
-    return NextResponse.json({
-      ok: true,
-    });
-  }
-
-  try {
-    const result =
-      await vendDigitalProduct({
-        orderId: order.id,
-
-        phone: order.recipientPhone,
-
-        network: order.network,
-
-        type: order.type,
-
-        amount: order.customerAmount,
-
-        providerCode:
-          order.product.providerCode,
+    const order =
+      await prisma.digitalOrder.findUnique({
+        where: {
+          id: orderId,
+        },
       });
 
+    if (!order) {
+      return Response.json(
+        {
+          success: false,
+          error: "Digital order not found",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    if (
+      order.status === "SUCCESS" ||
+      order.status === "COMPLETED"
+    ) {
+      return Response.json({
+        success: true,
+        message: "Order was already completed",
+      });
+    }
+
+    const successful =
+      incomingStatus === "SUCCESS" ||
+      incomingStatus === "COMPLETED" ||
+      incomingStatus === "PAID";
+
+    const failed =
+      incomingStatus === "FAILED" ||
+      incomingStatus === "CANCELLED" ||
+      incomingStatus === "CANCELED";
+
+    if (!successful && !failed) {
+      await prisma.digitalOrder.update({
+        where: {
+          id: order.id,
+        },
+        data: {
+          status: "PENDING_PAYMENT",
+        },
+      });
+
+      return Response.json({
+        success: true,
+        message: "Webhook received",
+      });
+    }
+
+    if (failed) {
+      await prisma.digitalOrder.update({
+        where: {
+          id: order.id,
+        },
+        data: {
+          status: "FAILED",
+          providerReference:
+            providerReference || undefined,
+        },
+      });
+
+      return Response.json({
+        success: true,
+        message: "Digital order marked as failed",
+      });
+    }
+
+    /*
+     * IMPORTANT:
+     * Payment success does not automatically mean the
+     * airtime/data has been delivered.
+     *
+     * The actual provider fulfilment must happen here
+     * after connecting a real digital-product provider.
+     */
+
     await prisma.digitalOrder.update({
       where: {
         id: order.id,
       },
-
       data: {
-        status: result.accepted
-          ? "SUCCESS"
-          : "FAILED",
-
+        status: "PAYMENT_CONFIRMED",
         providerReference:
-          result.reference,
-
-        providerMessage:
-          result.message,
-
-        completedAt:
-          result.accepted
-            ? new Date()
-            : undefined,
+          providerReference || undefined,
       },
+    });
+
+    return Response.json({
+      success: true,
+      message:
+        "Payment confirmed. Provider fulfilment is pending.",
     });
   } catch (error) {
-    await prisma.digitalOrder.update({
-      where: {
-        id: order.id,
-      },
+    console.error("DIGITAL_WEBHOOK_ERROR", error);
 
-      data: {
-        status: "FAILED",
-
-        providerMessage:
-          error instanceof Error
-            ? error.message
-            : "Digital delivery failed.",
+    return Response.json(
+      {
+        success: false,
+        error: "Webhook processing failed",
       },
-    });
+      {
+        status: 500,
+      }
+    );
   }
-
-  return NextResponse.json({
-    ok: true,
-  });
-    }
+      }
