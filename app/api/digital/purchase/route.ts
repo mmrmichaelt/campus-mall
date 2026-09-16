@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../lib/prisma";
-import { getSession } from "../../../../lib/session";
+import { prisma } from "../../../../src/lib/Prisma";
+import { getSession } from "../../../../src/lib/session";
 
 function normalizeKenyanPhone(value: string) {
   const digits = value.replace(/\D/g, "");
@@ -39,7 +39,6 @@ export async function POST(request: Request) {
       where: {
         email: session.email,
       },
-
       select: {
         id: true,
       },
@@ -135,24 +134,15 @@ export async function POST(request: Request) {
     const order = await prisma.digitalOrder.create({
       data: {
         userId: user.id,
-
         type: product.type,
-
         network: product.network,
-
         recipientPhone: phone,
-
         productId: product.id,
-
         customerAmount: product.amount,
-
         providerCost: product.providerCost,
-
         margin,
-
         status: "PENDING_PAYMENT",
       },
-
       select: {
         id: true,
         customerAmount: true,
@@ -163,11 +153,8 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         order,
-
         nextStep: "PAYMENT_REQUIRED",
-
-        message:
-          "Order created. Complete payment to continue.",
+        message: "Order created. Complete payment to continue.",
       },
       {
         status: 201,
