@@ -181,3 +181,68 @@ model Order {
   @@index([status])
   @@index([createdAt])
 }
+enum SubscriptionPlan {
+  MONTHLY
+  YEARLY
+}
+
+enum SubscriptionStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  FAILED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+model ProSubscription {
+  id                 String             @id @default(cuid())
+  userId             String
+  plan               SubscriptionPlan
+  status             SubscriptionStatus @default(PENDING)
+  amount             Int
+  currency           String             @default("KES")
+  startedAt          DateTime?
+  expiresAt          DateTime?
+  cancelledAt        DateTime?
+  provider           String?
+  providerReference  String?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments           ProPayment[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([expiresAt])
+}
+
+model ProPayment {
+  id                 String        @id @default(cuid())
+  subscriptionId     String
+  userId             String
+  amount             Int
+  currency           String        @default("KES")
+  status             PaymentStatus @default(PENDING)
+  provider           String?
+  providerReference  String?
+  checkoutReference  String?
+  paidAt             DateTime?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  subscription       ProSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([subscriptionId])
+  @@index([providerReference])
+  @@index([checkoutReference])
+}
