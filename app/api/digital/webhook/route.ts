@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import crypto from "node:crypto";
 
-import { prisma } from "../../../../lib/prisma";
-import { vendDigitalProduct } from "../../../../lib/digital-provider";
+import { prisma } from "../../../../src/lib/Prisma";
+import { vendDigitalProduct } from "../../../../src/lib/digital-provider";
 
 function validSignature(
   rawBody: string,
@@ -85,15 +85,16 @@ export async function POST(request: Request) {
     );
   }
 
-  const order = await prisma.digitalOrder.findUnique({
-    where: {
-      id: body.orderId,
-    },
+  const order =
+    await prisma.digitalOrder.findUnique({
+      where: {
+        id: body.orderId,
+      },
 
-    include: {
-      product: true,
-    },
-  });
+      include: {
+        product: true,
+      },
+    });
 
   if (!order) {
     return NextResponse.json(
@@ -109,7 +110,8 @@ export async function POST(request: Request) {
   /*
    * Idempotency:
    *
-   * Do not process an already completed/refunded order again.
+   * Do not process an already completed/refunded
+   * order again.
    */
 
   if (
@@ -243,4 +245,4 @@ export async function POST(request: Request) {
   return NextResponse.json({
     ok: true,
   });
-}
+    }
