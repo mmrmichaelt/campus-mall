@@ -1,13 +1,22 @@
-import { prisma } from "../../../../src/lib/prisma";
 import { NextRequest } from "next/server";
+import {
+  DigitalProductType,
+} from "@prisma/client";
+
+import { prisma } from "../../../../src/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const category = searchParams.get("category");
-    const type = searchParams.get("type");
+    const category = searchParams.get("category")?.trim();
+    const typeParam = searchParams.get("type")?.trim().toUpperCase();
     const search = searchParams.get("search")?.trim();
+
+    const type =
+      typeParam === "DATA" || typeParam === "AIRTIME"
+        ? (typeParam as DigitalProductType)
+        : undefined;
 
     const products = await prisma.digitalProduct.findMany({
       where: {
