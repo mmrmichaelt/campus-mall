@@ -1,177 +1,99 @@
-import Link from "next/link";
+"use client";
 
-import { getCurrentUser } from "../../lib/auth";
-import SettingsForm from "../../components/SettingsForm";
+import { useState } from "react";
 
-export const dynamic = "force-dynamic";
+export default function Settings() {
+  const [uni, setUni] = useState("");
+  const [msg, setMsg] = useState("");
 
-export default async function SettingsPage() {
-  const user = await getCurrentUser();
+  async function change() {
+    setMsg("");
 
-  if (!user) {
-    return (
-      <div className="auth-wrap">
-        <div className="auth-card">
-          <div className="brand-mark">CM</div>
+    try {
+      const response = await fetch("/api/university", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          university: uni,
+        }),
+      });
 
-          <p className="category">CAMPUS MALL</p>
-
-          <h1>Sign in to access settings</h1>
-
-          <p className="note">
-            Your Campus Mall settings are private to your
-            account. Please log in to continue.
-          </p>
-
-          <Link
-            href="/account"
-            className="primary-btn"
-          >
-            Join or log in
-          </Link>
-        </div>
-      </div>
-    );
+      setMsg(
+        response.ok
+          ? "University switched. The marketplace will now show the selected university."
+          : "Log in first."
+      );
+    } catch {
+      setMsg("Unable to switch university.");
+    }
   }
 
   return (
-    <div className="panel">
-      <div className="section-title">
-        <div>
-          <p className="category">ACCOUNT</p>
+    <>
+      <h1>Settings</h1>
 
-          <h1>Settings</h1>
+      <div className="two-col">
+        <section className="panel">
+          <h2>Account</h2>
+
+          <p>
+            Manage your account, notification preferences and
+            Campus Mall Pro.
+          </p>
 
           <p className="note">
-            Control your Campus Mall notifications and
-            profile visibility.
+            Your Campus Mall account controls your university,
+            listings and marketplace experience.
           </p>
-        </div>
 
-        <Link
-          href="/account"
-          className="secondary-btn"
-        >
-          Back to account
-        </Link>
+          <p>
+            <a className="primary-btn" href="/account/pro">
+              Campus Mall Pro
+            </a>
+          </p>
+        </section>
+
+        <section className="panel">
+          <h2>Change university</h2>
+
+          <input
+            style={{
+              width: "100%",
+              padding: 11,
+              border: "1px solid #ddd",
+              borderRadius: 10,
+            }}
+            value={uni}
+            onChange={(event) => setUni(event.target.value)}
+            placeholder="Enter university / college"
+          />
+
+          <button
+            className="primary-btn"
+            style={{
+              marginTop: 10,
+            }}
+            onClick={change}
+          >
+            Switch university
+          </button>
+
+          {msg && <p className="success">{msg}</p>}
+        </section>
       </div>
 
       <div className="panel">
-        <p className="category">
-          PREFERENCES
+        <h2>Help & legal</h2>
+
+        <p>
+          Feedback · Terms of service · About Campus Mall · FAQ ·
+          Dark mode
         </p>
 
-        <h2>Account settings</h2>
-
-        <p className="note">
-          Choose which notifications you receive and
-          control whether other Campus Mall users can
-          view your public profile.
-        </p>
-
-        <SettingsForm />
+        <p>Support: campusmallsupport@gmail.com</p>
       </div>
-
-      <section
-        className="panel"
-        style={{ marginTop: "20px" }}
-      >
-        <div className="section-title">
-          <div>
-            <p className="category">ACCOUNT</p>
-
-            <h2>{user.name}</h2>
-
-            <p className="note">
-              {user.email}
-            </p>
-
-            <p className="note">
-              {user.phone}
-            </p>
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: "grid",
-            gap: "10px",
-            marginTop: "16px",
-          }}
-        >
-          <div
-            className={
-              user.emailVerified
-                ? "success"
-                : "note"
-            }
-          >
-            {user.emailVerified
-              ? "✓ Email verified"
-              : "Email not verified"}
-          </div>
-
-          <div
-            className={
-              user.phoneVerified
-                ? "success"
-                : "note"
-            }
-          >
-            {user.phoneVerified
-              ? "✓ Phone verified"
-              : "Phone not verified"}
-          </div>
-        </div>
-      </section>
-
-      <section
-        className="panel"
-        style={{ marginTop: "20px" }}
-      >
-        <p className="category">ACCOUNT LINKS</p>
-
-        <h2>Manage your account</h2>
-
-        <div className="hero-actions">
-          <Link
-            href="/profile"
-            className="secondary-btn"
-          >
-            Edit profile
-          </Link>
-
-          <Link
-            href="/verify"
-            className="secondary-btn"
-          >
-            Verification
-          </Link>
-
-          <Link
-            href="/chats"
-            className="secondary-btn"
-          >
-            Chats
-          </Link>
-        </div>
-      </section>
-
-      <div
-        className="panel"
-        style={{ marginTop: "20px" }}
-      >
-        <p className="note">
-          Need help with your account?
-        </p>
-
-        <a
-          href="mailto:campusmall.support@gmail.com"
-          className="text-link"
-        >
-          campusmall.support@gmail.com
-        </a>
-      </div>
-    </div>
+    </>
   );
 }
