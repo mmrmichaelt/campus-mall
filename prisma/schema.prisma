@@ -43,6 +43,21 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum DigitalProductType {
+  DATA
+  AIRTIME
+}
+
+enum DigitalOrderStatus {
+  PENDING_PAYMENT
+  PAYMENT_CONFIRMED
+  PROCESSING
+  SUCCESS
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
 model User {
   id                String             @id @default(cuid())
   name              String
@@ -70,6 +85,9 @@ model User {
   // Campus Mall Pro
   proSubscriptions  ProSubscription[]
   proPayments       ProPayment[]
+
+  // Campus Mall Digital
+  digitalOrders     DigitalOrder[]
 
   @@index([country])
   @@index([university])
@@ -251,20 +269,6 @@ model ProPayment {
   @@index([providerReference])
   @@index([checkoutReference])
 }
-enum DigitalProductType {
-  DATA
-  AIRTIME
-}
-
-enum DigitalOrderStatus {
-  PENDING_PAYMENT
-  PAYMENT_CONFIRMED
-  PROCESSING
-  SUCCESS
-  COMPLETED
-  FAILED
-  CANCELLED
-}
 
 model DigitalProduct {
   id          String             @id @default(cuid())
@@ -298,7 +302,7 @@ model DigitalOrder {
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
 
-  user    User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   product DigitalProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([userId])
