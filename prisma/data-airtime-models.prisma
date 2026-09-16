@@ -1,0 +1,57 @@
+enum DigitalOrderType {
+  AIRTIME
+  DATA
+}
+
+enum DigitalOrderStatus {
+  PENDING_PAYMENT
+  PAID
+  PROCESSING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+model DigitalProduct {
+  id           String           @id @default(cuid())
+  type         DigitalOrderType
+  network      String
+  name         String
+  providerCode String
+  description  String?
+  amount       Int
+  providerCost Int?
+  active       Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  orders DigitalOrder[]
+
+  @@index([type, network, active])
+}
+
+model DigitalOrder {
+  id               String              @id @default(cuid())
+  userId           String
+  type             DigitalOrderType
+  network           String
+  recipientPhone   String
+  productId        String?
+  product          DigitalProduct?     @relation(fields: [productId], references: [id], onDelete: SetNull)
+  customerAmount   Int
+  providerCost     Int?
+  margin            Int                 @default(0)
+  status            DigitalOrderStatus  @default(PENDING_PAYMENT)
+  paymentReference String?
+  providerReference String?
+  providerMessage  String?
+  callbackPayload  Json?
+  createdAt        DateTime            @default(now())
+  paidAt           DateTime?
+  completedAt      DateTime?
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  @@index([paymentReference])
+  @@index([providerReference])
+}
