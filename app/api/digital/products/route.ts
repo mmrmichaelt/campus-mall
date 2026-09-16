@@ -1,21 +1,23 @@
-import { NextResponse } from "next/server";
-import { prisma } from "../../../../src/lib/Prisma";
+import { prisma } from "../../../../src/lib/prisma";
+import { NextRequest } from "next/server";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const typeParam = searchParams.get("type");
-    const network = searchParams.get("network");
-
-    const type =
-      typeParam === "DATA" || typeParam === "AIRTIME"
-        ? typeParam
-        : undefined;
+    const category = searchParams.get("category");
+    const type = searchParams.get("type");
+    const search = searchParams.get("search")?.trim();
 
     const products = await prisma.digitalProduct.findMany({
       where: {
         active: true,
+
+        ...(category
+          ? {
+              category,
+            }
+          : {}),
 
         ...(type
           ? {
@@ -23,46 +25,57 @@ export async function GET(request: Request) {
             }
           : {}),
 
-        ...(network
+        ...(search
           ? {
-              network,
+              OR: [
+                {
+                  name: {
+                    contains: search,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  description: {
+                    contains: search,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  provider: {
+                    contains: search,
+                    mode: "insensitive",
+                  },
+                },
+              ],
             }
           : {}),
       },
 
       orderBy: [
         {
-          network: "asc",
+          category: "asc",
         },
         {
-          amount: "asc",
+          price: "asc",
         },
       ],
-
-      select: {
-        id: true,
-        type: true,
-        network: true,
-        name: true,
-        description: true,
-        amount: true,
-        providerCode: true,
-      },
     });
 
-    return NextResponse.json({
+    return Response.json({
+      success: true,
       products,
     });
   } catch (error) {
-    console.error("Digital products error:", error);
+    console.error("DIGITAL_PRODUCTS_ERROR", error);
 
-    return NextResponse.json(
+    return Response.json(
       {
-        error: "Unable to load digital products.",
+        success: false,
+        error: "Unable to load digital products",
       },
       {
         status: 500,
-      },
+      }
     );
   }
 }
