@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../lib/prisma";
+import { prisma } from "../../../../src/lib/Prisma";
 
 export async function GET(request: Request) {
   try {
@@ -21,14 +21,12 @@ export async function GET(request: Request) {
           ? {
               type,
             }
-          }
           : {}),
 
         ...(network
           ? {
               network,
             }
-          }
           : {}),
       },
 
@@ -36,7 +34,6 @@ export async function GET(request: Request) {
         {
           network: "asc",
         },
-
         {
           amount: "asc",
         },
