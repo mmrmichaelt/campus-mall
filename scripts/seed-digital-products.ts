@@ -1,131 +1,154 @@
 import {
   PrismaClient,
-  DigitalOrderType,
+  DigitalProductType,
 } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 const products = [
+  // DATA
   {
-    type: DigitalOrderType.DATA,
-    network: "SAFARICOM",
-    name: "Safaricom Data Bundle",
-    providerCode: "REPLACE_SAFARICOM_DATA_CODE",
-    description:
-      "Configure the actual bundle supplied by your vending provider.",
-    amount: 20,
+    name: "Safaricom Data 100MB",
+    description: "Safaricom mobile data bundle.",
+    type: DigitalProductType.DATA,
+    category: "DATA",
+    provider: "Safaricom",
+    price: 20,
+  },
+  {
+    name: "Safaricom Data 500MB",
+    description: "Safaricom mobile data bundle.",
+    type: DigitalProductType.DATA,
+    category: "DATA",
+    provider: "Safaricom",
+    price: 50,
+  },
+  {
+    name: "Safaricom Data 1GB",
+    description: "Safaricom mobile data bundle.",
+    type: DigitalProductType.DATA,
+    category: "DATA",
+    provider: "Safaricom",
+    price: 99,
+  },
+  {
+    name: "Airtel Data 100MB",
+    description: "Airtel mobile data bundle.",
+    type: DigitalProductType.DATA,
+    category: "DATA",
+    provider: "Airtel",
+    price: 20,
+  },
+  {
+    name: "Airtel Data 500MB",
+    description: "Airtel mobile data bundle.",
+    type: DigitalProductType.DATA,
+    category: "DATA",
+    provider: "Airtel",
+    price: 50,
+  },
+  {
+    name: "Airtel Data 1GB",
+    description: "Airtel mobile data bundle.",
+    type: DigitalProductType.DATA,
+    category: "DATA",
+    provider: "Airtel",
+    price: 99,
   },
 
+  // AIRTIME
   {
-    type: DigitalOrderType.DATA,
-    network: "AIRTEL",
-    name: "Airtel Data Bundle",
-    providerCode: "REPLACE_AIRTEL_DATA_CODE",
-    description:
-      "Configure the actual bundle supplied by your vending provider.",
-    amount: 20,
+    name: "Safaricom Airtime KSh 20",
+    description: "Safaricom airtime.",
+    type: DigitalProductType.AIRTIME,
+    category: "AIRTIME",
+    provider: "Safaricom",
+    price: 20,
   },
-
   {
-    type: DigitalOrderType.DATA,
-    network: "TELKOM",
-    name: "Telkom Data Bundle",
-    providerCode: "REPLACE_TELKOM_DATA_CODE",
-    description:
-      "Configure the actual bundle supplied by your vending provider.",
-    amount: 20,
+    name: "Safaricom Airtime KSh 50",
+    description: "Safaricom airtime.",
+    type: DigitalProductType.AIRTIME,
+    category: "AIRTIME",
+    provider: "Safaricom",
+    price: 50,
   },
-
   {
-    type: DigitalOrderType.DATA,
-    network: "FAIBA",
-    name: "Faiba Data Bundle",
-    providerCode: "REPLACE_FAIBA_DATA_CODE",
-    description:
-      "Configure the actual bundle supplied by your vending provider.",
-    amount: 20,
+    name: "Safaricom Airtime KSh 100",
+    description: "Safaricom airtime.",
+    type: DigitalProductType.AIRTIME,
+    category: "AIRTIME",
+    provider: "Safaricom",
+    price: 100,
   },
-
   {
-    type: DigitalOrderType.AIRTIME,
-    network: "SAFARICOM",
-    name: "Safaricom Airtime",
-    providerCode: "REPLACE_SAFARICOM_AIRTIME_CODE",
-    description:
-      "Safaricom airtime.",
-    amount: 20,
+    name: "Airtel Airtime KSh 20",
+    description: "Airtel airtime.",
+    type: DigitalProductType.AIRTIME,
+    category: "AIRTIME",
+    provider: "Airtel",
+    price: 20,
   },
-
   {
-    type: DigitalOrderType.AIRTIME,
-    network: "AIRTEL",
-    name: "Airtel Airtime",
-    providerCode: "REPLACE_AIRTEL_AIRTIME_CODE",
-    description:
-      "Airtel airtime.",
-    amount: 20,
+    name: "Airtel Airtime KSh 50",
+    description: "Airtel airtime.",
+    type: DigitalProductType.AIRTIME,
+    category: "AIRTIME",
+    provider: "Airtel",
+    price: 50,
   },
-
   {
-    type: DigitalOrderType.AIRTIME,
-    network: "TELKOM",
-    name: "Telkom Airtime",
-    providerCode: "REPLACE_TELKOM_AIRTIME_CODE",
-    description:
-      "Telkom airtime.",
-    amount: 20,
-  },
-
-  {
-    type: DigitalOrderType.AIRTIME,
-    network: "FAIBA",
-    name: "Faiba Airtime",
-    providerCode: "REPLACE_FAIBA_AIRTIME_CODE",
-    description:
-      "Faiba airtime.",
-    amount: 20,
+    name: "Airtel Airtime KSh 100",
+    description: "Airtel airtime.",
+    type: DigitalProductType.AIRTIME,
+    category: "AIRTIME",
+    provider: "Airtel",
+    price: 100,
   },
 ];
 
 async function main() {
+  console.log("Seeding Campus Mall digital products...");
+
   for (const product of products) {
     await prisma.digitalProduct.upsert({
       where: {
-        id: `${product.network}-${product.type}-${product.providerCode}`,
+        id: `${product.provider}-${product.name}`
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-"),
       },
-
       update: {
         name: product.name,
         description: product.description,
-        amount: product.amount,
-        providerCode:
-          product.providerCode,
+        type: product.type,
+        category: product.category,
+        provider: product.provider,
+        price: product.price,
         active: true,
       },
-
       create: {
-        id: `${product.network}-${product.type}-${product.providerCode}`,
-        type: product.type,
-        network: product.network,
+        id: `${product.provider}-${product.name}`
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-"),
         name: product.name,
-        providerCode:
-          product.providerCode,
-        description:
-          product.description,
-        amount: product.amount,
+        description: product.description,
+        type: product.type,
+        category: product.category,
+        provider: product.provider,
+        price: product.price,
         active: true,
       },
     });
   }
 
   console.log(
-    `Seeded ${products.length} digital products.`,
+    `Successfully seeded ${products.length} digital products.`
   );
 }
 
 main()
   .catch((error) => {
-    console.error(error);
+    console.error("DIGITAL_PRODUCT_SEED_ERROR", error);
     process.exit(1);
   })
   .finally(async () => {
