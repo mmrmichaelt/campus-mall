@@ -1,175 +1,149 @@
-import { NextResponse } from "next/server";
-import { prisma } from "../../../../src/lib/Prisma";
-import { getSession } from "../../../../src/lib/session";
+import { NextRequest } from "next/server";
 
-function normalizeKenyanPhone(value: string) {
-  const digits = value.replace(/\D/g, "");
+import { prisma } from "../../../../src/lib/prisma";
+import { getCurrentUser } from "../../../../src/lib/auth";
 
-  if (/^07\d{8}$/.test(digits)) {
-    return `254${digits.slice(1)}`;
+function normalizeKenyanPhone(phone: string) {
+  const value = phone.trim().replace(/\s+/g, "");
+
+  if (value.startsWith("+254")) {
+    return `254${value.slice(4)}`;
   }
 
-  if (/^01\d{8}$/.test(digits)) {
-    return `254${digits.slice(1)}`;
+  if (value.startsWith("254")) {
+    return value;
   }
 
-  if (/^254\d{9}$/.test(digits)) {
-    return digits;
+  if (value.startsWith("07") || value.startsWith("01")) {
+    return `254${value.slice(1)}`;
   }
 
-  return null;
+  return value;
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const session = await getSession();
+    const user = await getCurrentUser();
 
-    if (!session?.email) {
-      return NextResponse.json(
+    if (!user) {
+      return Response.json(
         {
-          error: "You must be logged in.",
+          success: false,
+          error: "Unauthorized",
         },
         {
           status: 401,
-        },
+        }
       );
     }
 
-    const user = await prisma.user.findUnique({
-      where: {
-        email: session.email,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const body = await request.json();
 
-    if (!user) {
-      return NextResponse.json(
-        {
-          error: "User account not found.",
-        },
-        {
-          status: 404,
-        },
-      );
-    }
+    const productId =
+      typeof body.productId === "string"
+        ? body.productId.trim()
+        : "";
 
-    let body: {
-      productId?: string;
-      phone?: string;
-    };
+    const phone =
+      typeof body.phone === "string"
+        ? normalizeKenyanPhone(body.phone)
+        : "";
 
-    try {
-      body = await request.json();
-    } catch {
-      return NextResponse.json(
+    if (!productId) {
+      return Response.json(
         {
-          error: "Invalid request.",
+          success: false,
+          error: "Product ID is required",
         },
         {
           status: 400,
-        },
+        }
       );
     }
-
-    if (!body.productId || !body.phone) {
-      return NextResponse.json(
-        {
-          error: "Product and phone number are required.",
-        },
-        {
-          status: 400,
-        },
-      );
-    }
-
-    const phone = normalizeKenyanPhone(body.phone);
 
     if (!phone) {
-      return NextResponse.json(
+      return Response.json(
         {
-          error: "Enter a valid Kenyan mobile number.",
+          success: false,
+          error: "Phone number is required",
         },
         {
           status: 400,
-        },
+        }
       );
     }
 
     const product = await prisma.digitalProduct.findFirst({
       where: {
-        id: body.productId,
+        id: productId,
         active: true,
       },
     });
 
     if (!product) {
-      return NextResponse.json(
+      return Response.json(
         {
-          error: "That product is no longer available.",
+          success: false,
+          error: "Digital product not found or unavailable",
         },
         {
           status: 404,
-        },
+        }
       );
     }
 
-    const margin =
-      product.providerCost === null ||
-      product.providerCost === undefined
-        ? 0
-        : product.amount - product.providerCost;
+    const amount = Number(product.price);
 
-    /*
-     * IMPORTANT:
-     *
-     * Creating this order does NOT mean payment succeeded.
-     *
-     * The payment system must verify the customer's payment before
-     * this order can be marked PAID/PROCESSING and sent to the
-     * vending provider.
-     */
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return Response.json(
+        {
+          success: false,
+          error: "Invalid product price",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
     const order = await prisma.digitalOrder.create({
       data: {
         userId: user.id,
-        type: product.type,
-        network: product.network,
-        recipientPhone: phone,
         productId: product.id,
-        customerAmount: product.amount,
-        providerCost: product.providerCost,
-        margin,
+        phone,
+        amount: product.price,
         status: "PENDING_PAYMENT",
-      },
-      select: {
-        id: true,
-        customerAmount: true,
-        status: true,
       },
     });
 
-    return NextResponse.json(
+    return Response.json(
       {
-        order,
-        nextStep: "PAYMENT_REQUIRED",
-        message: "Order created. Complete payment to continue.",
+        success: true,
+        message:
+          "Digital order created. Payment must be completed before fulfilment.",
+        order: {
+          id: order.id,
+          productId: order.productId,
+          phone: order.phone,
+          amount: order.amount,
+          status: order.status,
+        },
       },
       {
         status: 201,
-      },
+      }
     );
   } catch (error) {
-    console.error("Digital purchase error:", error);
+    console.error("DIGITAL_PURCHASE_ERROR", error);
 
-    return NextResponse.json(
+    return Response.json(
       {
-        error: "Unable to create the order.",
+        success: false,
+        error: "Unable to create digital purchase",
       },
       {
         status: 500,
-      },
+      }
     );
   }
 }
