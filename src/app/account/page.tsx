@@ -144,28 +144,28 @@ export default async function AccountPage() {
 
             <div className="hero-actions">
               <Link
-                href="/sell"
+                href={"/sell" as Route}
                 className="primary-btn"
               >
                 Add listing
               </Link>
 
               <Link
-                href="/chats"
+                href={"/chats" as Route}
                 className="secondary-btn"
               >
                 Chats
               </Link>
 
               <Link
-                href="/settings"
+                href={"/settings" as Route}
                 className="secondary-btn"
               >
                 Settings
               </Link>
 
               <Link
-                href="/profile"
+                href={"/profile" as Route}
                 className="secondary-btn"
               >
                 Edit profile
