@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 
 import { getCurrentUser } from "../../lib/auth";
 import AccountForms from "../../components/AccountForms";
@@ -33,9 +34,7 @@ export default async function AccountPage() {
           <section className="panel">
             <div className="avatar-box">
               <div className="avatar-circle">
-                {user.name
-                  .charAt(0)
-                  .toUpperCase()}
+                {user.name.charAt(0).toUpperCase()}
               </div>
 
               <h2>{user.name}</h2>
@@ -117,7 +116,7 @@ export default async function AccountPage() {
             {!user.emailVerified ||
             !user.phoneVerified ? (
               <Link
-                href="/verify"
+                href={"/verify" as Route}
                 className="primary-btn"
               >
                 Verify account
