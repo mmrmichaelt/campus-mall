@@ -1,3 +1,24 @@
+export async function GET() {
+  try {
+    const user = await requireUser();
+    const orders = await prisma.order.findMany({
+      where: { OR: [{ buyerId: user.id }, { sellerId: user.id }] },
+      orderBy: { createdAt: "desc" },
+      include: {
+        listing: { select: { id: true, title: true, price: true, currency: true, status: true } },
+        buyer: { select: { id: true, name: true } },
+        seller: { select: { id: true, name: true } },
+      },
+    });
+    return NextResponse.json({ success: true, orders });
+  } catch (error) {
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+      return NextResponse.json({ error: "Create an account to manage orders.", accountRequired: true }, { status: 401 });
+    }
+    return NextResponse.json({ error: "Unable to load orders." }, { status: 500 });
+  }
+}
+
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
