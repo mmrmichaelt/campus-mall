@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { countries } from "@/data/countries";
 
@@ -21,6 +21,21 @@ password: "",
 
 const [error, setError] = useState("");
 const [busy, setBusy] = useState(false);
+const [institutions, setInstitutions] = useState<{name:string}[]>([]);
+const [institutionLoading, setInstitutionLoading] = useState(false);
+
+useEffect(() => {
+  const country = countries.find((item) => item.code === data.country);
+  if (!country || mode !== "create") return;
+  const controller = new AbortController();
+  setInstitutionLoading(true);
+  fetch(`/api/institutions?country=${encodeURIComponent(country.code)}`, { signal: controller.signal })
+    .then((r) => r.json())
+    .then((d) => setInstitutions(Array.isArray(d.institutions) ? d.institutions : []))
+    .catch(() => setInstitutions([]))
+    .finally(() => setInstitutionLoading(false));
+  return () => controller.abort();
+}, [data.country, mode]);
 
 function update(field: string, value: string) {
 setData((current) => ({
@@ -178,17 +193,11 @@ return (
 
           <label>
             University / College
-            <input
-              required
-              value={data.university}
-              onChange={(event) =>
-                update(
-                  "university",
-                  event.target.value
-                )
-              }
-              placeholder="University or college"
-            />
+            <input required list="campus-mall-institutions" value={data.university} onChange={(event) => update("university", event.target.value)} placeholder={institutionLoading ? "Loading institutions..." : "Search or enter university / college"} />
+            <datalist id="campus-mall-institutions">
+              {institutions.map((institution) => <option key={institution.name} value={institution.name} />)}
+            </datalist>
+            <small className="note">Institutions are loaded for the selected country; you can also enter an institution manually.</small>
           </label>
 
           <label>
