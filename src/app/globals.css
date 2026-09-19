@@ -823,3 +823,62 @@ width: 100%;
 padding: 20px;
 }
   }
+
+
+/* Registration institution picker */
+.institution-field {
+  position: relative;
+}
+
+.institution-picker {
+  position: relative;
+}
+
+.institution-options {
+  position: absolute;
+  z-index: 50;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  max-height: 240px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.10);
+}
+
+.institution-option {
+  display: block;
+  width: 100%;
+  margin: 0 !important;
+  padding: 10px 12px;
+  border: 0;
+  border-bottom: 1px solid #f0f0f2;
+  background: #fff;
+  color: var(--ink);
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.institution-option:hover {
+  background: var(--red-light);
+}
+
+.institution-option.muted {
+  color: var(--muted);
+  cursor: default;
+}
+
+.field-error {
+  color: var(--error);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.field-success {
+  color: var(--success);
+  font-size: 12px;
+  font-weight: 700;
+}
