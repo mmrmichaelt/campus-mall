@@ -83,6 +83,11 @@ export default function Orders() {
                   )}
                 </div>
               )}
+              {currentUserId === order.buyer?.id && order.status === "PENDING" && (
+                <div className="hero-actions">
+                  <button className="secondary-btn" disabled={busy === order.id} onClick={() => void update(order.id, "CANCELLED")}>Cancel order</button>
+                </div>
+              )}
             </div>
           ))}
         </div>
