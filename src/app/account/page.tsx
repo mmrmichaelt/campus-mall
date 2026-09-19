@@ -1,6 +1,4 @@
 import Link from "next/link";
-import type { Route } from "next";
-
 import { getCurrentUser } from "../../lib/auth";
 import AccountForms from "../../components/AccountForms";
 
@@ -116,7 +114,7 @@ export default async function AccountPage() {
             {!user.emailVerified ||
             !user.phoneVerified ? (
               <Link
-                href={"/verify" as Route}
+                href="/verify"
                 className="primary-btn"
               >
                 Verify account
@@ -144,28 +142,28 @@ export default async function AccountPage() {
 
             <div className="hero-actions">
               <Link
-                href={"/sell" as Route}
+                href="/sell"
                 className="primary-btn"
               >
                 Add listing
               </Link>
 
               <Link
-                href={"/chats" as Route}
+                href="/chats"
                 className="secondary-btn"
               >
                 Chats
               </Link>
 
               <Link
-                href={"/settings" as Route}
+                href="/settings"
                 className="secondary-btn"
               >
                 Settings
               </Link>
 
               <Link
-                href={"/profile" as Route}
+                href="/profile"
                 className="secondary-btn"
               >
                 Edit profile
