@@ -40,13 +40,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const email = data.email.trim().toLowerCase();
+    const email = data.email?.trim().toLowerCase() || undefined;
 
     const phone = data.phone
-      .trim()
-      .replace(/[^\d+]/g, "");
+      ? data.phone.trim().replace(/[^\d+]/g, "")
+      : undefined;
 
-    if (!phone.startsWith("+")) {
+    if (phone && !phone.startsWith("+")) {
       return NextResponse.json(
         {
           error:
@@ -59,12 +59,8 @@ export async function POST(request: Request) {
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [
-          {
-            email,
-          },
-          {
-            phone,
-          },
+          ...(email ? [{ email }] : []),
+          ...(phone ? [{ phone }] : []),
         ],
       },
       select: {
@@ -74,7 +70,7 @@ export async function POST(request: Request) {
     });
 
     if (existingUser) {
-      if (existingUser.email === email) {
+      if (email && existingUser.email === email) {
         return NextResponse.json(
           {
             error:
@@ -84,7 +80,7 @@ export async function POST(request: Request) {
         );
       }
 
-      if (existingUser.phone === phone) {
+      if (phone && existingUser.phone === phone) {
         return NextResponse.json(
           {
             error:
@@ -128,40 +124,32 @@ export async function POST(request: Request) {
     await createSession(user.id);
 
     const verificationResults = await Promise.allSettled([
-      sendEmailVerificationCode(user.id),
-      sendPhoneVerificationCode(user.id),
+      ...(email ? [sendEmailVerificationCode(user.id)] : []),
+      ...(phone ? [sendPhoneVerificationCode(user.id)] : []),
     ]);
 
-    const emailSent =
-      verificationResults[0]?.status === "fulfilled";
+    const emailSent = Boolean(email) && verificationResults.some(
+      (result) => result.status === "fulfilled"
+    ) && Boolean(email);
 
-    const phoneSent =
-      verificationResults[1]?.status === "fulfilled";
+    const phoneSent = Boolean(phone) && verificationResults.some(
+      (result) => result.status === "fulfilled"
+    ) && Boolean(phone);
 
-    if (!emailSent) {
-      console.error(
-        "Campus Mall email verification delivery failed:",
-        verificationResults[0]?.status === "rejected"
-          ? verificationResults[0].reason
-          : "Unknown error"
-      );
+    if (email && !emailSent) {
+      console.error("Campus Mall email verification delivery failed.");
     }
 
-    if (!phoneSent) {
-      console.error(
-        "Campus Mall phone verification delivery failed:",
-        verificationResults[1]?.status === "rejected"
-          ? verificationResults[1].reason
-          : "Unknown error"
-      );
+    if (phone && !phoneSent) {
+      console.error("Campus Mall phone verification delivery failed.");
     }
 
     return NextResponse.json(
       {
         success: true,
         message:
-          emailSent && phoneSent
-            ? "Account created. Verification codes have been sent to your email and phone."
+          emailSent || phoneSent
+            ? "Account created. Verify at least one of your email address or phone number to activate the account."
             : "Account created. Please open the verification page to complete verification.",
         redirectTo: "/verify",
         verification: {
