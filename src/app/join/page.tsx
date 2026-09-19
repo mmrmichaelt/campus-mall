@@ -16,8 +16,8 @@ university: "",
 accountType: "STUDENT",
 phone: "",
 email: "",
-confirmEmail: "",
 password: "",
+confirmPassword: "",
 });
 
 const [error, setError] = useState("");
@@ -253,22 +253,6 @@ return (
         />
       </label>
 
-      {mode === "create" && (
-        <label>
-          Confirm email
-          <input
-            required
-            type="email"
-            autoComplete="email"
-            value={data.confirmEmail}
-            onChange={(event) =>
-              update("confirmEmail", event.target.value)
-            }
-            placeholder="Re-enter your email address"
-          />
-        </label>
-      )}
-
       <label>
         Password
         <input
@@ -287,6 +271,23 @@ return (
           placeholder="At least 8 characters"
         />
       </label>
+      
+      {mode === "create" && (
+        <label>
+          Confirm password
+          <input
+            required
+            type="password"
+            minLength={8}
+            autoComplete="new-password"
+            value={data.confirmPassword}
+            onChange={(event) =>
+              update("confirmPassword", event.target.value)
+            }
+            placeholder="Re-enter your password"
+          />
+        </label>
+      )}
 
       {error && (
         <div className="error" role="alert">
