@@ -154,7 +154,7 @@ export async function GET(request: Request) {
       return NextResponse.json(
         {
           error:
-            "The other user has not completed verification yet.",
+            "The other user has not verified an email address or phone number yet.",
         },
         { status: 403 }
       );
@@ -359,7 +359,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "The recipient has not completed email and phone verification.",
+            "The recipient has not verified an email address or phone number.",
         },
         { status: 403 }
       );
