@@ -64,8 +64,8 @@ model User {
   country           String
   university        String
   accountType       AccountType
-  phone             String             @unique
-  email             String             @unique
+  phone             String?            @unique
+  email             String?            @unique
   passwordHash      String
   imageUrl          String?
   emailVerified     Boolean            @default(false)
