@@ -21,6 +21,7 @@ children: React.ReactNode;
 }) {
 const [user, setUser] = useState<any>(null);
 const [q, setQ] = useState("");
+const [theme, setTheme] = useState<"light" | "dark">("light");
 
 useEffect(() => {
 let active = true;
@@ -44,7 +45,7 @@ return () => {
 
 }, []);
 
-async function logout() {
+function toggleTheme() {\n  const next = theme === "dark" ? "light" : "dark";\n  setTheme(next);\n  document.documentElement.dataset.theme = next;\n  window.localStorage.setItem("campus_mall_theme", next);\n}\n\nasync function logout() {
 try {
 await fetch("/api/auth/logout", {
 method: "POST",
@@ -87,7 +88,7 @@ return (
       />
     </form>
 
-    <div className="top-actions">
+    <div className="top-actions">\n      <button type="button" className="theme-toggle" onClick={toggleTheme} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`} title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>\n        {theme === "dark" ? "☀️" : "🌙"} <span>{theme === "dark" ? "Light" : "Dark"}</span>\n      </button>
       <Link
         href="/notifications"
         aria-label="Notifications"
