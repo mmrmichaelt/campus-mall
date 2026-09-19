@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Image as ImageIcon, Upload, X } from "lucide-react";
 
 const categories = [
 "Accommodation",
@@ -27,6 +28,9 @@ location: "",
 
 const [message, setMessage] = useState("");
 const [busy, setBusy] = useState(false);
+const [uploadingPhotos, setUploadingPhotos] = useState(false);
+const [imageUrls, setImageUrls] = useState<string[]>([]);
+const [photoMessage, setPhotoMessage] = useState("");
 
 function update(field: string, value: string) {
 setData((current) => ({
@@ -51,7 +55,8 @@ try {
       title: data.title,
       description: data.description,
       category: data.category,
-      imageUrl: data.imageUrl || null,
+      imageUrl: imageUrls[0] || null,
+      imageUrls,
       price: Number(data.price),
       currency: data.currency,
       location: data.location,
@@ -136,15 +141,90 @@ return (
       </select>
     </label>
 
+    <div className="panel">
+      <div className="section-title">
+        <div>
+          <p className="category">PHOTOS</p>
+          <h2>Upload photos</h2>
+          <p className="note">Select up to 5 photos from your phone or computer. No photo URL is required.</p>
+        </div>
+        <ImageIcon size={24} />
+      </div>
+
+      <label>
+        Photos
+        <input
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          multiple
+          onChange={async (event) => {
+            const files = Array.from(event.target.files || []);
+            if (!files.length) return;
+            if (files.length > 5) {
+              setPhotoMessage("You can upload up to 5 photos.");
+              event.target.value = "";
+              return;
+            }
+            setUploadingPhotos(true);
+            setPhotoMessage("");
+            setMessage("");
+            try {
+              const formData = new FormData();
+              files.forEach((file) => formData.append("files", file));
+              const response = await fetch("/api/uploads", { method: "POST", body: formData });
+              const result = await response.json().catch(() => ({}));
+              if (!response.ok) {
+                throw new Error(result.error || "Unable to upload photos.");
+              }
+              setImageUrls(result.urls || []);
+              setPhotoMessage(`${(result.urls || []).length} photo(s) uploaded successfully.`);
+            } catch (error) {
+              setPhotoMessage(error instanceof Error ? error.message : "Unable to upload photos.");
+            } finally {
+              setUploadingPhotos(false);
+              event.target.value = "";
+            }
+          }}
+        />
+      </label>
+
+      {uploadingPhotos && <p className="note"><Upload size={15} /> Uploading photos...</p>}
+
+      {imageUrls.length > 0 && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(100px,1fr))", gap: 10, marginTop: 12 }}>
+          {imageUrls.map((url, index) => (
+            <div key={url} style={{ position: "relative" }}>
+              <img src={url} alt={`Listing photo ${index + 1}`} style={{ width: "100%", aspectRatio: "1", objectFit: "cover", borderRadius: 12 }} />
+              <button
+                type="button"
+                className="secondary-btn"
+                aria-label={`Remove photo ${index + 1}`}
+                onClick={() => setImageUrls((current) => current.filter((item) => item !== url))}
+                style={{ position: "absolute", top: 5, right: 5, minWidth: 34, padding: 6 }}
+              >
+                <X size={15} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {photoMessage && <p className="success">{photoMessage}</p>}
+
+      <p className="note" style={{ marginTop: 8 }}>
+        Maximum 5 photos, 4 MB each. JPG, PNG, WEBP or GIF.
+      </p>
+    </div>
+
     <label>
-      Picture URL
+      Legacy photo URL (optional)
       <input
         type="url"
         value={data.imageUrl}
         onChange={(event) =>
           update("imageUrl", event.target.value)
         }
-        placeholder="https://..."
+        placeholder="https://... (optional)"
       />
     </label>
 
