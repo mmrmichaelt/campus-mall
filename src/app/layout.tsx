@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AppShell from "@/components/AppShell";
+import PwaRegister from "@/components/PwaRegister";
 
 export const metadata: Metadata = {
   title: {
@@ -57,7 +58,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body><PwaRegister />
         <AppShell>{children}</AppShell>
       </body>
     </html>
