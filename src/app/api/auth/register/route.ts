@@ -123,26 +123,27 @@ export async function POST(request: Request) {
 
     await createSession(user.id);
 
-    const verificationResults = await Promise.allSettled([
-      ...(email ? [sendEmailVerificationCode(user.id)] : []),
-      ...(phone ? [sendPhoneVerificationCode(user.id)] : []),
+    const [emailResult, phoneResult] = await Promise.all([
+      email
+        ? sendEmailVerificationCode(user.id)
+            .then(() => true)
+            .catch((error) => {
+              console.error("Campus Mall email verification delivery failed:", error);
+              return false;
+            })
+        : Promise.resolve(false),
+      phone
+        ? sendPhoneVerificationCode(user.id)
+            .then(() => true)
+            .catch((error) => {
+              console.error("Campus Mall phone verification delivery failed:", error);
+              return false;
+            })
+        : Promise.resolve(false),
     ]);
 
-    const emailSent = Boolean(email) && verificationResults.some(
-      (result) => result.status === "fulfilled"
-    ) && Boolean(email);
-
-    const phoneSent = Boolean(phone) && verificationResults.some(
-      (result) => result.status === "fulfilled"
-    ) && Boolean(phone);
-
-    if (email && !emailSent) {
-      console.error("Campus Mall email verification delivery failed.");
-    }
-
-    if (phone && !phoneSent) {
-      console.error("Campus Mall phone verification delivery failed.");
-    }
+    const emailSent = Boolean(email && emailResult);
+    const phoneSent = Boolean(phone && phoneResult);
 
     return NextResponse.json(
       {
