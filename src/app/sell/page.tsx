@@ -216,17 +216,7 @@ return (
       </p>
     </div>
 
-    <label>
-      Legacy photo URL (optional)
-      <input
-        type="url"
-        value={data.imageUrl}
-        onChange={(event) =>
-          update("imageUrl", event.target.value)
-        }
-        placeholder="https://... (optional)"
-      />
-    </label>
+
 
     <label>
       Price
