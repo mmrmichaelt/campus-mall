@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import InstitutionMemberships from "@/components/InstitutionMemberships";
 import { useEffect, useState } from "react";
 import {
   Bell,
@@ -187,6 +188,8 @@ export default function Settings() {
           </button>
         </section>
       </div>
+
+      <InstitutionMemberships />
 
       <section className="panel" style={{ marginTop: 20 }}>
         <p className="category">NOTIFICATIONS</p>
