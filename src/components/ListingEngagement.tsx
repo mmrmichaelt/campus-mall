@@ -113,10 +113,14 @@ export default function ListingEngagement({ listingId, sellerId, active }: Props
           <Bookmark size={17} fill={data.favorited ? "currentColor" : "none"} /> {data.favorited ? "Saved" : "Save"}
         </button>
         {active && (
-          <button className="primary-btn" type="button" disabled={!active || !!busy} onClick={() => void buyNow()}><ShoppingCart size={17} /> Buy now</button>
-        <Link className="primary-btn" href={"/chats?listingId=" + listingId + "&withUserId=" + sellerId}>
-            <MessageCircle size={17} /> Chat
-          </Link>
+          <>
+            <button className="primary-btn" type="button" disabled={!active || !!busy} onClick={() => void buyNow()}>
+              <ShoppingCart size={17} /> Buy now
+            </button>
+            <Link className="primary-btn" href={"/chats?listingId=" + listingId + "&withUserId=" + sellerId}>
+              <MessageCircle size={17} /> Chat
+            </Link>
+          </>
         )}
       </div>
 
