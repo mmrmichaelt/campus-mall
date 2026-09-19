@@ -907,3 +907,144 @@ padding: 20px;
 .modal-card h2 {
   margin: 4px 0 8px;
 }
+
+
+/* =========================
+THEME SYSTEM
+========================= */
+:root {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #f4f4f5;
+  --text: #f4f4f5;
+  --muted: #b4b4bd;
+  --line: #35353c;
+  --bg: #111114;
+  --card: #1b1b20;
+  --red-light: #35131a;
+  --success: #73d58a;
+  --success-bg: #16331d;
+  --error: #ff8f9b;
+  --error-bg: #3a171c;
+}
+
+html[data-theme="dark"] body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .topbar,
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .listing-card,
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .filterbar,
+html[data-theme="dark"] .chat,
+html[data-theme="dark"] .loading,
+html[data-theme="dark"] .empty-state,
+html[data-theme="dark"] .modal-card,
+html[data-theme="dark"] .avatar-box {
+  background: var(--card);
+  border-color: var(--line);
+}
+
+html[data-theme="dark"] .global-search,
+html[data-theme="dark"] .secondary-btn,
+html[data-theme="dark"] .step,
+html[data-theme="dark"] .bubble {
+  background: #29292f;
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .filterbar input,
+html[data-theme="dark"] .filterbar select,
+html[data-theme="dark"] .form input,
+html[data-theme="dark"] .form select,
+html[data-theme="dark"] .form textarea,
+html[data-theme="dark"] .composer input {
+  background: #151519;
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+html[data-theme="dark"] .global-search input,
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea {
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .global-search input::placeholder,
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+  color: #888892;
+}
+
+html[data-theme="dark"] .hero {
+  background: linear-gradient(135deg, #1d1d22, #32151a);
+  border-color: #5a252d;
+}
+
+html[data-theme="dark"] .listing-photo,
+html[data-theme="dark"] .photo-placeholder {
+  background: #25252b;
+}
+
+html[data-theme="dark"] .institution-options {
+  background: var(--card);
+  border-color: var(--line);
+}
+
+html[data-theme="dark"] .institution-option {
+  background: var(--card);
+  color: var(--ink);
+  border-bottom-color: var(--line);
+}
+
+html[data-theme="dark"] .institution-option:hover {
+  background: var(--red-light);
+}
+
+html[data-theme="dark"] .mobile-nav {
+  background: var(--card);
+  border-top-color: var(--line);
+}
+
+html[data-theme="dark"] footer {
+  color: #9a9aa4;
+  border-top-color: var(--line);
+}
+
+html[data-theme="dark"] .bubble.mine {
+  background: #4b2028;
+}
+
+html[data-theme="dark"] .avatar-circle {
+  background: #3a171e;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 42px;
+  height: 40px;
+  padding: 8px 11px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--ink);
+}
+
+.theme-toggle:hover {
+  border-color: var(--red);
+}
+
+@media (max-width: 620px) {
+  .theme-toggle span {
+    display: none;
+  }
+}
