@@ -110,10 +110,10 @@ export async function POST(req: Request) {
             const result = await vendDigitalProduct({
               orderId: digitalOrder.id,
               phone: digitalOrder.phone,
-              network: product.category,
+              network: product.provider,
               type: product.type,
               amount: Number(digitalOrder.amount),
-              providerCode: product.provider,
+              providerCode: product.id,
             });
             await prisma.digitalOrder.update({
               where: { id: digitalOrder.id },
