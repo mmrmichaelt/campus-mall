@@ -29,6 +29,7 @@ export default async function PublicProfilePage({
       accountType: true,
       emailVerified: true,
       phoneVerified: true,
+      imageUrl: true,
       createdAt: true,
       setting: {
         select: {
@@ -142,9 +143,13 @@ export default async function PublicProfilePage({
       <div className="profile-grid">
         <section className="panel">
           <div className="avatar-box">
-            <div className="avatar-circle">
-              {initials || "CM"}
-            </div>
+            {profile.imageUrl ? (
+              <img src={profile.imageUrl} alt={profile.name} style={{ width: 96, height: 96, objectFit: "cover", borderRadius: "50%" }} />
+            ) : (
+              <div className="avatar-circle">
+                {initials || "CM"}
+              </div>
+            )}
 
             <h2>{profile.name}</h2>
 
@@ -331,6 +336,15 @@ export default async function PublicProfilePage({
   );
 }
 
+function getImageUrl(value?: string | null) {
+  if (!value) return null;
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed) && typeof parsed[0] === "string") return parsed[0];
+  } catch {}
+  return value;
+}
+
 async function PublicProfileListings({
   userId,
 }: {
@@ -364,6 +378,7 @@ async function PublicProfileListings({
   return (
     <div className="listing-grid">
       {listings.map((listing) => {
+        const imageUrl = getImageUrl(listing.imageUrl);
         const numericPrice = Number(
           listing.price
         );
@@ -388,9 +403,9 @@ async function PublicProfileListings({
               href={`/listings/${listing.id}`}
               className="listing-photo"
             >
-              {listing.imageUrl ? (
+              {imageUrl ? (
                 <img
-                  src={listing.imageUrl}
+                  src={imageUrl}
                   alt={listing.title}
                   loading="lazy"
                 />
