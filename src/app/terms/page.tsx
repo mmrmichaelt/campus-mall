@@ -133,8 +133,8 @@ export default function TermsPage() {
             </p>
 
             <p>
-              <a href="mailto:campusmallsupport@gmail.com">
-                campusmallsupport@gmail.com
+              <a href="mailto:campusmall.support@gmail.com">
+                campusmall.support@gmail.com
               </a>
             </p>
           </section>
