@@ -35,10 +35,25 @@ export const registerSchema = z.object({
     .email("Enter a valid email address")
     .max(254, "Email address is too long"),
 
+  confirmEmail: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email("Enter a valid confirmation email address")
+    .max(254, "Confirmation email is too long"),
+
   password: z
     .string()
     .min(8, "Password must contain at least 8 characters")
     .max(128, "Password is too long"),
+}).superRefine((data, ctx) => {
+  if (data.email !== data.confirmEmail) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["confirmEmail"],
+      message: "Email addresses do not match",
+    });
+  }
 });
 
 export const loginSchema = z.object({
@@ -54,10 +69,6 @@ export const loginSchema = z.object({
 });
 
 export const verificationSchema = z.object({
-  userId: z
-    .string()
-    .min(1, "User ID is required"),
-
   type: z.enum(["EMAIL", "PHONE"]),
 
   code: z
@@ -67,10 +78,6 @@ export const verificationSchema = z.object({
 });
 
 export const sendVerificationCodeSchema = z.object({
-  userId: z
-    .string()
-    .min(1, "User ID is required"),
-
   type: z.enum(["EMAIL", "PHONE"]),
 });
 
@@ -112,6 +119,12 @@ export const listingSchema = z.object({
     .url("Image URL must be valid")
     .optional()
     .or(z.literal("")),
+
+  imageUrls: z
+    .array(z.string().url("Each photo must be a valid uploaded image URL"))
+    .max(5, "You can upload up to 5 photos")
+    .optional()
+    .default([]),
 
   location: z
     .string()
