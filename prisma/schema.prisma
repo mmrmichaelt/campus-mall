@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum AccountType {
+enum InstitutionMembershipType {\n  POSTING\n  VISITING\n}\n\nenum AccountType {
   STUDENT
   OUTSIDER
 }
@@ -470,4 +470,20 @@ model Activity {
   @@index([userId, createdAt])
   @@index([listingId, createdAt])
   @@index([type, createdAt])
+}
+
+model UserInstitutionMembership {
+  id            String                    @id @default(cuid())
+  userId        String
+  country       String
+  institution   String
+  type          InstitutionMembershipType @default(POSTING)
+  createdAt     DateTime                  @default(now())
+  updatedAt     DateTime                  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, country, institution])
+  @@index([userId, type])
+  @@index([country, institution])
 }
