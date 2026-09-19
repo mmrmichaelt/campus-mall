@@ -29,6 +29,18 @@ export default function JoinPage() {
   const [showInstitutionOptions, setShowInstitutionOptions] = useState(false);
 
   useEffect(() => {
+    const savedCountry = window.localStorage.getItem("campus_mall_guest_country");
+    const savedUniversity = window.localStorage.getItem("campus_mall_guest_university");
+    if (savedCountry || savedUniversity) {
+      setData((current) => ({
+        ...current,
+        country: savedCountry || current.country,
+        university: savedUniversity || current.university,
+      }));
+    }
+  }, []);
+
+  useEffect(() => {
     const country = countries.find((item) => item.code === data.country);
     if (!country || mode !== "create") return;
     const controller = new AbortController();
