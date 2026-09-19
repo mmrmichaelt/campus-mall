@@ -8,6 +8,7 @@ SlidersHorizontal,
 MapPin,
 } from "lucide-react";
 import ListingCard from "@/components/ListingCard";
+import SplashScreen from "@/components/SplashScreen";
 import { countries } from "@/data/countries";
 
 const categories = [
