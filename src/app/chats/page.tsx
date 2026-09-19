@@ -24,7 +24,7 @@ export default async function ChatsPage() {
           </p>
 
           <Link
-            href="/account"
+            href="/join?next=/chats&action=chat"
             className="primary-btn"
           >
             Join or log in
@@ -34,9 +34,7 @@ export default async function ChatsPage() {
     );
   }
 
-  const fullyVerified =
-    user.emailVerified &&
-    user.phoneVerified;
+  const fullyVerified = user.emailVerified || user.phoneVerified;
 
   if (!fullyVerified) {
     return (
@@ -53,9 +51,7 @@ export default async function ChatsPage() {
           </h1>
 
           <p className="note">
-            Both your email address and phone number
-            must be verified before you can send or
-            receive marketplace messages.
+            Verify at least your email address or phone number before you can send or receive marketplace messages.
           </p>
 
           <Link
