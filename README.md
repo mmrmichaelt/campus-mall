@@ -28,7 +28,7 @@ This version rebuilds the handwritten Campus Mall plan into a real Next.js + Pri
 - Change university.
 - Promotion endpoint (payment-provider hook left explicit rather than pretending payment is complete).
 - Prisma PostgreSQL schema.
-- Support email: `campusmallsupport@gmail.com`.
+- Support email: `campusmall.support@gmail.com`.
 - Responsive web UI suitable for Android WebView/PWA wrapping later.
 - Demo seed data.
 
