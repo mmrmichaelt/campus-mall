@@ -45,11 +45,22 @@ export async function PUT(req: NextRequest, ctx: RouteContext) {
       );
     }
 
-    if (order.sellerId !== user.id) {
-      return NextResponse.json(
-        { error: "Not allowed." },
-        { status: 403 }
-      );
+    const isSeller = order.sellerId === user.id;
+    const isBuyer = order.buyerId === user.id;
+    if (!isSeller && !isBuyer) {
+      return NextResponse.json({ error: "Not allowed." }, { status: 403 });
+    }
+    if (isBuyer && status !== "CANCELLED") {
+      return NextResponse.json({ error: "Buyers may only cancel a pending order." }, { status: 403 });
+    }
+    if (isSeller && status === "CANCELLED") {
+      return NextResponse.json({ error: "Sellers should reject an order instead of cancelling it." }, { status: 403 });
+    }
+    if (isBuyer && order.status !== "PENDING") {
+      return NextResponse.json({ error: "Only pending orders can be cancelled by the buyer." }, { status: 409 });
+    }
+    if (isSeller && order.status === "PENDING" && !["ACCEPTED", "REJECTED"].includes(status)) {
+      return NextResponse.json({ error: "A pending order can only be accepted or rejected by the seller." }, { status: 400 });
     }
 
     const updated = await prisma.$transaction(async (tx) => {
