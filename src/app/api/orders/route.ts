@@ -10,7 +10,7 @@ export async function GET() {
         seller: { select: { id: true, name: true } },
       },
     });
-    return NextResponse.json({ success: true, orders });
+    return NextResponse.json({ success: true, orders, currentUserId: user.id });
   } catch (error) {
     if (error instanceof Error && error.message === "UNAUTHORIZED") {
       return NextResponse.json({ error: "Create an account to manage orders.", accountRequired: true }, { status: 401 });
