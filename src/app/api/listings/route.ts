@@ -259,7 +259,9 @@ export async function POST(request: Request) {
         currency: data.currency.trim().toUpperCase(),
         category: data.category.trim().toLowerCase(),
         imageUrl:
-          data.imageUrl?.trim() || null,
+          data.imageUrls?.length
+            ? JSON.stringify(data.imageUrls)
+            : data.imageUrl?.trim() || null,
         location: data.location.trim(),
         status: "ACTIVE",
       },
