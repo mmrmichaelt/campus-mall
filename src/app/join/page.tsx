@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { countries } from "@/data/countries";
+import { Eye, EyeOff } from "lucide-react";
 
 type Mode = "create" | "login";
 
@@ -22,6 +23,8 @@ confirmPassword: "",
 
 const [error, setError] = useState("");
 const [busy, setBusy] = useState(false);
+const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 const [institutions, setInstitutions] = useState<{name:string}[]>([]);
 const [institutionLoading, setInstitutionLoading] = useState(false);
 
@@ -257,7 +260,7 @@ return (
         Password
         <input
           required
-          type="password"
+          type={showPassword ? "text" : "password"}
           minLength={8}
           autoComplete={
             mode === "create"
@@ -270,6 +273,10 @@ return (
           }
           placeholder="At least 8 characters"
         />
+        <button type="button" className="secondary-btn" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? "Hide password" : "Show password"}>
+          {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+          {showPassword ? "Hide password" : "View password"}
+        </button>
       </label>
       
       {mode === "create" && (
@@ -277,7 +284,7 @@ return (
           Confirm password
           <input
             required
-            type="password"
+            type={showConfirmPassword ? "text" : "password"}
             minLength={8}
             autoComplete="new-password"
             value={data.confirmPassword}
@@ -286,6 +293,10 @@ return (
             }
             placeholder="Re-enter your password"
           />
+          <button type="button" className="secondary-btn" onClick={() => setShowConfirmPassword((value) => !value)} aria-label={showConfirmPassword ? "Hide confirmed password" : "Show confirmed password"}>
+            {showConfirmPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+            {showConfirmPassword ? "Hide password" : "View password"}
+          </button>
         </label>
       )}
 
