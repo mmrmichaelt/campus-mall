@@ -11,6 +11,7 @@ import {
   Search,
 } from "lucide-react";
 
+import Link from "next/link";
 import {
   countries,
 } from "@/data/countries";
@@ -36,8 +37,8 @@ export default function AccountForms() {
     useState("");
   const [email, setEmail] =
     useState("");
-  const [password, setPassword] =
-    useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [showPassword, setShowPassword] =
     useState(false);
@@ -136,10 +137,10 @@ export default function AccountForms() {
               email:
                 email.trim().toLowerCase(),
               password,
+              confirmPassword,
             }
           : {
-              email:
-                email.trim().toLowerCase(),
+              identifier: (email.trim() || phone.trim()),
               password,
             };
 
@@ -505,7 +506,6 @@ export default function AccountForms() {
                     )
                   }
                   placeholder="+254..."
-                  required
                 />
               </label>
             </>
@@ -522,7 +522,7 @@ export default function AccountForms() {
                 )
               }
               placeholder="you@example.com"
-              required
+              required={mode === "login" && !phone.trim()}
             />
           </label>
 
@@ -593,6 +593,27 @@ export default function AccountForms() {
             </div>
           </label>
 
+          {mode === "register" && (
+            <>
+              <label>
+                Confirm password
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  placeholder="Re-enter your password"
+                  required
+                />
+                {confirmPassword && confirmPassword !== password && (
+                  <span className="field-error">Passwords do not match.</span>
+                )}
+              </label>
+              {!email.trim() && !phone.trim() && (
+                <div className="field-error">Enter an email address, a phone number, or both.</div>
+              )}
+            </>
+          )}
+
           {error && (
             <div className="error">
               {error}
@@ -604,6 +625,10 @@ export default function AccountForms() {
               {success}
             </div>
           )}
+
+          <div className="hero-actions">
+            <Link href="/verify" className="secondary-btn">Verify Account</Link>
+          </div>
 
           <button
             className="primary-btn"
