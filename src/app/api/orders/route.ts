@@ -10,8 +10,8 @@ export async function POST(req: NextRequest) {
     const listingId = String(body.listingId || "").trim();
 
     if (!listingId) return NextResponse.json({ error: "Listing ID is required." }, { status: 400 });
-    if (!user.emailVerified || !user.phoneVerified) {
-      return NextResponse.json({ error: "Please verify both your email and phone number before placing an order." }, { status: 403 });
+    if (!user.emailVerified && !user.phoneVerified) {
+      return NextResponse.json({ error: "Please verify your email or phone number before placing an order.", redirectTo: "/verify" }, { status: 403 });
     }
 
     const listing = await prisma.listing.findUnique({ where: { id: listingId } });
