@@ -89,6 +89,7 @@ export async function getCurrentUser() {
       email: true,
       emailVerified: true,
       phoneVerified: true,
+      imageUrl: true,
       createdAt: true,
       updatedAt: true,
     },
