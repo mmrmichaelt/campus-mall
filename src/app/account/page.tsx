@@ -115,8 +115,7 @@ export default async function AccountPage() {
               </div>
             </div>
 
-            {!user.emailVerified ||
-            !user.phoneVerified ? (
+            {!user.emailVerified && !user.phoneVerified ? (
               <Link
                 href="/verify"
                 className="primary-btn"
@@ -125,9 +124,7 @@ export default async function AccountPage() {
               </Link>
             ) : (
               <div className="success">
-                Your account is fully verified. You
-                can use Campus Mall chats and
-                marketplace features.
+                Your account is verified because at least one contact method has been verified. You can verify the other contact method too.
               </div>
             )}
           </section>
