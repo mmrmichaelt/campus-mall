@@ -67,7 +67,12 @@ try {
 
   if (!response.ok) {
     if (response.status === 401) {
-      window.location.href = "/join";
+      window.location.href = "/join?next=/sell&action=sell";
+      return;
+    }
+
+    if (response.status === 403 && result.redirectTo) {
+      window.location.href = result.redirectTo + "?next=/sell";
       return;
     }
 
