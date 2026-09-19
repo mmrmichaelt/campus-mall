@@ -220,14 +220,10 @@ export async function POST(request: Request) {
       );
     }
 
-    if (
-      !user.emailVerified ||
-      !user.phoneVerified
-    ) {
+    if (!user.emailVerified && !user.phoneVerified) {
       return NextResponse.json(
         {
-          error:
-            "Please verify both your email and phone number before creating a listing.",
+          error: "Please verify your email or phone number before creating a listing.",
           redirectTo: "/verify",
         },
         { status: 403 }
