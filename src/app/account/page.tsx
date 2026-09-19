@@ -31,9 +31,13 @@ export default async function AccountPage() {
         <div className="profile-grid">
           <section className="panel">
             <div className="avatar-box">
-              <div className="avatar-circle">
-                {user.name.charAt(0).toUpperCase()}
-              </div>
+              {user.imageUrl ? (
+                <img src={user.imageUrl} alt={user.name} style={{ width: 80, height: 80, objectFit: "cover", borderRadius: "50%" }} />
+              ) : (
+                <div className="avatar-circle">
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+              )}
 
               <h2>{user.name}</h2>
 
