@@ -42,6 +42,31 @@ export default function ListingEngagement({ listingId, sellerId, active }: Props
     } finally { setBusy(""); }
   }
 
+  async function buyNow() {
+    const phone = window.prompt("Enter the M-Pesa phone number for this purchase:");
+    if (!phone) return;
+    setBusy("order"); setMessage("");
+    try {
+      const r = await fetch("/api/orders", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ listingId, phone }),
+      });
+      const result = await r.json().catch(() => ({}));
+      if (r.status === 401) {
+        window.location.href = "/join?next=" + encodeURIComponent(window.location.pathname) + "&action=order";
+        return;
+      }
+      if (r.status === 403 && result.redirectTo) {
+        window.location.href = result.redirectTo + "?next=" + encodeURIComponent(window.location.pathname);
+        return;
+      }
+      if (!r.ok) throw new Error(result.error || "Unable to start the order.");
+      setMessage(result.stk ? "M-Pesa payment request sent. Complete it on your phone." : "Order created.");
+    } catch (e) {
+      setMessage(e instanceof Error ? e.message : "Unable to start the order.");
+    } finally { setBusy(""); }
+  }
+
   async function share() {
     setBusy("share");
     try {
@@ -80,7 +105,7 @@ export default function ListingEngagement({ listingId, sellerId, active }: Props
           <Bookmark size={17} fill={data.favorited ? "currentColor" : "none"} /> {data.favorited ? "Saved" : "Save"}
         </button>
         {active && (
-          <Link className="primary-btn" href={"/chats?listingId=" + listingId + "&withUserId=" + sellerId}>
+          <button className="primary-btn" type="button" disabled={!active || !!busy} onClick={() => void buyNow()}><ShoppingCart size={17} /> Buy now</button>\n        <Link className="primary-btn" href={"/chats?listingId=" + listingId + "&withUserId=" + sellerId}>
             <MessageCircle size={17} /> Chat
           </Link>
         )}
