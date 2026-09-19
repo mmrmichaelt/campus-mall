@@ -24,13 +24,16 @@ export async function POST(request: Request) {
       );
     }
 
-    const email = parsed.data.email
-      .trim()
-      .toLowerCase();
+    const identifier = parsed.data.identifier.trim();
+    const emailIdentifier = identifier.toLowerCase();
+    const phoneIdentifier = identifier.replace(/[^\d+]/g, "");
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: {
-        email,
+        OR: [
+          { email: emailIdentifier },
+          { phone: phoneIdentifier },
+        ],
       },
       select: {
         id: true,
@@ -70,7 +73,7 @@ export async function POST(request: Request) {
     await createSession(user.id);
 
     const fullyVerified =
-      user.emailVerified && user.phoneVerified;
+      user.emailVerified || user.phoneVerified;
 
     return NextResponse.json({
       success: true,
