@@ -4,15 +4,17 @@ import { useState } from "react";
 import { Image as ImageIcon, Upload, X } from "lucide-react";
 
 const categories = [
-"Accommodation",
-"Beauty & dressing",
-"Electronics",
-"Food",
-"Furniture",
-"Jobs",
-"Printing & photography",
-"Stationery",
-"Utensils",
+  "Accommodation",
+  "Beauty & dressing",
+  "Electronics",
+  "Food",
+  "Furniture",
+  "Jobs",
+  "Printing & photography",
+  "Services",
+  "Stationery",
+  "Utensils",
+  "Other",
 ];
 
 export default function SellPage() {
