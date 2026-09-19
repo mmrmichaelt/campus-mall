@@ -12,15 +12,17 @@ import SplashScreen from "@/components/SplashScreen";
 import { countries } from "@/data/countries";
 
 const categories = [
-"Accommodation",
-"Beauty & dressing",
-"Electronics",
-"Food",
-"Furniture",
-"Jobs",
-"Printing & photography",
-"Stationery",
-"Utensils",
+  "Accommodation",
+  "Beauty & dressing",
+  "Electronics",
+  "Food",
+  "Furniture",
+  "Jobs",
+  "Printing & photography",
+  "Services",
+  "Stationery",
+  "Utensils",
+  "Other",
 ];
 
 export default function HomePage() {
