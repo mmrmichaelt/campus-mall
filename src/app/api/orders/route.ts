@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
 
     const listing = await prisma.listing.findUnique({ where: { id: listingId } });
     if (!listing || listing.status !== "ACTIVE") return NextResponse.json({ error: "Item unavailable." }, { status: 409 });
+    if (listing.currency !== "KES") return NextResponse.json({ error: "M-Pesa checkout currently supports KES listings only." }, { status: 400 });
     if (listing.sellerId === user.id) return NextResponse.json({ error: "You cannot order your own listing." }, { status: 400 });
 
     const order = await prisma.order.create({
