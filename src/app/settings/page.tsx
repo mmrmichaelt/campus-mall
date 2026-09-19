@@ -213,10 +213,10 @@ export default function Settings() {
         <section className="panel">
           <p className="category">SHOPPING</p>
           <h2><ShoppingBag size={20} /> Shopping preferences</h2>
-          <div className="settings-links">
-            <Link href="/cart" className="text-link">Trolley / cart →</Link>
-            <Link href="/listings" className="text-link">Browse marketplace →</Link>
-            <Link href="/orders" className="text-link">My orders →</Link>
+          <div className="hero-actions">
+            <Link href="/cart" className="secondary-btn"><ShoppingBag size={17} /> Trolley / cart</Link>
+            <Link href="/listings" className="secondary-btn">Browse marketplace</Link>
+            <Link href="/orders" className="secondary-btn">My orders</Link>
           </div>
         </section>
       </div>
@@ -225,10 +225,10 @@ export default function Settings() {
         <section className="panel">
           <p className="category">SELLING</p>
           <h2><Store size={20} /> Seller tools</h2>
-          <div className="settings-links">
-            <Link href="/sell" className="text-link">Add an item →</Link>
-            <Link href="/advertise" className="text-link">Advertise a product →</Link>
-            <Link href="/business" className="text-link">Business account →</Link>
+          <div className="hero-actions">
+            <Link href="/sell" className="primary-btn">Add an item</Link>
+            <Link href="/advertise" className="secondary-btn">Advertise a product</Link>
+            <Link href="/business" className="secondary-btn">Business account</Link>
           </div>
           <p className="note" style={{ marginTop: 12 }}>
             Listing creation can remain free while featured placement, promotions and advertising can be paid services.
@@ -238,10 +238,10 @@ export default function Settings() {
         <section className="panel">
           <p className="category">PAYMENTS & PRO</p>
           <h2><CreditCard size={20} /> Payments and subscriptions</h2>
-          <div className="settings-links">
-            <Link href="/account/pro" className="text-link">Manage Campus Mall Pro →</Link>
-            <Link href="/pro" className="text-link">View Pro plans →</Link>
-            <Link href="/business" className="text-link">Business plans →</Link>
+          <div className="hero-actions">
+            <Link href="/account/pro" className="primary-btn">Manage Campus Mall Pro</Link>
+            <Link href="/pro" className="secondary-btn">View Pro plans</Link>
+            <Link href="/business" className="secondary-btn">Business plans</Link>
           </div>
         </section>
       </div>
@@ -261,7 +261,15 @@ export default function Settings() {
           <p className="category">APPEARANCE</p>
           <h2><Palette size={20} /> App experience</h2>
           <p className="note">Campus Mall is designed for phone and desktop use. Your browser or device can control dark/light appearance where supported.</p>
-          <Link href="/" className="secondary-btn">Return to marketplace</Link>
+          <div className="hero-actions">
+            <Link href="/" className="secondary-btn">Return to marketplace</Link>
+            <button type="button" className="secondary-btn" onClick={() => {
+              const root = document.documentElement;
+              const next = root.dataset.theme === "dark" ? "light" : "dark";
+              root.dataset.theme = next;
+              window.localStorage.setItem("campus_mall_theme", next);
+            }}>Toggle dark / light mode</button>
+          </div>
         </section>
       </div>
 
