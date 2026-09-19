@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
+import type { Route } from "next";
 import { useState } from "react";
 
 export default function ProCheckoutPage() {
@@ -41,7 +42,7 @@ export default function ProCheckoutPage() {
       }
 
       if (data.reference) {
-        router.push(`/pro/payment/${data.reference}`);
+        router.push(`/pro/payment/${data.reference}` as Route);
         return;
       }
 
