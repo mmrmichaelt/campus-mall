@@ -1,11 +1,12 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { LogOut, Save } from "lucide-react";
+import { LogOut, Save, Upload, Image as ImageIcon } from "lucide-react";
 
 type ProfileFormProps = {
   initialName: string;
   initialUniversity: string;
+  initialImageUrl?: string | null;
 };
 
 type ProfileResponse = {
@@ -17,10 +18,13 @@ type ProfileResponse = {
 export default function ProfileForm({
   initialName,
   initialUniversity,
+  initialImageUrl,
 }: ProfileFormProps) {
   const [name, setName] = useState(initialName);
   const [university, setUniversity] =
     useState(initialUniversity);
+  const [imageUrl, setImageUrl] = useState(initialImageUrl || "");
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   const [saving, setSaving] = useState(false);
   const [loggingOut, setLoggingOut] =
@@ -49,6 +53,7 @@ export default function ProfileForm({
           body: JSON.stringify({
             name: name.trim(),
             university: university.trim(),
+            imageUrl,
           }),
         }
       );
@@ -152,6 +157,58 @@ export default function ProfileForm({
               know who they are dealing with.
             </p>
           </div>
+        </div>
+
+        <div className="panel" style={{ marginBottom: "18px" }}>
+          <div className="section-title">
+            <div>
+              <p className="category">PROFILE PHOTO</p>
+              <h3>Upload your profile picture</h3>
+              <p className="note">Use a clear photo so other Campus Mall users can recognize your account.</p>
+            </div>
+            <ImageIcon size={24} />
+          </div>
+
+          {imageUrl && (
+            <div style={{ marginBottom: "14px" }}>
+              <img
+                src={imageUrl}
+                alt="Your profile"
+                style={{ width: 120, height: 120, objectFit: "cover", borderRadius: "50%" }}
+              />
+            </div>
+          )}
+
+          <input
+            id="profile-photo"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={async (event) => {
+              const file = event.target.files?.[0];
+              if (!file) return;
+              setUploadingPhoto(true);
+              setError("");
+              setMessage("");
+              try {
+                const formData = new FormData();
+                formData.append("files", file);
+                const response = await fetch("/api/uploads", { method: "POST", body: formData });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok || !data.urls?.[0]) {
+                  throw new Error(data.error || "Unable to upload profile photo.");
+                }
+                setImageUrl(data.urls[0]);
+                setMessage("Profile photo uploaded. Save changes to keep it on your profile.");
+              } catch (error) {
+                setError(error instanceof Error ? error.message : "Unable to upload profile photo.");
+              } finally {
+                setUploadingPhoto(false);
+                event.target.value = "";
+              }
+            }}
+          />
+
+          {uploadingPhoto && <p className="note">Uploading photo...</p>}
         </div>
 
         <form
