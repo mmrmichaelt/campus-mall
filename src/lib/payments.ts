@@ -13,7 +13,7 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
       reference,
       amount:input.amount,
       phone:input.phone,
-      metadata:input.metadata
+      metadata:input.metadata ?? undefined
     }
   });
   const configured=!!(process.env.MPESA_CONSUMER_KEY&&process.env.MPESA_CONSUMER_SECRET&&process.env.MPESA_SHORTCODE&&process.env.MPESA_PASSKEY&&process.env.MPESA_CALLBACK_URL);
@@ -30,7 +30,7 @@ export async function settleRevenue(input:{userId?:string;type:string;reference:
   const fee=input.fee||0;
   return prisma.revenueTransaction.upsert({
     where:{reference:input.reference},
-    update:{status:"SETTLED",gross:input.gross,fee,net:input.gross-fee,metadata:input.metadata},
+    update:{status:"SETTLED",gross:input.gross,fee,net:input.gross-fee,metadata:input.metadata ?? undefined},
     create:{userId:input.userId,type:input.type,reference:input.reference,gross:input.gross,fee,net:input.gross-fee,status:"SETTLED",metadata:input.metadata}
   });
 }
