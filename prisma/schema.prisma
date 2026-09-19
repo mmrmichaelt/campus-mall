@@ -7,7 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum InstitutionMembershipType {\n  POSTING\n  VISITING\n}\n\nenum AccountType {
+enum InstitutionMembershipType {
+  POSTING
+  VISITING
+}
+
+enum AccountType {
   STUDENT
   OUTSIDER
 }
@@ -86,6 +91,7 @@ model User {
   favorites         ListingFavorite[]
   comments          ListingComment[]
   activities        Activity[]
+  institutionMemberships UserInstitutionMembership[]
 
   // Campus Mall Pro
   proSubscriptions  ProSubscription[]
