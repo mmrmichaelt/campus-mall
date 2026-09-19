@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { settleRevenue } from "@/lib/payments";
-import { vendDigitalProduct } from "../../../../../../../../lib/digital-provider";
+import { vendDigitalProduct } from "@/../lib/digital-provider";
 
 function transactionFeeRate() {
   const value = Number(process.env.TRANSACTION_FEE_PERCENT || "5");
