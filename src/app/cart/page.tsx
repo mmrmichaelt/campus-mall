@@ -102,6 +102,8 @@ export default function Cart() {
   }
 
   async function order(listingId: string) {
+    const phone = window.prompt("Enter the M-Pesa phone number for this purchase:");
+    if (!phone) return;
     setBusyId(listingId);
     setMessage("");
 
@@ -113,7 +115,7 @@ export default function Cart() {
         },
         body: JSON.stringify({
           listingId,
-          paymentMethod: "To be agreed",
+          phone,
         }),
       });
 
