@@ -512,17 +512,17 @@ export default function AccountForms() {
           )}
 
           <label>
-            Email
+            {mode === "login" ? "Email or phone number" : "Email"}
             <input
-              type="email"
+              type={mode === "login" ? "text" : "email"}
               value={email}
               onChange={(event) =>
                 setEmail(
                   event.target.value
                 )
               }
-              placeholder="you@example.com"
-              required={mode === "login" && !phone.trim()}
+              placeholder={mode === "login" ? "you@example.com or +254..." : "you@example.com"}
+              required={mode === "login"}
             />
           </label>
 
