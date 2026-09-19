@@ -41,8 +41,7 @@ export async function POST(request: Request) {
       (type === "EMAIL" && user.emailVerified) ||
       (type === "PHONE" && user.phoneVerified)
     ) {
-      const fullyVerified =
-        user.emailVerified && user.phoneVerified;
+      const fullyVerified = user.emailVerified || user.phoneVerified;
 
       return NextResponse.json({
         success: true,
@@ -87,9 +86,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const fullyVerified =
-      updatedUser.emailVerified &&
-      updatedUser.phoneVerified;
+    const fullyVerified = updatedUser.emailVerified || updatedUser.phoneVerified;
 
     return NextResponse.json({
       success: true,
