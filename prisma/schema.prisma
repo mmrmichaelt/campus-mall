@@ -82,6 +82,10 @@ model User {
   notifications     Notification[]
   buyerOrders       Order[]            @relation("BuyerOrders")
   sellerOrders      Order[]            @relation("SellerOrders")
+  likes             ListingLike[]
+  favorites         ListingFavorite[]
+  comments          ListingComment[]
+  activities        Activity[]
 
   // Campus Mall Pro
   proSubscriptions  ProSubscription[]
@@ -131,6 +135,10 @@ model Listing {
   messages  Message[]
   cartItems CartItem[]
   orders    Order[]
+  likes     ListingLike[]
+  favorites ListingFavorite[]
+  comments  ListingComment[]
+  activities Activity[]
 
   @@index([sellerId])
   @@index([category])
@@ -404,4 +412,62 @@ model AffiliatePartner {
   active Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+
+model ListingLike {
+  id        String   @id @default(cuid())
+  userId    String
+  listingId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, listingId])
+  @@index([listingId, createdAt])
+}
+
+model ListingFavorite {
+  id        String   @id @default(cuid())
+  userId    String
+  listingId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, listingId])
+  @@index([listingId, createdAt])
+}
+
+model ListingComment {
+  id        String   @id @default(cuid())
+  userId    String
+  listingId String
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  listingId String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([listingId, createdAt])
+  @@index([type, createdAt])
 }
