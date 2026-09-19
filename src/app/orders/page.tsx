@@ -67,7 +67,7 @@ export default function Orders() {
                   <h2>{order.listing.title}</h2>
                   <p className="note">KSh {Number(order.amount).toLocaleString()} · Buyer: {order.buyer.name} · Seller: {order.seller.name}</p>
                 </div>
-                <Link href={"/listings/" + order.listing.id} className="secondary-btn">View item</Link>
+                <Link href={`/listings/${order.listing.id}`} className="secondary-btn">View item</Link>
               </div>
               {currentUserId === order.seller?.id && (
                 <div className="hero-actions">
