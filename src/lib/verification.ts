@@ -77,6 +77,10 @@ export async function sendEmailVerificationCode(userId: string) {
     throw new Error("User not found");
   }
 
+  if (!user.email) {
+    throw new Error("No email address is attached to this account");
+  }
+
   const verification = await createVerificationCode(
     userId,
     "EMAIL"
@@ -126,6 +130,10 @@ export async function sendPhoneVerificationCode(userId: string) {
 
   if (!user) {
     throw new Error("User not found");
+  }
+
+  if (!user.phone) {
+    throw new Error("No phone number is attached to this account");
   }
 
   const verification = await createVerificationCode(
