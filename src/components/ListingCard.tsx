@@ -29,6 +29,15 @@ type ListingCardProps = {
   onCart?: (id: string) => void;
 };
 
+function getImageUrl(value?: string | null) {
+  if (!value) return null;
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed) && typeof parsed[0] === "string") return parsed[0];
+  } catch {}
+  return value;
+}
+
 export default function ListingCard({
   item,
   onCart,
@@ -37,6 +46,7 @@ export default function ListingCard({
 
   const verified =
     item.seller?.emailVerified || item.seller?.phoneVerified;
+  const imageUrl = getImageUrl(item.imageUrl);
 
   return (
     <article
@@ -45,9 +55,9 @@ export default function ListingCard({
       }`}
     >
       <div className="listing-photo">
-        {item.imageUrl ? (
+        {imageUrl ? (
           <img
-            src={item.imageUrl}
+            src={imageUrl}
             alt={item.title}
             loading="lazy"
           />
