@@ -59,9 +59,17 @@ export default async function ProfilePage() {
       <div className="profile-grid">
         <aside className="panel">
           <div className="avatar-box">
-            <div className="avatar-circle">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
+            {user.imageUrl ? (
+              <img
+                src={user.imageUrl}
+                alt={user.name}
+                style={{ width: 96, height: 96, objectFit: "cover", borderRadius: "50%" }}
+              />
+            ) : (
+              <div className="avatar-circle">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+            )}
 
             <h2>{user.name}</h2>
 
@@ -136,6 +144,7 @@ export default async function ProfilePage() {
           <ProfileForm
             initialName={user.name}
             initialUniversity={user.university}
+            initialImageUrl={user.imageUrl}
           />
         </div>
       </div>
