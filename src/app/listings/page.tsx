@@ -20,8 +20,10 @@ const categories = [
   "Furniture",
   "Jobs",
   "Printing & photography",
+  "Services",
   "Stationery",
   "Utensils",
+  "Other",
 ];
 
 export default async function ListingsPage({
