@@ -41,12 +41,13 @@ export default function Cart() {
 
       const data = await response.json().catch(() => ({}));
 
+      if (response.status === 401) {
+        window.location.href = "/join?next=/cart&action=cart";
+        return;
+      }
       if (!response.ok) {
         setItems([]);
-        setMessage(
-          data?.error ||
-            "Log in to use your trolley."
-        );
+        setMessage(data?.error || "Unable to load your trolley.");
         return;
       }
 
