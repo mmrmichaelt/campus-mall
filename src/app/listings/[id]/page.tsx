@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "../../../lib/prisma";
 import { getCurrentUser } from "../../../lib/auth";
 import ListingActions from "../../../components/ListingActions";
+import ListingEngagement from "../../../components/ListingEngagement";
 
 export const dynamic = "force-dynamic";
 
@@ -95,12 +96,11 @@ export default async function ListingPage({
   const imageUrls = getImageUrls(listing.imageUrl);
 
   const sellerFullyVerified =
-    listing.seller.emailVerified &&
+    listing.seller.emailVerified ||
     listing.seller.phoneVerified;
 
   const currentUserFullyVerified =
-    user?.emailVerified &&
-    user?.phoneVerified;
+    !!user && (user.emailVerified || user.phoneVerified);
 
   return (
     <div className="panel">
@@ -285,6 +285,8 @@ export default async function ListingPage({
             </div>
           </section>
 
+          <ListingEngagement listingId={listing.id} sellerId={listing.seller.id} active={listing.status === "ACTIVE"} />
+
           <div style={{ marginTop: "20px" }}>
             {isSeller ? (
               <ListingActions
@@ -300,9 +302,7 @@ export default async function ListingPage({
                     </h3>
 
                     <p className="note">
-                      Join Campus Mall and verify
-                      your email and phone number
-                      to start a conversation.
+                      Create a Campus Mall account and verify your email, your phone number, or both to start a conversation.
                     </p>
 
                     <Link
@@ -319,9 +319,7 @@ export default async function ListingPage({
                     </h3>
 
                     <p className="note">
-                      Your email and phone number
-                      must both be verified before
-                      you can contact sellers.
+                      Verify at least one contact method — your email or your phone number — before you can contact sellers.
                     </p>
 
                     <Link
