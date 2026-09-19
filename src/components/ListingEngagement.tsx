@@ -68,25 +68,33 @@ export default function ListingEngagement({ listingId, sellerId, active }: Props
   }
 
   async function share() {
-    setBusy("share");
+    setBusy("share"); setMessage("");
     try {
+      const gate = await fetch("/api/listings/" + listingId + "/engagement", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "share", channel: "pending" }),
+      });
+      const gateData = await gate.json().catch(() => ({}));
+      if (gate.status === 401) {
+        window.location.href = "/join?next=" + encodeURIComponent(window.location.pathname) + "&action=share";
+        return;
+      }
+      if (gate.status === 403 && gateData.verificationRequired) {
+        window.location.href = "/verify?next=" + encodeURIComponent(window.location.pathname);
+        return;
+      }
+      if (!gate.ok) throw new Error(gateData.error || "Unable to share this listing.");
+
       const url = window.location.href;
       if (navigator.share) {
         await navigator.share({ title: document.title, url });
-        await fetch("/api/listings/" + listingId + "/engagement", {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "share", channel: "native" }),
-        });
       } else {
         await navigator.clipboard.writeText(url);
-        await fetch("/api/listings/" + listingId + "/engagement", {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "share", channel: "clipboard" }),
-        });
         setMessage("Listing link copied.");
       }
-    } catch {}
-    finally { setBusy(""); }
+    } catch (e) {
+      if (e instanceof Error && e.name !== "AbortError") setMessage(e.message);
+    } finally { setBusy(""); }
   }
 
   return (
