@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { NextRequest } from "next/server";
 
-import { prisma } from "../../../../src/lib/prisma";
+import { prisma } from "../../../../lib/prisma";
 
 function verifySignature(
   rawBody: string,
