@@ -30,8 +30,7 @@ export async function GET() {
         email: user.email,
         emailVerified: user.emailVerified,
         phoneVerified: user.phoneVerified,
-        fullyVerified:
-          user.emailVerified && user.phoneVerified,
+        fullyVerified: user.emailVerified || user.phoneVerified,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       },
