@@ -5,7 +5,7 @@ import { settleRevenue } from "@/lib/payments";
 export async function POST(request: Request) {
   const user = await getCurrentUser();
   const admins = (process.env.ADMIN_EMAILS || "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean);
-  if (!user || !admins.includes(user.email.toLowerCase())) {
+  if (!user || !user.email || !admins.includes(user.email.toLowerCase())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
