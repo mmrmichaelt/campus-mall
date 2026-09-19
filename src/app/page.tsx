@@ -8,6 +8,7 @@ SlidersHorizontal,
 MapPin,
 } from "lucide-react";
 import ListingCard from "@/components/ListingCard";
+import { countries } from "@/data/countries";
 
 const categories = [
 "Accommodation",
@@ -25,6 +26,11 @@ export default function HomePage() {
 const [items, setItems] = useState<any[]>([]);
 const [user, setUser] = useState<any>(null);
 const [loading, setLoading] = useState(true);
+const [guestCountry, setGuestCountry] = useState("KE");
+const [guestUniversity, setGuestUniversity] = useState("");
+const [guestInstitutions, setGuestInstitutions] = useState<{ name: string }[]>([]);
+const [guestSetup, setGuestSetup] = useState(false);
+const [guestLoading, setGuestLoading] = useState(false);
 
 const [q, setQ] = useState("");
 const [category, setCategory] = useState("");
@@ -34,7 +40,11 @@ const params = new URLSearchParams(window.location.search);
 const initialQuery = params.get("q") || "";
 
 setQ(initialQuery);
-
+const savedCountry = window.localStorage.getItem("campus_mall_guest_country");
+const savedUniversity = window.localStorage.getItem("campus_mall_guest_university");
+if (savedCountry) setGuestCountry(savedCountry);
+if (savedUniversity) setGuestUniversity(savedUniversity);
+if (!savedCountry || !savedUniversity) setGuestSetup(true);
 }, []);
 
 useEffect(() => {
@@ -47,6 +57,18 @@ setUser(data.user ?? null);
 setUser(null);
 });
 }, []);
+
+useEffect(() => {
+if (user || !guestUniversity) return;
+const controller = new AbortController();
+setGuestLoading(true);
+fetch(`/api/institutions?country=${encodeURIComponent(guestCountry)}`)
+.then((response) => response.json())
+.then((data) => setGuestInstitutions(Array.isArray(data.institutions) ? data.institutions : []))
+.catch(() => setGuestInstitutions([]))
+.finally(() => setGuestLoading(false));
+return () => controller.abort();
+}, [guestCountry, user, guestUniversity]);
 
 useEffect(() => {
 const controller = new AbortController();
@@ -66,6 +88,14 @@ async function loadListings() {
 
     if (category) {
       url.searchParams.set("category", category);
+    }
+
+    if (!user && guestCountry) {
+      url.searchParams.set("country", guestCountry);
+    }
+
+    if (!user && guestUniversity) {
+      url.searchParams.set("university", guestUniversity);
     }
 
     const response = await fetch(url.toString(), {
@@ -97,7 +127,7 @@ return () => {
   controller.abort();
 };
 
-}, [q, category]);
+}, [q, category, user, guestCountry, guestUniversity]);
 
 async function addToCart(listingId: string) {
 if (!user) {
@@ -149,7 +179,7 @@ return (
       Your campus marketplace for students and
       outsiders. See items posted around{" "}
       <b>
-        {user?.university || "your selected university"}
+        {user?.university || guestUniversity || "your selected university"}
       </b>
       , buy, sell, chat and manage orders in one place.
     </p>
@@ -170,6 +200,13 @@ return (
 
   <div className="section-title">
     <h2>Marketplace</h2>
+
+    {!user && guestUniversity && (
+      <span className="note">
+        <MapPin size={14} />
+        Browsing as guest • {guestUniversity}
+      </span>
+    )}
 
     {user && (
       <span className="note">
