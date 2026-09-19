@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 
-import { prisma } from "../../../../src/lib/prisma";
-import { getCurrentUser } from "../../../../src/lib/auth";
+import { prisma } from "../../../../lib/prisma";
+import { getCurrentUser } from "../../../../lib/auth";
 
 function normalizeKenyanPhone(phone: string) {
   const value = phone.trim().replace(/\s+/g, "");
