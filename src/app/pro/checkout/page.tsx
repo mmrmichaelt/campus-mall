@@ -1,9 +1,9 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
-export default function ProCheckoutPage() {
+function CheckoutContent() {
   const searchParams = useSearchParams();
   const plan = searchParams.get("plan") === "YEARLY" ? "YEARLY" : "MONTHLY";
   const amount = plan === "YEARLY" ? 1999 : 199;
@@ -58,4 +58,9 @@ export default function ProCheckoutPage() {
       </div>
     </main>
   );
+}
+
+
+export default function ProCheckoutPage() {
+  return <Suspense fallback={<main className="mx-auto max-w-lg px-4 py-10">Loading checkout...</main>}><CheckoutContent /></Suspense>;
 }
