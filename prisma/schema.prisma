@@ -312,3 +312,95 @@ model DigitalOrder {
   @@index([providerReference])
   @@index([createdAt])
 }
+
+
+model PaymentIntent {
+  id String @id @default(cuid())
+  userId String
+  purpose String
+  reference String @unique
+  amount Decimal @db.Decimal(12,2)
+  currency String @default("KES")
+  phone String
+  status String @default("PENDING")
+  provider String @default("MPESA")
+  merchantRequestId String?
+  checkoutRequestId String? @unique
+  resultCode Int?
+  resultDesc String?
+  metadata Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId,status])
+  @@index([purpose,createdAt])
+}
+
+model RevenueTransaction {
+  id String @id @default(cuid())
+  userId String?
+  type String
+  reference String @unique
+  gross Decimal @db.Decimal(12,2)
+  fee Decimal @db.Decimal(12,2) @default(0)
+  net Decimal @db.Decimal(12,2)
+  currency String @default("KES")
+  status String @default("PENDING")
+  metadata Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId,createdAt])
+  @@index([type,status,createdAt])
+}
+
+model PromotionPurchase {
+  id String @id @default(cuid())
+  userId String
+  listingId String
+  paymentIntentId String? @unique
+  days Int
+  amount Decimal @db.Decimal(12,2)
+  status String @default("PENDING")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId,status])
+  @@index([listingId,status])
+}
+
+model BusinessSubscription {
+  id String @id @default(cuid())
+  userId String
+  plan String
+  amount Decimal @db.Decimal(12,2)
+  currency String @default("KES")
+  status String @default("PENDING")
+  paymentIntentId String? @unique
+  startedAt DateTime?
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId,status])
+}
+
+model AdCampaign {
+  id String @id @default(cuid())
+  userId String
+  title String
+  budget Decimal @db.Decimal(12,2)
+  status String @default("PENDING_PAYMENT")
+  paymentIntentId String? @unique
+  startsAt DateTime?
+  endsAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId,status])
+}
+
+model AffiliatePartner {
+  id String @id @default(cuid())
+  name String
+  trackingId String?
+  commissionRate Decimal? @db.Decimal(8,4)
+  active Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
