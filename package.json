@@ -4,13 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && prisma db push && next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
     "prisma:push": "prisma db push",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "mobile:sync": "npx cap sync",
+    "mobile:android": "npx cap open android",
+    "mobile:ios": "npx cap open ios"
   },
   "dependencies": {
     "@prisma/client": "^6.16.2",
@@ -22,7 +25,11 @@
     "react-dom": "^19.1.1",
     "resend": "^6.0.0",
     "twilio": "^5.10.3",
-    "zod": "^4.1.8"
+    "zod": "^4.1.8",
+    "@capacitor/core": "^7.4.0",
+    "@capacitor/cli": "^7.4.0",
+    "@capacitor/android": "^7.4.0",
+    "@capacitor/ios": "^7.4.0"
   },
   "devDependencies": {
     "@types/node": "^24.5.2",
