@@ -6,7 +6,7 @@ import { useState } from "react";
 export default function ProCheckoutPage() {
   const searchParams = useSearchParams();
   const plan = searchParams.get("plan") === "YEARLY" ? "YEARLY" : "MONTHLY";
-  const amount = plan === "YEARLY" ? 1999 : 1999 / 10;
+  const amount = plan === "YEARLY" ? 1999 : 199;
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
