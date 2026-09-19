@@ -72,24 +72,25 @@ export async function GET(request: Request) {
           }
         : {}),
 
-      ...(country
+      ...(country || university
         ? {
             seller: {
-              country: {
-                equals: country,
-                mode: "insensitive",
-              },
-            },
-          }
-        : {}),
-
-      ...(university
-        ? {
-            seller: {
-              university: {
-                equals: university,
-                mode: "insensitive",
-              },
+              ...(country
+                ? {
+                    country: {
+                      equals: country,
+                      mode: "insensitive",
+                    },
+                  }
+                : {}),
+              ...(university
+                ? {
+                    university: {
+                      equals: university,
+                      mode: "insensitive",
+                    },
+                  }
+                : {}),
             },
           }
         : {}),
