@@ -85,6 +85,21 @@ export default function Settings() {
       </div>
 
       <div className="panel">
+        <h2>Campus Mall revenue services</h2>
+        <p className="note">The platform is structured to support these revenue channels:</p>
+        <ul>
+          <li>Data & airtime commissions</li>
+          <li>Pro subscriptions</li>
+          <li>Seller listing/promotional fees</li>
+          <li>Featured products</li>
+          <li>Advertising</li>
+          <li>Transaction/service fees</li>
+          <li>Business accounts</li>
+          <li>Affiliate/partner revenue</li>
+        </ul>
+      </div>
+
+      <div className="panel">
         <h2>Help & legal</h2>
 
         <p>
