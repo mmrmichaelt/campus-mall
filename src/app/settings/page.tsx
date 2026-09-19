@@ -213,7 +213,6 @@ export default function Settings() {
           <div className="settings-links">
             <Link href="/cart" className="text-link">Trolley / cart →</Link>
             <Link href="/listings" className="text-link">Browse marketplace →</Link>
-            <Link href="/digital" className="text-link">Data & airtime →</Link>
             <Link href="/orders" className="text-link">My orders →</Link>
           </div>
         </section>
