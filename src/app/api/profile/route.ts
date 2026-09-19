@@ -39,6 +39,7 @@ export async function GET() {
         phone: user.phone,
         emailVerified: user.emailVerified,
         phoneVerified: user.phoneVerified,
+        imageUrl: user.imageUrl,
         publicProfile: settings?.publicProfile ?? true,
         createdAt: user.createdAt,
       },
@@ -79,6 +80,11 @@ export async function PUT(request: Request) {
     const university =
       typeof body?.university === "string"
         ? body.university.trim()
+        : "";
+
+    const imageUrl =
+      typeof body?.imageUrl === "string"
+        ? body.imageUrl.trim()
         : "";
 
     if (name.length < 2) {
@@ -127,6 +133,9 @@ export async function PUT(request: Request) {
       data: {
         name,
         university,
+        ...(imageUrl
+          ? { imageUrl }
+          : {}),
       },
       select: {
         id: true,
@@ -138,6 +147,7 @@ export async function PUT(request: Request) {
         phone: true,
         emailVerified: true,
         phoneVerified: true,
+        imageUrl: true,
         createdAt: true,
         updatedAt: true,
       },
