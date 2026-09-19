@@ -35,23 +35,20 @@ export const registerSchema = z.object({
     .email("Enter a valid email address")
     .max(254, "Email address is too long"),
 
-  confirmEmail: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .email("Enter a valid confirmation email address")
-    .max(254, "Confirmation email is too long"),
-
   password: z
     .string()
     .min(8, "Password must contain at least 8 characters")
     .max(128, "Password is too long"),
+
+  confirmPassword: z
+    .string()
+    .min(8, "Please confirm your password"),
 }).superRefine((data, ctx) => {
-  if (data.email !== data.confirmEmail) {
+  if (data.password !== data.confirmPassword) {
     ctx.addIssue({
       code: "custom",
-      path: ["confirmEmail"],
-      message: "Email addresses do not match",
+      path: ["confirmPassword"],
+      message: "Passwords do not match",
     });
   }
 });
