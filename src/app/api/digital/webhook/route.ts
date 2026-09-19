@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { NextRequest } from "next/server";
 
 import { prisma } from "../../../../lib/prisma";
+import { settleRevenue } from "@/lib/payments";
 
 function verifySignature(
   rawBody: string,
@@ -217,11 +218,26 @@ export async function POST(request: NextRequest) {
         id: order.id,
       },
       data: {
-        status: "PAYMENT_CONFIRMED",
+        status: "SUCCESS",
         providerReference:
           providerReference || undefined,
       },
     });
+
+    const commission = Number(order.amount) * Number(process.env.DIGITAL_COMMISSION_PERCENT || "5") / 100;
+    if (commission > 0) {
+      await settleRevenue({
+        userId: order.userId,
+        type: "DATA_AIRTIME_COMMISSION",
+        reference: "DIG-" + order.id,
+        gross: commission,
+        metadata: {
+          digitalOrderId: order.id,
+          saleAmount: Number(order.amount),
+          providerReference: providerReference || null,
+        },
+      });
+    }
 
     return Response.json({
       success: true,
