@@ -41,6 +41,10 @@ export async function POST(request: Request) {
     const { type } = parsed.data;
 
     if (type === "EMAIL") {
+      if (!user.email) {
+        return NextResponse.json({ error: "No email address is attached to this account." }, { status: 400 });
+      }
+
       if (user.emailVerified) {
         return NextResponse.json(
           {
@@ -58,6 +62,10 @@ export async function POST(request: Request) {
         message:
           "A new verification code has been sent to your email address.",
       });
+    }
+
+    if (!user.phone) {
+      return NextResponse.json({ error: "No phone number is attached to this account." }, { status: 400 });
     }
 
     if (user.phoneVerified) {
