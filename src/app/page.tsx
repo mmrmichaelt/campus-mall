@@ -129,6 +129,13 @@ return () => {
 
 }, [q, category, user, guestCountry, guestUniversity]);
 
+function saveGuestContext() {
+  if (!guestCountry || !guestUniversity) return;
+  window.localStorage.setItem("campus_mall_guest_country", guestCountry);
+  window.localStorage.setItem("campus_mall_guest_university", guestUniversity);
+  setGuestSetup(false);
+}
+
 async function addToCart(listingId: string) {
 if (!user) {
 window.location.href = "/join";
