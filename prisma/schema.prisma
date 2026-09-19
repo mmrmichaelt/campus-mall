@@ -67,6 +67,7 @@ model User {
   phone             String             @unique
   email             String             @unique
   passwordHash      String
+  imageUrl          String?
   emailVerified     Boolean            @default(false)
   phoneVerified     Boolean            @default(false)
   createdAt         DateTime           @default(now())
