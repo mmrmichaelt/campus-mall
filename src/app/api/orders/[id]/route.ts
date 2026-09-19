@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/auth";
 
 const VALID_STATUSES = [
   "PENDING",
+  "PAID",
   "ACCEPTED",
   "REJECTED",
   "COMPLETED",
