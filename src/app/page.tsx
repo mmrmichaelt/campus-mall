@@ -179,6 +179,30 @@ try {
 
 return (
 <>
+{!user && guestSetup && (
+  <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="guest-setup-title">
+    <div className="modal-card">
+      <p className="category">CAMPUS MALL GUEST</p>
+      <h2 id="guest-setup-title">Choose your country and university</h2>
+      <p className="note">Browse without an account. Create an account only when you want to like, comment, share, chat, order, save items, add items or sell.</p>
+      <div className="form">
+        <label>Country
+          <select value={guestCountry} onChange={(e) => { setGuestCountry(e.target.value); setGuestUniversity(""); }}>
+            {countries.map((country) => <option key={country.code} value={country.code}>{country.flag} {country.name}</option>)}
+          </select>
+        </label>
+        <label>University / College
+          <select value={guestUniversity} onChange={(e) => setGuestUniversity(e.target.value)} disabled={guestLoading}>
+            <option value="">{guestLoading ? "Loading institutions..." : "Choose your institution"}</option>
+            {guestInstitutions.map((institution, index) => <option key={institution.name + index} value={institution.name}>{institution.name}</option>)}
+          </select>
+        </label>
+        <button type="button" className="primary-btn" disabled={!guestUniversity} onClick={saveGuestContext}>Continue as guest</button>
+        <Link className="secondary-btn" href="/join" onClick={() => { if (guestCountry && guestUniversity) { window.localStorage.setItem("campus_mall_guest_country", guestCountry); window.localStorage.setItem("campus_mall_guest_university", guestUniversity); } }}>Create account</Link>
+      </div>
+    </div>
+  </div>
+)}
 <section className="hero">
 <h1>Campus Mall</h1>
 
