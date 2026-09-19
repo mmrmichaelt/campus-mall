@@ -27,19 +27,21 @@ const [showPassword, setShowPassword] = useState(false);
 const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 const [institutions, setInstitutions] = useState<{name:string}[]>([]);
 const [institutionLoading, setInstitutionLoading] = useState(false);
+const [institutionQuery, setInstitutionQuery] = useState("");
+const [showInstitutionOptions, setShowInstitutionOptions] = useState(false);
 
 useEffect(() => {
   const country = countries.find((item) => item.code === data.country);
   if (!country || mode !== "create") return;
   const controller = new AbortController();
   setInstitutionLoading(true);
-  fetch(`/api/institutions?country=${encodeURIComponent(country.code)}`, { signal: controller.signal })
+  fetch(`/api/institutions?country=${encodeURIComponent(country.code)}&name=${encodeURIComponent(institutionQuery)}`, { signal: controller.signal })
     .then((r) => r.json())
     .then((d) => setInstitutions(Array.isArray(d.institutions) ? d.institutions : []))
     .catch(() => setInstitutions([]))
     .finally(() => setInstitutionLoading(false));
   return () => controller.abort();
-}, [data.country, mode]);
+}, [data.country, mode, institutionQuery]);
 
 function update(field: string, value: string) {
 setData((current) => ({
@@ -195,13 +197,46 @@ return (
             </select>
           </label>
 
-          <label>
+          <label className="institution-field">
             University / College
-            <input required list="campus-mall-institutions" value={data.university} onChange={(event) => update("university", event.target.value)} placeholder={institutionLoading ? "Loading institutions..." : "Search or enter university / college"} />
-            <datalist id="campus-mall-institutions">
-              {institutions.map((institution) => <option key={institution.name} value={institution.name} />)}
-            </datalist>
-            <small className="note">Institutions are loaded for the selected country; you can also enter an institution manually.</small>
+            <div className="institution-picker">
+              <input
+                required
+                autoComplete="off"
+                value={data.university}
+                onFocus={() => setShowInstitutionOptions(true)}
+                onChange={(event) => {
+                  update("university", event.target.value);
+                  setInstitutionQuery(event.target.value);
+                  setShowInstitutionOptions(true);
+                }}
+                placeholder={institutionLoading ? "Loading institutions..." : "Search university / college"}
+              />
+              {showInstitutionOptions && (
+                <div className="institution-options" role="listbox">
+                  {institutionLoading && <div className="institution-option muted">Loading institutions...</div>}
+                  {!institutionLoading && institutions.length === 0 && (
+                    <div className="institution-option muted">No matching institutions found. You can enter one manually.</div>
+                  )}
+                  {!institutionLoading && institutions.map((institution) => (
+                    <button
+                      type="button"
+                      className="institution-option"
+                      key={institution.name}
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => {
+                        update("university", institution.name);
+                        setInstitutionQuery(institution.name);
+                        setShowInstitutionOptions(false);
+                      }}
+                    >
+                      {institution.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <small className="note">Choose an institution from the results or enter one manually.</small>
           </label>
 
           <label>
@@ -288,15 +323,20 @@ return (
             minLength={8}
             autoComplete="new-password"
             value={data.confirmPassword}
-            onChange={(event) =>
-              update("confirmPassword", event.target.value)
-            }
+            onChange={(event) => update("confirmPassword", event.target.value)}
             placeholder="Re-enter your password"
+            aria-invalid={Boolean(data.confirmPassword && data.password !== data.confirmPassword)}
           />
           <button type="button" className="secondary-btn" onClick={() => setShowConfirmPassword((value) => !value)} aria-label={showConfirmPassword ? "Hide confirmed password" : "Show confirmed password"}>
             {showConfirmPassword ? <EyeOff size={17} /> : <Eye size={17} />}
             {showConfirmPassword ? "Hide password" : "View password"}
           </button>
+          {data.confirmPassword && data.password !== data.confirmPassword && (
+            <span className="field-error" role="alert">Passwords do not match.</span>
+          )}
+          {data.confirmPassword && data.password === data.confirmPassword && (
+            <span className="field-success">Passwords match.</span>
+          )}
         </label>
       )}
 
