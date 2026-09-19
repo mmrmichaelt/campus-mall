@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle, Trash2 } from "lucide-react";
+import { CheckCircle, Trash2, Megaphone } from "lucide-react";
 
 type ListingStatus =
 | "ACTIVE"
@@ -22,6 +22,8 @@ const router = useRouter();
 
 const [loading, setLoading] = useState(false);
 const [error, setError] = useState("");
+const [promotionLoading, setPromotionLoading] = useState(false);
+const [promotionMessage, setPromotionMessage] = useState("");
 
 async function updateStatus(
 nextStatus: "SOLD" | "ACTIVE"
@@ -77,6 +79,29 @@ try {
   setLoading(false);
 }
 
+}
+
+async function promoteListing(days: number) {
+  setPromotionLoading(true);
+  setPromotionMessage("");
+  try {
+    const response = await fetch("/api/promote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ listingId, days }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || "Unable to start promotion.");
+    setPromotionMessage(
+      data.paymentConfigured
+        ? "M-Pesa payment request sent. Complete it on your phone; the listing will become featured after confirmation."
+        : "Promotion created, but M-Pesa is not configured on the server yet."
+    );
+  } catch (err) {
+    setPromotionMessage(err instanceof Error ? err.message : "Unable to start promotion.");
+  } finally {
+    setPromotionLoading(false);
+  }
 }
 
 async function deleteListing() {
@@ -222,6 +247,18 @@ SELLER CONTROLS
       ? "Deleting..."
       : "Delete listing"}
   </button>
+
+  <div style={{ marginTop: "16px" }}>
+    <h4><Megaphone size={16} style={{ display: "inline", verticalAlign: "middle" }} /> Feature this listing</h4>
+    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+      {[1, 3, 7, 14, 30].map((days) => (
+        <button key={days} type="button" className="secondary-btn" onClick={() => promoteListing(days)} disabled={promotionLoading}>
+          {days} day{days === 1 ? "" : "s"}
+        </button>
+      ))}
+    </div>
+    {promotionMessage && <p className="note" role="status">{promotionMessage}</p>}
+  </div>
 
   {error && (
     <p
