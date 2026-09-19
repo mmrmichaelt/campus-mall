@@ -54,13 +54,9 @@ export async function GET(request: Request) {
       );
     }
 
-    if (!user.emailVerified || !user.phoneVerified) {
+    if (!user.emailVerified && !user.phoneVerified) {
       return NextResponse.json(
-        {
-          error:
-            "You must verify both your email and phone number before using Campus Mall chats.",
-          verificationRequired: true,
-        },
+        { error: "Verify your email or phone number before using Campus Mall chats.", verificationRequired: true, redirectTo: "/verify" },
         { status: 403 }
       );
     }
