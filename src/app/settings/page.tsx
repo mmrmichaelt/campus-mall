@@ -92,7 +92,7 @@ export default function Settings() {
           Dark mode
         </p>
 
-        <p>Support: campusmallsupport@gmail.com</p>
+        <p>Support: campusmall.support@gmail.com</p>
       </div>
     </>
   );
