@@ -1048,3 +1048,119 @@ html[data-theme="dark"] .avatar-circle {
     display: none;
   }
 }
+
+
+/* =========================
+CAMPUS MALL SPLASH
+========================= */
+.campus-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  grid-template-rows: 1fr auto 1fr;
+  align-items: center;
+  justify-items: center;
+  padding: 38px 24px;
+  background: #0b0b0d;
+  color: #fff;
+  overflow: hidden;
+  animation: splash-fade-out 0.55s ease 2.45s forwards;
+}
+
+.campus-splash::before {
+  content: "";
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: var(--red);
+  opacity: 0.14;
+  filter: blur(12px);
+  animation: splash-glow 2.4s ease-in-out infinite alternate;
+}
+
+.campus-splash-title {
+  align-self: start;
+  position: relative;
+  margin-top: 5vh;
+  color: #fff;
+  font-size: clamp(26px, 6vw, 64px);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-align: center;
+  animation: splash-title 0.9s cubic-bezier(.2,.8,.2,1) both;
+}
+
+.campus-splash-title::after {
+  content: "";
+  display: block;
+  width: 90px;
+  height: 4px;
+  margin: 16px auto 0;
+  border-radius: 999px;
+  background: var(--red);
+  animation: splash-line 1s ease 0.25s both;
+}
+
+.campus-splash-tagline {
+  position: relative;
+  align-self: center;
+  max-width: 900px;
+  color: #fff;
+  font-size: clamp(22px, 4vw, 46px);
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  animation: splash-tagline 1s ease 0.3s both;
+}
+
+.campus-splash-footer {
+  position: relative;
+  align-self: end;
+  margin-bottom: 2vh;
+  color: #d8d8dc;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  animation: splash-footer 1s ease 0.55s both;
+}
+
+@keyframes splash-title {
+  from { opacity: 0; transform: translateY(-35px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes splash-tagline {
+  from { opacity: 0; transform: scale(.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes splash-footer {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes splash-line {
+  from { opacity: 0; width: 0; }
+  to { opacity: 1; width: 90px; }
+}
+
+@keyframes splash-glow {
+  from { transform: scale(.85); opacity: .08; }
+  to { transform: scale(1.25); opacity: .18; }
+}
+
+@keyframes splash-fade-out {
+  to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campus-splash,
+  .campus-splash::before,
+  .campus-splash-title,
+  .campus-splash-tagline,
+  .campus-splash-footer,
+  .campus-splash-title::after {
+    animation: none;
+  }
+}
