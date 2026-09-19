@@ -332,18 +332,27 @@ export default function VerifyPage() {
               </div>
             ) : (
               <>
-                <button
-                  type="button"
-                  className="secondary-btn"
-                  disabled={sendingEmail}
-                  onClick={() =>
-                    sendCode("EMAIL")
-                  }
-                >
-                  {sendingEmail
-                    ? "Sending..."
-                    : "Send email code"}
-                </button>
+                <div className="hero-actions">
+                  <a
+                    href={`mailto:${status.email}`}
+                    className="secondary-btn"
+                  >
+                    Open email
+                  </a>
+
+                  <button
+                    type="button"
+                    className="secondary-btn"
+                    disabled={sendingEmail}
+                    onClick={() =>
+                      sendCode("EMAIL")
+                    }
+                  >
+                    {sendingEmail
+                      ? "Sending..."
+                      : "Resend email code"}
+                  </button>
+                </div>
 
                 <form
                   onSubmit={(event) =>
