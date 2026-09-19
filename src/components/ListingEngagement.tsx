@@ -97,6 +97,8 @@ export default function ListingEngagement({ listingId, sellerId, active }: Props
     } finally { setBusy(""); }
   }
 
+  const chatHref = `/chats?listingId=${encodeURIComponent(listingId)}&withUserId=${encodeURIComponent(sellerId)}`;
+
   return (
     <section className="panel" style={{ marginTop: 20 }}>
       <div className="hero-actions">
@@ -117,7 +119,7 @@ export default function ListingEngagement({ listingId, sellerId, active }: Props
             <button className="primary-btn" type="button" disabled={!active || !!busy} onClick={() => void buyNow()}>
               <ShoppingCart size={17} /> Buy now
             </button>
-            <Link className="primary-btn" href={"/chats?listingId=" + listingId + "&withUserId=" + sellerId}>
+            <Link className="primary-btn" href={chatHref}>
               <MessageCircle size={17} /> Chat
             </Link>
           </>
