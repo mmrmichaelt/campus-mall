@@ -16,6 +16,7 @@ university: "",
 accountType: "STUDENT",
 phone: "",
 email: "",
+confirmEmail: "",
 password: "",
 });
 
@@ -251,6 +252,22 @@ return (
           placeholder="you@example.com"
         />
       </label>
+
+      {mode === "create" && (
+        <label>
+          Confirm email
+          <input
+            required
+            type="email"
+            autoComplete="email"
+            value={data.confirmEmail}
+            onChange={(event) =>
+              update("confirmEmail", event.target.value)
+            }
+            placeholder="Re-enter your email address"
+          />
+        </label>
+      )}
 
       <label>
         Password
