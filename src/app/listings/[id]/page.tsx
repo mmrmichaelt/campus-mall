@@ -13,6 +13,15 @@ type PageProps = {
   }>;
 };
 
+function getImageUrls(value?: string | null) {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) return parsed.filter((item): item is string => typeof item === "string");
+  } catch {}
+  return [value];
+}
+
 function formatPrice(price: unknown, currency: string) {
   const numericPrice = Number(price);
 
@@ -83,6 +92,8 @@ export default async function ListingPage({
     notFound();
   }
 
+  const imageUrls = getImageUrls(listing.imageUrl);
+
   const sellerFullyVerified =
     listing.seller.emailVerified &&
     listing.seller.phoneVerified;
@@ -111,25 +122,31 @@ export default async function ListingPage({
 
       <div className="two-col">
         <div>
-          <div className="listing-photo">
-            {listing.imageUrl ? (
-              <img
-                src={listing.imageUrl}
-                alt={listing.title}
-              />
+          <div>
+            {imageUrls.length ? (
+              <div style={{ display: "grid", gap: 10 }}>
+                <div className="listing-photo">
+                  <img src={imageUrls[0]} alt={listing.title} />
+                </div>
+                {imageUrls.length > 1 && (
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(80px,1fr))", gap: 8 }}>
+                    {imageUrls.slice(1).map((url, index) => (
+                      <img
+                        key={url}
+                        src={url}
+                        alt={`${listing.title} photo ${index + 2}`}
+                        style={{ width: "100%", aspectRatio: "1", objectFit: "cover", borderRadius: 12 }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             ) : (
-              <div className="photo-placeholder">
-                <span
-                  style={{
-                    fontSize: "48px",
-                  }}
-                >
-                  🛍️
-                </span>
-
-                <span>
-                  Campus Mall
-                </span>
+              <div className="listing-photo">
+                <div className="photo-placeholder">
+                  <span style={{ fontSize: "48px" }}>🛍️</span>
+                  <span>Campus Mall</span>
+                </div>
               </div>
             )}
           </div>
