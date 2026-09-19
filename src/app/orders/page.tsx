@@ -5,6 +5,7 @@ import Link from "next/link";
 
 export default function Orders() {
   const [orders, setOrders] = useState<any[]>([]);
+  const [currentUserId, setCurrentUserId] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState("");
@@ -20,6 +21,7 @@ export default function Orders() {
       }
       if (!response.ok) throw new Error(data.error || "Unable to load orders.");
       setOrders(data.orders || []);
+      setCurrentUserId(data.currentUserId || "");
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "Unable to load orders.");
     } finally { setLoading(false); }
@@ -67,16 +69,16 @@ export default function Orders() {
                 </div>
                 <Link href={"/listings/" + order.listing.id} className="secondary-btn">View item</Link>
               </div>
-              {order.seller?.id && (
+              {currentUserId === order.seller?.id && (
                 <div className="hero-actions">
-                  {order.status === "PENDING" && (
+                  {currentUserId === order.seller?.id && order.status === "PENDING" && (
                     <>
                       <button className="primary-btn" disabled={busy === order.id} onClick={() => void update(order.id, "ACCEPTED")}>Accept order</button>
                       <button className="danger-btn" disabled={busy === order.id} onClick={() => void update(order.id, "REJECTED")}>Reject order</button>
-                      <button className="secondary-btn" disabled={busy === order.id} onClick={() => void update(order.id, "CANCELLED")}>Cancel order</button>
+                      
                     </>
                   )}
-                  {order.status === "ACCEPTED" && (
+                  {currentUserId === order.seller?.id && order.status === "ACCEPTED" && (
                     <button className="primary-btn" disabled={busy === order.id} onClick={() => void update(order.id, "COMPLETED")}>Mark completed</button>
                   )}
                 </div>
