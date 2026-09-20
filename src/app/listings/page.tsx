@@ -37,16 +37,6 @@ export default async function ListingsPage({
   const category = params.category?.trim() || "";
   const country = params.country?.trim() || "";
   const university = params.university?.trim() || "";
-
-  const maxPrice = Number(params.maxPrice);
-  const sort = params.sort?.trim() || "newest";
-  const location = params.location?.trim() || "";
-  const sellerType = params.sellerType?.trim() || "";
-
-  const priceFilter = {
-    ...(Number.isFinite(minPrice) && minPrice >= 0 ? { gte: minPrice } : {}),
-    ...(Number.isFinite(maxPrice) && maxPrice >= 0 ? { lte: maxPrice } : {}),
-  };
   const minPrice = Number(params.minPrice);
   const maxPrice = Number(params.maxPrice);
   const sort = params.sort?.trim() || "newest";
