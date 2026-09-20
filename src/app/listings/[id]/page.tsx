@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "../../../lib/prisma";
 import { getCurrentUser } from "../../../lib/auth";
 import ListingActions from "../../../components/ListingActions";
+import ListingEngagement from "../../../components/ListingEngagement";
 
 export const dynamic = "force-dynamic";
 
@@ -267,6 +268,8 @@ export default async function ListingPage({
               </span>
             </div>
           </section>
+
+          <ListingEngagement listingId={listing.id} sellerId={listing.seller.id} active={listing.status === "ACTIVE"} />
 
           <div style={{ marginTop: "20px" }}>
             {isSeller ? (
