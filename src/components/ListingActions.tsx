@@ -249,7 +249,7 @@ SELLER CONTROLS
   </button>
 
   <div style={{ marginTop: "16px" }}>
-    <h4><Megaphone size={16} style={{ display: "inline", verticalAlign: "middle" }} /> Feature this listing</h4>
+    <h4><Megaphone size={16} style={{ display: "inline", verticalAlign: "middle" }} /> Boost item to reach more people</h4>\n    <p className="note">This advertising option stays below your item while it is active, so you can promote it later even if you skipped promotion when uploading.</p>
     <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
       {[1, 3, 7, 14, 30].map((days) => (
         <button key={days} type="button" className="secondary-btn" onClick={() => promoteListing(days)} disabled={promotionLoading}>
