@@ -1207,38 +1207,27 @@ CAMPUS MALL SPLASH
 .guest-institution-option:hover { background: #fff0f2; color: #a80f24; }
 
 
-/* Active mobile navigation state */
-.mobile-nav a.active {
-  color: var(--red);
-  background: var(--light-red, #fff0f2);
-  border: 1px solid var(--red);
-  border-radius: 12px;
-  box-shadow: 0 0 0 2px rgba(201, 21, 45, 0.10);
-  font-weight: 800;
-}
-
-
-/* Active page state for every visible page-opening navigation control */
+/* Active page state: colour only, without a surrounding ring or box */
+.mobile-nav a.active,
 .top-actions a.active-page,
 .brand.active-page {
   color: var(--red);
-  background: var(--red-light);
-  border: 1px solid var(--red);
-  border-radius: 12px;
-  box-shadow: 0 0 0 2px rgba(201, 21, 45, 0.10);
   font-weight: 800;
 }
 
-.top-actions a.active-page {
-  padding: 7px 9px;
+.marketplace-filter .filter-button {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  border-radius: 0;
+  padding: 0;
+  font-weight: 700;
+  box-shadow: none;
 }
 
-.brand.active-page {
-  padding: 4px 7px 4px 4px;
-}
-
-@media (max-width: 620px) {
-  .brand.active-page {
-    padding: 3px 5px 3px 3px;
-  }
+.marketplace-filter .filter-button:hover {
+  border: 0;
+  background: transparent;
+  color: var(--red);
+  box-shadow: none;
 }
