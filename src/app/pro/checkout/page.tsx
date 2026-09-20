@@ -34,6 +34,8 @@ function CheckoutContent() {
 
       if (!response.ok) throw new Error(data.error || "Unable to start payment.");
 
+      if (data.checkoutUrl) { window.location.href = data.checkoutUrl; return; }
+
       if (data.paymentConfigured && data.stk) {
         setMessage(paymentMethod === "MPESA" ? "M-Pesa payment request sent. Check your phone and enter your M-Pesa PIN. Your Pro account will activate after payment confirmation." : "Payment method is configured. Continue through the provider checkout to complete payment.");
       } else {
