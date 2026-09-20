@@ -2,5 +2,7 @@ import { execFileSync } from "node:child_process";
 
 process.env.PRISMA_HIDE_UPDATE_MESSAGE = "1";
 
-execFileSync("prisma", ["generate"], { stdio: "inherit" });
-execFileSync("next", ["build"], { stdio: "inherit" });
+const bin = (name) => (process.platform === "win32" ? `${name}.cmd` : name);
+
+execFileSync(bin("prisma"), ["generate"], { stdio: "inherit" });
+execFileSync(bin("next"), ["build"], { stdio: "inherit" });
