@@ -36,14 +36,14 @@ export default async function ListingsPage({
   const q = params.q?.trim() || "";
   const category = params.category?.trim() || "";
   const country = params.country?.trim() || "";
-  const university = params.university?.trim() || "";
+  const university = params.university?.trim() || "";\n  const minPrice = Number(params.minPrice);\n  const maxPrice = Number(params.maxPrice);\n  const sort = params.sort?.trim() || "newest";\n  const location = params.location?.trim() || "";\n  const sellerType = params.sellerType?.trim() || "";
 
-  const sellerFilters: {
+  const priceFilter = {\n    ...(Number.isFinite(minPrice) && minPrice >= 0 ? { gte: minPrice } : {}),\n    ...(Number.isFinite(maxPrice) && maxPrice >= 0 ? { lte: maxPrice } : {}),\n  };\n\n  const sellerFilters: {
     country?: {
       equals: string;
       mode: "insensitive";
     };
-    university?: {
+    accountType?: "STUDENT" | "OUTSIDER";\n    university?: {
       equals: string;
       mode: "insensitive";
     };
@@ -56,7 +56,7 @@ export default async function ListingsPage({
     };
   }
 
-  if (university) {
+  if (sellerType === "STUDENT" || sellerType === "OUTSIDER") {\n    sellerFilters.accountType = sellerType as "STUDENT" | "OUTSIDER";\n  }\n\n  if (university) {
     sellerFilters.university = {
       equals: university,
       mode: "insensitive",
@@ -153,7 +153,7 @@ export default async function ListingsPage({
     Boolean(q) ||
     Boolean(category) ||
     Boolean(country) ||
-    Boolean(university);
+    Boolean(university) ||\n    Boolean(params.minPrice) ||\n    Boolean(params.maxPrice) ||\n    Boolean(params.sort && params.sort !== "newest") ||\n    Boolean(location) ||\n    Boolean(sellerType);
 
   return (
     <div className="panel">
