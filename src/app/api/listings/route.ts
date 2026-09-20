@@ -17,6 +17,8 @@ function formatListing(listing: {
   imageUrl: string | null;
   location: string;
   status: string;
+  promoted: boolean;
+  promotedUntil: Date | null;
   soldAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -131,9 +133,11 @@ export async function GET(request: Request) {
       await prisma.$transaction([
         prisma.listing.findMany({
           where,
-          orderBy: {
-            createdAt: "desc",
-          },
+          orderBy: [
+            { promoted: "desc" },
+            { promotedUntil: "desc" },
+            { createdAt: "desc" },
+          ],
           skip: (page - 1) * limit,
           take: limit,
           select: {
@@ -146,6 +150,8 @@ export async function GET(request: Request) {
             imageUrl: true,
             location: true,
             status: true,
+            promoted: true,
+            promotedUntil: true,
             soldAt: true,
             createdAt: true,
             updatedAt: true,
