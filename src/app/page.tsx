@@ -188,6 +188,7 @@ try {
 
 return (
 <>
+<SplashScreen />
 {!user && guestSetup && (
   <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="guest-setup-title">
     <div className="modal-card">
