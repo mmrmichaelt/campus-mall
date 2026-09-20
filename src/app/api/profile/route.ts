@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
@@ -70,21 +71,33 @@ export async function PUT(request: Request) {
       );
     }
 
-    const body = await request.json();
+    let body: unknown;
+
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid profile data. Please try again." }, { status: 400 });
+    }
+
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return NextResponse.json({ error: "Invalid profile data. Please try again." }, { status: 400 });
+    }
+
+    const input = body as Record<string, unknown>;
 
     const name =
-      typeof body?.name === "string"
-        ? body.name.trim()
+      typeof input.name === "string"
+        ? input.name.trim()
         : "";
 
     const university =
-      typeof body?.university === "string"
-        ? body.university.trim()
+      typeof input.university === "string"
+        ? input.university.trim()
         : "";
 
     const imageUrl =
-      typeof body?.imageUrl === "string"
-        ? body.imageUrl.trim()
+      typeof input.imageUrl === "string"
+        ? input.imageUrl.trim()
         : "";
 
     if (name.length < 2) {
