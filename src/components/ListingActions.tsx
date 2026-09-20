@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle, Trash2, Megaphone } from "lucide-react";
+import PaymentMethodSelector, { type PaymentMethod } from "./PaymentMethodSelector";
 
 type ListingStatus =
 | "ACTIVE"
@@ -24,6 +25,7 @@ const [loading, setLoading] = useState(false);
 const [error, setError] = useState("");
 const [promotionLoading, setPromotionLoading] = useState(false);
 const [promotionMessage, setPromotionMessage] = useState("");
+const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("MPESA");
 
 async function updateStatus(
 nextStatus: "SOLD" | "ACTIVE"
@@ -88,13 +90,13 @@ async function promoteListing(days: number) {
     const response = await fetch("/api/promote", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ listingId, days }),
+      body: JSON.stringify({ listingId, days, paymentMethod }),
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || "Unable to start promotion.");
     setPromotionMessage(
       data.paymentConfigured
-        ? "M-Pesa payment request sent. Complete it on your phone; the listing will become featured after confirmation."
+        ? `${paymentMethod === "MPESA" ? "M-Pesa payment request sent. Complete it on your phone" : "Payment started with " + paymentMethod.replaceAll("_", " ") + ". Complete the provider checkout"}; the listing will become featured after confirmation.`
         : "Promotion created, but M-Pesa is not configured on the server yet."
     );
   } catch (err) {
@@ -249,7 +251,9 @@ SELLER CONTROLS
   </button>
 
   <div style={{ marginTop: "16px" }}>
-    <h4><Megaphone size={16} style={{ display: "inline", verticalAlign: "middle" }} /> Boost item to reach more people</h4>\n    <p className="note">This advertising option stays below your item while it is active, so you can promote it later even if you skipped promotion when uploading.</p>
+    <h4><Megaphone size={16} style={{ display: "inline", verticalAlign: "middle" }} /> Boost item to reach more people</h4>
+    <p className="note">This advertising option stays below your item while it is active, so you can promote it later even if you skipped promotion when uploading.</p>
+    <PaymentMethodSelector value={paymentMethod} onChange={setPaymentMethod} compact />
     <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
       {[1, 3, 7, 14, 30].map((days) => (
         <button key={days} type="button" className="secondary-btn" onClick={() => promoteListing(days)} disabled={promotionLoading}>
