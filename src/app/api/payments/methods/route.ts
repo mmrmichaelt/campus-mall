@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 const methods = [
   ["MPESA", "MPESA_CONSUMER_KEY", "M-Pesa"],
-  ["AIRTEL_MONEY", "AIRTEL_MONEY_CLIENT_ID", "Airtel Money"],
+  ["AIRTEL_MONEY", "PAYSTACK_SECRET_KEY", "Airtel Money"],
   ["CARD", "STRIPE_SECRET_KEY", "Visa / Mastercard"],
   ["BANK_TRANSFER", "CAMPUS_MALL_BANK_NAME", "Bank transfer"],
   ["PESALINK", "CAMPUS_MALL_BANK_NAME", "PesaLink"],
