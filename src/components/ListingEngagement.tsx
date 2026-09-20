@@ -97,7 +97,10 @@ export default function ListingEngagement({ listingId, sellerId, active }: Props
     } finally { setBusy(""); }
   }
 
-  const chatHref = `/chats?listingId=${encodeURIComponent(listingId)}&withUserId=${encodeURIComponent(sellerId)}`;
+  const chatHref = {
+    pathname: "/chats",
+    query: { listingId, withUserId: sellerId },
+  };
 
   return (
     <section className="panel" style={{ marginTop: 20 }}>
