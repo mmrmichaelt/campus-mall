@@ -36,14 +36,35 @@ export default async function ListingsPage({
   const q = params.q?.trim() || "";
   const category = params.category?.trim() || "";
   const country = params.country?.trim() || "";
-  const university = params.university?.trim() || "";\n  const minPrice = Number(params.minPrice);\n  const maxPrice = Number(params.maxPrice);\n  const sort = params.sort?.trim() || "newest";\n  const location = params.location?.trim() || "";\n  const sellerType = params.sellerType?.trim() || "";
+  const university = params.university?.trim() || "";
+  const minPrice = Number(params.minPrice);
+  const maxPrice = Number(params.maxPrice);
+  const sort = params.sort?.trim() || "newest";
+  const location = params.location?.trim() || "";
+  const sellerType = params.sellerType?.trim() || "";
 
-  const priceFilter = {\n    ...(Number.isFinite(minPrice) && minPrice >= 0 ? { gte: minPrice } : {}),\n    ...(Number.isFinite(maxPrice) && maxPrice >= 0 ? { lte: maxPrice } : {}),\n  };\n\n  const sellerFilters: {
+  const priceFilter = {
+    ...(Number.isFinite(minPrice) && minPrice >= 0 ? { gte: minPrice } : {}),
+    ...(Number.isFinite(maxPrice) && maxPrice >= 0 ? { lte: maxPrice } : {}),
+  };
+  const minPrice = Number(params.minPrice);
+  const maxPrice = Number(params.maxPrice);
+  const sort = params.sort?.trim() || "newest";
+  const location = params.location?.trim() || "";
+  const sellerType = params.sellerType?.trim() || "";
+
+  const priceFilter = {
+    ...(Number.isFinite(minPrice) && minPrice >= 0 ? { gte: minPrice } : {}),
+    ...(Number.isFinite(maxPrice) && maxPrice >= 0 ? { lte: maxPrice } : {}),
+  };
+
+  const sellerFilters: {
     country?: {
       equals: string;
       mode: "insensitive";
     };
-    accountType?: "STUDENT" | "OUTSIDER";\n    university?: {
+    accountType?: "STUDENT" | "OUTSIDER";
+    university?: {
       equals: string;
       mode: "insensitive";
     };
@@ -56,7 +77,11 @@ export default async function ListingsPage({
     };
   }
 
-  if (sellerType === "STUDENT" || sellerType === "OUTSIDER") {\n    sellerFilters.accountType = sellerType as "STUDENT" | "OUTSIDER";\n  }\n\n  if (university) {
+  if (sellerType === "STUDENT" || sellerType === "OUTSIDER") {
+    sellerFilters.accountType = sellerType as "STUDENT" | "OUTSIDER";
+  }
+
+  if (university) {
     sellerFilters.university = {
       equals: university,
       mode: "insensitive",
@@ -80,6 +105,12 @@ export default async function ListingsPage({
         ? {
             seller: sellerFilters,
           }
+        : {}),
+
+      ...(Object.keys(priceFilter).length > 0 ? { price: priceFilter } : {}),
+
+      ...(location
+        ? { location: { contains: location, mode: "insensitive" as const } }
         : {}),
 
       ...(q
@@ -114,14 +145,13 @@ export default async function ListingsPage({
         : {}),
     },
 
-    orderBy: [
-      {
-        promoted: "desc",
-      },
-      {
-        createdAt: "desc",
-      },
-    ],
+    orderBy:
+      sort === "price-low" ? [{ price: "asc" as const }] :
+      sort === "price-high" ? [{ price: "desc" as const }] :
+      sort === "title-az" ? [{ title: "asc" as const }] :
+      sort === "title-za" ? [{ title: "desc" as const }] :
+      sort === "oldest" ? [{ createdAt: "asc" as const }] :
+      [{ promoted: "desc" as const }, { createdAt: "desc" as const }],
 
     take: 60,
 
@@ -153,7 +183,12 @@ export default async function ListingsPage({
     Boolean(q) ||
     Boolean(category) ||
     Boolean(country) ||
-    Boolean(university) ||\n    Boolean(params.minPrice) ||\n    Boolean(params.maxPrice) ||\n    Boolean(params.sort && params.sort !== "newest") ||\n    Boolean(location) ||\n    Boolean(sellerType);
+    Boolean(university) ||
+    Boolean(params.minPrice) ||
+    Boolean(params.maxPrice) ||
+    Boolean(params.sort && params.sort !== "newest") ||
+    Boolean(location) ||
+    Boolean(sellerType);
 
   return (
     <div className="panel">
