@@ -1205,3 +1205,14 @@ CAMPUS MALL SPLASH
 }
 .guest-institution-option:last-child { border-bottom: 0; }
 .guest-institution-option:hover { background: #fff0f2; color: #a80f24; }
+
+
+/* Active mobile navigation state */
+.mobile-nav a.active {
+  color: var(--red);
+  background: var(--light-red, #fff0f2);
+  border: 1px solid var(--red);
+  border-radius: 12px;
+  box-shadow: 0 0 0 2px rgba(201, 21, 45, 0.10);
+  font-weight: 800;
+}
