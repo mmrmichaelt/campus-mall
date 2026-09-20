@@ -35,17 +35,18 @@ export default function ProCheckoutPage() {
         throw new Error(data.error || "Unable to start payment.");
       }
 
-      if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
+      if (!data.paymentConfigured) {
+        throw new Error(
+          "M-Pesa payment is not configured yet. Please try again after payment credentials are configured."
+        );
+      }
+
+      if (data.stk?.CheckoutRequestID) {
+        router.push("/account/pro");
         return;
       }
 
-      if (data.reference) {
-        router.push(`/pro/payment/${data.reference}`);
-        return;
-      }
-
-      throw new Error("Payment provider did not return a checkout reference.");
+      throw new Error("Payment provider did not return a checkout request.");
     } catch (err) {
       setError(
         err instanceof Error
