@@ -40,7 +40,6 @@ export default function SiteHeader({
         >
           <span className="site-brand-mark" aria-hidden="true">
             <span>CM</span>
-            <span className="site-brand-cart">🛒</span>
           </span>
 
           <span className="site-brand-text">
@@ -78,6 +77,8 @@ export default function SiteHeader({
             🔎
           </button>
         </form>
+
+        <MarketplaceFilter />
 
         <nav
           className="site-navigation"
