@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import MarketplaceFilter from "./MarketplaceFilter";
 
 type SiteHeaderProps = {
   userName?: string | null;
