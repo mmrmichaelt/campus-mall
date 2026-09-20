@@ -62,16 +62,22 @@ setUser(null);
 }, []);
 
 useEffect(() => {
-if (user || !guestUniversity) return;
+if (user || !guestSetup) return;
 const controller = new AbortController();
 setGuestLoading(true);
-fetch(`/api/institutions?country=${encodeURIComponent(guestCountry)}`)
+fetch(`/api/institutions?country=${encodeURIComponent(guestCountry)}`, {
+  signal: controller.signal,
+})
 .then((response) => response.json())
 .then((data) => setGuestInstitutions(Array.isArray(data.institutions) ? data.institutions : []))
-.catch(() => setGuestInstitutions([]))
-.finally(() => setGuestLoading(false));
+.catch((error) => {
+  if (error?.name !== "AbortError") setGuestInstitutions([]);
+})
+.finally(() => {
+  if (!controller.signal.aborted) setGuestLoading(false);
+});
 return () => controller.abort();
-}, [guestCountry, user, guestUniversity]);
+}, [guestCountry, user, guestSetup]);
 
 useEffect(() => {
 const controller = new AbortController();
@@ -195,10 +201,41 @@ return (
           </select>
         </label>
         <label>University / College
-          <select value={guestUniversity} onChange={(e) => setGuestUniversity(e.target.value)} disabled={guestLoading}>
-            <option value="">{guestLoading ? "Loading institutions..." : "Choose your institution"}</option>
-            {guestInstitutions.map((institution, index) => <option key={institution.name + index} value={institution.name}>{institution.name}</option>)}
-          </select>
+          <input
+            type="search"
+            value={guestUniversity}
+            onChange={(e) => setGuestUniversity(e.target.value)}
+            placeholder={guestLoading ? "Loading institutions..." : "Search your institution..."}
+            autoComplete="off"
+            disabled={guestLoading}
+            required
+          />
+          {guestUniversity.trim() && guestInstitutions.filter((institution) =>
+            institution.name.toLowerCase().includes(guestUniversity.trim().toLowerCase())
+          ).length > 0 && (
+            <div className="guest-institution-options">
+              {guestInstitutions
+                .filter((institution) =>
+                  institution.name.toLowerCase().includes(guestUniversity.trim().toLowerCase())
+                )
+                .slice(0, 10)
+                .map((institution, index) => (
+                  <button
+                    type="button"
+                    key={institution.name + index}
+                    onClick={() => setGuestUniversity(institution.name)}
+                    className="guest-institution-option"
+                  >
+                    {institution.name}
+                  </button>
+                ))}
+            </div>
+          )}
+          {!guestLoading && guestUniversity.trim() && guestInstitutions.filter((institution) =>
+            institution.name.toLowerCase().includes(guestUniversity.trim().toLowerCase())
+          ).length === 0 && (
+            <span className="note">No matching institution found. You can enter the institution name manually.</span>
+          )}
         </label>
         <button type="button" className="primary-btn" disabled={!guestUniversity} onClick={saveGuestContext}>Continue as guest</button>
         <Link className="secondary-btn" href="/join" onClick={() => { if (guestCountry && guestUniversity) { window.localStorage.setItem("campus_mall_guest_country", guestCountry); window.localStorage.setItem("campus_mall_guest_university", guestUniversity); } }}>Create account</Link>
