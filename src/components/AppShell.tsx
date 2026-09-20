@@ -82,7 +82,7 @@ window.location.href = `/?q=${encodeURIComponent(value)}`;
 return (
 <div className="app">
 <header className="topbar">
-<Link href="/" className="brand" aria-label="Campus Mall home">
+<Link href="/" className={`brand ${pathname === "/" ? "active-page" : ""}`} aria-label="Campus Mall home">
 <span className="brand-mark">CM</span>
 <span>Campus Mall</span>
 </Link>
@@ -104,6 +104,7 @@ return (
       </button>
       <Link
         href="/notifications"
+        className={pathname.startsWith("/notifications") ? "active-page" : ""}
         aria-label="Notifications"
         title="Notifications"
       >
@@ -116,7 +117,7 @@ return (
         <>
           <Link
             href="/profile"
-            className="avatar"
+            className={`avatar ${pathname.startsWith("/profile") ? "active-page" : ""}`}
             aria-label="Profile"
           >
             <UserCircle size={22} />
@@ -137,7 +138,7 @@ return (
           </button>
         </>
       ) : (
-        <Link className="small-btn" href="/join">
+        <Link className={`small-btn ${pathname.startsWith("/join") ? "active-page" : ""}`} href="/join">
           Join
         </Link>
       )}
