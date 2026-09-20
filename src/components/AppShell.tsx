@@ -24,6 +24,7 @@ const [user, setUser] = useState<any>(null);
 const [q, setQ] = useState("");
 const [theme, setTheme] = useState<"light" | "dark">("light");
 const pathname = usePathname();
+const pathname = usePathname();
 
 useEffect(() => {
 let active = true;
@@ -109,13 +110,7 @@ return (
         <Bell size={20} />
       </Link>
 
-      <Link
-        href="/cart"
-        aria-label="Shopping cart"
-        title="Trolley"
-      >
-        <ShoppingCart size={20} />
-      </Link>
+      <MarketplaceFilter />
 
       {user ? (
         <>
@@ -150,27 +145,27 @@ return (
   </header>
 
   <nav className="mobile-nav" aria-label="Mobile navigation">
-    <Link href="/">
+    <Link href="/" className={pathname === "/" ? "active" : ""}>
       <Home size={19} />
       <span>Home</span>
     </Link>
 
-    <Link href="/sell">
+    <Link href="/sell" className={pathname.startsWith("/sell") ? "active" : ""}>
       <PlusCircle size={19} />
       <span>Add item</span>
     </Link>
 
-    <Link href="/cart">
+    <Link href="/cart" className={pathname.startsWith("/cart") ? "active" : ""}>
       <ShoppingCart size={19} />
       <span>Cart</span>
     </Link>
 
-    <Link href="/chats">
+    <Link href="/chats" className={pathname.startsWith("/chats") ? "active" : ""}>
       <MessageCircle size={19} />
       <span>Chats</span>
     </Link>
 
-    <Link href="/settings">
+    <Link href="/settings" className={pathname.startsWith("/settings") ? "active" : ""}>
       <Settings size={19} />
       <span>Settings</span>
     </Link>
