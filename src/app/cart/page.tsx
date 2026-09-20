@@ -132,7 +132,9 @@ export default function Cart() {
         return;
       }
 
-      alert("Order placed successfully.");
+      if (data.checkoutUrl) { window.location.href = data.checkoutUrl; return; }
+
+      alert("Order/payment request started successfully.");
 
       await load();
     } catch {
