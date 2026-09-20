@@ -68,6 +68,7 @@ export async function POST(req: NextRequest) {
         paymentIntentId: payment.intent.id,
         paymentReference: payment.intent.reference,
         paymentConfigured: payment.configured,
+        checkoutUrl: (payment as any).checkoutUrl || null,
         stk: payment.stk,
       }, { status: 201 });
     } catch (paymentError) {
