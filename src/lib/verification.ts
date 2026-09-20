@@ -1,6 +1,5 @@
 import { randomInt } from "crypto";
 import { Resend } from "resend";
-import twilio from "twilio";
 import { prisma } from "./prisma";
 
 type VerificationType = "EMAIL" | "PHONE";
@@ -27,7 +26,7 @@ function getResendClient() {
   return new Resend(apiKey);
 }
 
-function getTwilioClient() {
+async function sendTwilioSms(to: string, body: string) {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
 
@@ -35,9 +34,33 @@ function getTwilioClient() {
     throw new Error("Twilio credentials are not configured");
   }
 
-  return twilio(accountSid, authToken);
-}
+  const fromNumber = process.env.TWILIO_FROM_NUMBER;
 
+  if (!fromNumber) {
+    throw new Error("TWILIO_FROM_NUMBER is not configured");
+  }
+
+  const response = await fetch(
+    `https://api.twilio.com/2010-04-01/Accounts/${encodeURIComponent(accountSid)}/Messages.json`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${Buffer.from(`${accountSid}:${authToken}`).toString("base64")}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        Body: body,
+        From: fromNumber,
+        To: to,
+      }).toString(),
+    }
+  );
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`Twilio SMS request failed (${response.status}): ${errorBody}`);
+  }
+}
 async function createVerificationCode(
   userId: string,
   type: VerificationType
@@ -141,19 +164,10 @@ export async function sendPhoneVerificationCode(userId: string) {
     "PHONE"
   );
 
-  const twilioClient = getTwilioClient();
-
-  const fromNumber = process.env.TWILIO_FROM_NUMBER;
-
-  if (!fromNumber) {
-    throw new Error("TWILIO_FROM_NUMBER is not configured");
-  }
-
-  await twilioClient.messages.create({
-    body: `Campus Mall verification code: ${verification.code}. It expires in ${CODE_EXPIRATION_MINUTES} minutes.`,
-    from: fromNumber,
-    to: user.phone,
-  });
+  await sendTwilioSms(
+    user.phone,
+    `Campus Mall verification code: ${verification.code}. It expires in ${CODE_EXPIRATION_MINUTES} minutes.`
+  );
 
   return {
     success: true,
