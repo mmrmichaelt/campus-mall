@@ -163,6 +163,77 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
   return {intent,configured:false,stk:null,paymentMethod,checkoutUrl:null};
 }
 
+export async function finalizePaymentIntent(reference: string) {
+  const intent = await prisma.paymentIntent.findUnique({ where: { reference } });
+  if (!intent) return null;
+  const metadata = (intent.metadata && typeof intent.metadata === "object" ? intent.metadata : {}) as Record<string, unknown>;
+  if (intent.status !== "SUCCESS") return intent;
+
+  const purpose = intent.purpose;
+  if (purpose === "PROMOTION" && typeof metadata.promotionPurchaseId === "string" && typeof metadata.listingId === "string") {
+    const purchase = await prisma.promotionPurchase.findUnique({ where: { id: metadata.promotionPurchaseId } });
+    if (purchase && purchase.status !== "SUCCESS") {
+      const days = Number(metadata.days || purchase.days || 7);
+      const listing = await prisma.listing.findUnique({ where: { id: metadata.listingId } });
+      if (listing) {
+        const base = listing.promotedUntil && listing.promotedUntil > new Date() ? listing.promotedUntil : new Date();
+        const until = new Date(base.getTime() + days * 24 * 60 * 60 * 1000);
+        await prisma.$transaction([
+          prisma.promotionPurchase.update({ where: { id: purchase.id }, data: { status: "SUCCESS" } }),
+          prisma.listing.update({ where: { id: listing.id }, data: { promoted: true, promotedUntil: until } }),
+          prisma.revenueTransaction.upsert({
+            where: { reference: intent.reference },
+            update: { status: "SETTLED" },
+            create: { userId: intent.userId, type: "PROMOTION", reference: intent.reference, gross: purchase.amount, fee: 0, net: purchase.amount, status: "SETTLED", metadata: { listingId: listing.id, days } }
+          })
+        ]);
+      }
+    }
+  }
+
+  if (purpose === "PRO" && typeof metadata.subscriptionId === "string" && typeof metadata.proPaymentId === "string") {
+    const subscription = await prisma.proSubscription.findUnique({ where: { id: metadata.subscriptionId } });
+    const payment = await prisma.proPayment.findUnique({ where: { id: metadata.proPaymentId } });
+    if (subscription && payment && payment.status !== "SUCCESS") {
+      const startedAt = new Date();
+      const expiresAt = new Date(startedAt);
+      expiresAt.setMonth(expiresAt.getMonth() + (subscription.plan === "YEARLY" ? 12 : 1));
+      await prisma.$transaction([
+        prisma.proPayment.update({ where: { id: payment.id }, data: { status: "SUCCESS", providerReference: intent.reference, paidAt: startedAt } }),
+        prisma.proSubscription.update({ where: { id: subscription.id }, data: { status: "ACTIVE", startedAt, expiresAt, provider: intent.provider, providerReference: intent.reference } }),
+        prisma.revenueTransaction.upsert({
+          where: { reference: intent.reference },
+          update: { status: "SETTLED" },
+          create: { userId: intent.userId, type: "PRO", reference: intent.reference, gross: subscription.amount, fee: 0, net: subscription.amount, status: "SETTLED" }
+        })
+      ]);
+    }
+  }
+
+  if (purpose === "ORDER" && typeof metadata.orderId === "string") {
+    const order = await prisma.order.findUnique({ where: { id: metadata.orderId } });
+    if (order && order.status === "PENDING") {
+      await prisma.$transaction([
+        prisma.order.update({ where: { id: order.id }, data: { status: "PAID" } }),
+        prisma.revenueTransaction.upsert({
+          where: { reference: intent.reference },
+          update: { status: "SETTLED" },
+          create: { userId: intent.userId, type: "ORDER", reference: intent.reference, gross: order.amount, fee: 0, net: order.amount, status: "SETTLED", metadata: { orderId: order.id } }
+        })
+      ]);
+    }
+  }
+
+  if (purpose === "DIGITAL" && typeof metadata.digitalOrderId === "string") {
+    const order = await prisma.digitalOrder.findUnique({ where: { id: metadata.digitalOrderId } });
+    if (order && order.status === "PENDING_PAYMENT") {
+      await prisma.digitalOrder.update({ where: { id: order.id }, data: { status: "PAYMENT_CONFIRMED", providerReference: intent.reference } });
+    }
+  }
+
+  return intent;
+}
+
 export async function settleRevenue(input:{userId?:string;type:string;reference:string;gross:number;fee?:number;metadata?:PaymentMetadata}){
   const fee=input.fee||0;
   return prisma.revenueTransaction.upsert({
