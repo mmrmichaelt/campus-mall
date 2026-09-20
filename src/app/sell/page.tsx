@@ -269,6 +269,24 @@ return (
       </select>
     </label>
 
+    <div className="panel" style={{ marginTop: 4, marginBottom: 0 }}>
+      <p className="category">ADVERTISING & PROMOTION</p>
+      <h2>Boost item to reach more people</h2>
+      <p className="note">Optional paid promotion. Your item will still be posted for free if you skip this. You can boost it later from the item page.</p>
+      <label>
+        Boost duration
+        <select value={boostDays} onChange={(event) => setBoostDays(event.target.value)}>
+          <option value="0">No boost — free listing</option>
+          <option value="1">1 day — KES 50</option>
+          <option value="3">3 days — KES 120</option>
+          <option value="7">7 days — KES 250</option>
+          <option value="14">14 days — KES 450</option>
+          <option value="30">30 days — KES 800</option>
+        </select>
+      </label>
+      <p className="note" style={{ marginBottom: 0 }}>These are Campus Mall promotion/advertising fees. If selected, an M-Pesa payment request is started after your item is created.</p>
+    </div>
+
     <label>
       Location
       <input
