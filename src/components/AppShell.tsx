@@ -111,8 +111,6 @@ return (
         <Bell size={20} />
       </Link>
 
-      <MarketplaceFilter />
-
       {user ? (
         <>
           <Link
@@ -138,9 +136,12 @@ return (
           </button>
         </>
       ) : (
-        <Link className={`small-btn ${pathname.startsWith("/join") ? "active-page" : ""}`} href="/join">
-          Join
-        </Link>
+        <>
+          <MarketplaceFilter />
+          <Link className={`small-btn ${pathname.startsWith("/join") ? "active-page" : ""}`} href="/join">
+            Join
+          </Link>
+        </>
       )}
     </div>
   </header>
