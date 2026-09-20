@@ -27,7 +27,7 @@ export default function VerifyPage() {
     try {
       const response = await fetch("/api/auth/me", { cache: "no-store" });
       if (!response.ok) {
-        router.replace("/join");
+        router.replace("/join?mode=login");
         return;
       }
       const data = await response.json();
