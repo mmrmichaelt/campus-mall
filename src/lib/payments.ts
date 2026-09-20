@@ -4,7 +4,12 @@ import type { Prisma } from "@prisma/client";
 
 type PaymentMetadata = Prisma.InputJsonValue;
 
-export async function createPaymentIntent(input:{userId:string;purpose:string;amount:number;phone:string;metadata?:PaymentMetadata}){
+export type PaymentMethod =
+  | "MPESA" | "AIRTEL_MONEY" | "CARD" | "BANK_TRANSFER" | "PESALINK"
+  | "MOBILE_MONEY" | "PAYPAL" | "APPLE_PAY" | "GOOGLE_PAY" | "STRIPE"
+  | "FLUTTERWAVE" | "PAYSTACK" | "CASH_ON_DELIVERY";
+
+export async function createPaymentIntent(input:{userId:string;purpose:string;amount:number;phone:string;email?:string;paymentMethod?:PaymentMethod;metadata?:PaymentMetadata}){
   const reference=`CM-${Date.now()}-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
   const intent=await prisma.paymentIntent.create({
     data:{
@@ -13,9 +18,42 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
       reference,
       amount:input.amount,
       phone:input.phone,
-      metadata:input.metadata ?? undefined
+      metadata:{
+        ...(input.metadata && typeof input.metadata === "object" ? input.metadata : {}),
+        paymentMethod: input.paymentMethod ?? "MPESA"
+      } as PaymentMetadata
     }
   });
+  const paymentMethod=input.paymentMethod ?? "MPESA";
+  if (paymentMethod !== "MPESA") {
+    const configured = paymentMethod === "CASH_ON_DELIVERY"
+      ? process.env.CASH_ON_DELIVERY_ENABLED === "true"
+      : paymentMethod === "BANK_TRANSFER" || paymentMethod === "PESALINK"
+        ? Boolean(process.env.CAMPUS_MALL_BANK_NAME && process.env.CAMPUS_MALL_BANK_ACCOUNT)
+        : paymentMethod === "CARD" || paymentMethod === "APPLE_PAY" || paymentMethod === "GOOGLE_PAY" || paymentMethod === "STRIPE"
+          ? Boolean(process.env.STRIPE_SECRET_KEY)
+          : paymentMethod === "PAYPAL"
+            ? Boolean(process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET)
+            : paymentMethod === "FLUTTERWAVE" || paymentMethod === "MOBILE_MONEY"
+              ? Boolean(process.env.FLW_SECRET_KEY)
+              : paymentMethod === "PAYSTACK"
+                ? Boolean(process.env.PAYSTACK_SECRET_KEY)
+                : paymentMethod === "AIRTEL_MONEY"
+                  ? Boolean(process.env.AIRTEL_MONEY_CLIENT_ID && process.env.AIRTEL_MONEY_CLIENT_SECRET)
+                  : false;
+
+    if (!configured) return { intent, configured: false, stk: null, paymentMethod, checkoutUrl: null };
+
+    return {
+      intent,
+      configured: true,
+      stk: null,
+      paymentMethod,
+      checkoutUrl: null,
+      requiresProviderCheckout: true
+    };
+  }
+
   const configured=!!(process.env.MPESA_CONSUMER_KEY&&process.env.MPESA_CONSUMER_SECRET&&process.env.MPESA_SHORTCODE&&process.env.MPESA_PASSKEY&&process.env.MPESA_CALLBACK_URL);
   if(!configured)return{intent,configured:false,stk:null};
   const stk=await initiateMpesaStk({amount:input.amount,phone:input.phone,reference,description:input.purpose});
@@ -23,7 +61,7 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
     where:{id:intent.id},
     data:{merchantRequestId:stk.MerchantRequestID,checkoutRequestId:stk.CheckoutRequestID}
   });
-  return{intent:updated,configured:true,stk};
+  return{intent:updated,configured:true,stk,paymentMethod,checkoutUrl:null};
 }
 
 export async function settleRevenue(input:{userId?:string;type:string;reference:string;gross:number;fee?:number;metadata?:PaymentMetadata}){
