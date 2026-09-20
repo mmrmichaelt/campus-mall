@@ -94,6 +94,7 @@ try {
       const promotionResponse = await fetch("/api/promote", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ listingId: result.listing.id, days: Number(boostDays), paymentMethod }) });
       const promotion = await promotionResponse.json().catch(() => ({}));
       if (!promotionResponse.ok) throw new Error(promotion.error || "Unable to start the boost.");
+      if (promotion.checkoutUrl) { window.location.href = promotion.checkoutUrl; return; }
     } catch (error) {
       setMessage(error instanceof Error ? `${error.message} You can boost this item later from its page.` : "Item posted. You can boost it later from its page.");
       window.setTimeout(() => { window.location.href = result.redirectTo || `/listings/${result.listing.id}`; }, 900);
