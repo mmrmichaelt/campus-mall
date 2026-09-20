@@ -139,7 +139,7 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
     if (!key || !input.email) return { intent, configured:false, stk:null, paymentMethod, checkoutUrl:null };
     const params=new URLSearchParams();
     params.set("mode","payment");
-    params.set("success_url",`${appUrl}/payment-success?reference=${encodeURIComponent(reference)}`);
+    params.set("success_url",`${appUrl}/api/payments/callback/stripe?reference=${encodeURIComponent(reference)}&session_id={CHECKOUT_SESSION_ID}`);
     params.set("cancel_url",`${appUrl}/payment-cancelled?reference=${encodeURIComponent(reference)}`);
     params.set("customer_email",input.email);
     params.set("line_items[0][price_data][currency]",(process.env.STRIPE_CURRENCY || "kes").toLowerCase());
