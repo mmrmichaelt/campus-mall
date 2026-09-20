@@ -45,6 +45,7 @@ export async function POST(request: NextRequest) {
         purpose: "DIGITAL",
         amount,
         phone,
+        email: user.email || undefined,
         paymentMethod: String(body.paymentMethod || "MPESA") as any,
         metadata: { digitalOrderId: order.id, productId: product.id },
       });
