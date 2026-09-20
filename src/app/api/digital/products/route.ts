@@ -3,7 +3,7 @@ import {
   DigitalProductType,
 } from "@prisma/client";
 
-import { prisma } from "../../../../src/lib/prisma";
+import { prisma } from "../../../../lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
