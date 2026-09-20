@@ -40,8 +40,14 @@ export default function SplashScreen() {
         }
         @media (max-width: 620px) {
           .campus-splash-photo-image {
-            background-size: auto 100%;
+            background-size: cover;
             background-position: center center;
+          }
+        }
+
+        @media (max-width: 420px) {
+          .campus-splash-photo-image {
+            background-position: 50% center;
           }
         }
         @media (prefers-reduced-motion: reduce) {
