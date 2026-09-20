@@ -166,7 +166,7 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
         amount:String(Math.round(input.amount*100)),
         currency:"KES",
         mobile_money:{phone:input.phone,provider:"atl"},
-        metadata:{...(input.metadata ?? {}), paymentIntentReference:reference}
+        metadata:{...(input.metadata && typeof input.metadata === "object" && !Array.isArray(input.metadata) ? input.metadata : {}), paymentIntentReference:reference}
       }),
       cache:"no-store"
     });
