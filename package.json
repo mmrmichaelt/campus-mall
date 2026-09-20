@@ -38,5 +38,10 @@
     "@types/react-dom": "^19.1.9",
     "prisma": "^6.16.2",
     "typescript": "^5.9.2"
+  },
+  "allowScripts": {
+    "prisma": true,
+    "@prisma/engines": true,
+    "@prisma/client": true
   }
 }
