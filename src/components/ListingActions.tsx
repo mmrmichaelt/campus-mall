@@ -94,6 +94,7 @@ async function promoteListing(days: number) {
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || "Unable to start promotion.");
+    if (data.checkoutUrl) { window.location.href = data.checkoutUrl; return; }
     setPromotionMessage(
       data.paymentConfigured
         ? `${paymentMethod === "MPESA" ? "M-Pesa payment request sent. Complete it on your phone" : "Payment started with " + paymentMethod.replaceAll("_", " ") + ". Complete the provider checkout"}; the listing will become featured after confirmation.`
