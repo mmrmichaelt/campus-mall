@@ -28,7 +28,7 @@ export default function SplashScreen() {
           position: fixed; inset: 0; z-index: 1000; overflow: hidden;
           display: grid; place-items: center; min-height: 100dvh;
           background-color: #171114;
-          background-image: url("/campus-mall-welcome.webp");
+          background-image: url("/campus-mall-welcome.jpg");
           background-size: cover; background-position: center center; background-repeat: no-repeat;
           color: #fff; animation: campusSplashFadeOut 0.55s ease 6.45s forwards;
         }
