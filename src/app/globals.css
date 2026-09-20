@@ -1216,3 +1216,29 @@ CAMPUS MALL SPLASH
   box-shadow: 0 0 0 2px rgba(201, 21, 45, 0.10);
   font-weight: 800;
 }
+
+
+/* Active page state for every visible page-opening navigation control */
+.top-actions a.active-page,
+.brand.active-page {
+  color: var(--red);
+  background: var(--red-light);
+  border: 1px solid var(--red);
+  border-radius: 12px;
+  box-shadow: 0 0 0 2px rgba(201, 21, 45, 0.10);
+  font-weight: 800;
+}
+
+.top-actions a.active-page {
+  padding: 7px 9px;
+}
+
+.brand.active-page {
+  padding: 4px 7px 4px 4px;
+}
+
+@media (max-width: 620px) {
+  .brand.active-page {
+    padding: 3px 5px 3px 3px;
+  }
+}
