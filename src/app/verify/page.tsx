@@ -114,7 +114,8 @@ export default function VerifyPage() {
       }
 
       if (data.verification?.fullyVerified || data.fullyVerified) {
-        setTimeout(() => router.replace("/"), 700);
+        // Keep the verification result visible. The user should explicitly
+        // choose when to continue instead of being unexpectedly sent home.
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Verification failed.");
@@ -156,9 +157,15 @@ export default function VerifyPage() {
 
       {verified && (
         <div className="success" style={{ marginBottom: 20 }}>
-          ✓ Your account is verified. You can continue using Campus Mall.
+          <strong>✓ Your account is verified.</strong>{" "}
+          You can continue using Campus Mall.
           {!status.emailVerified && hasEmail ? " You can verify your email too." : ""}
           {!status.phoneVerified && hasPhone ? " You can verify your phone too." : ""}
+          <div className="hero-actions" style={{ marginTop: 14 }}>
+            <button type="button" className="primary-btn" onClick={() => router.push("/")}>
+              Continue to Campus Mall
+            </button>
+          </div>
         </div>
       )}
 
