@@ -10,6 +10,11 @@ type SearchParams = Promise<{
   category?: string;
   country?: string;
   university?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  sort?: string;
+  location?: string;
+  sellerType?: string;
 }>;
 
 const categories = [
