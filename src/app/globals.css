@@ -1179,3 +1179,29 @@ CAMPUS MALL SPLASH
 .filter-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .filter-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:4px; }
 @media (max-width: 760px) { .marketplace-filter { order:3; } .marketplace-filter-panel { right:-6px; } .filter-row { grid-template-columns:1fr; } }
+
+/* Guest institution search */
+.guest-institution-options {
+  display: grid;
+  gap: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  margin-top: 6px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(0,0,0,.12);
+}
+.guest-institution-option {
+  width: 100%;
+  padding: 11px 14px;
+  border: 0;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fff;
+  color: #17171a;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+.guest-institution-option:last-child { border-bottom: 0; }
+.guest-institution-option:hover { background: #fff0f2; color: #a80f24; }
