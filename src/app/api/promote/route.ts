@@ -14,6 +14,6 @@ export async function POST(req: Request) {
     const purchase = await prisma.promotionPurchase.create({ data: { userId: user.id, listingId: listing.id, days, amount: prices[days] } });
     const payment = await createPaymentIntent({ userId: user.id, purpose: "PROMOTION", amount: prices[days], phone: String(body.phone || user.phone), email: user.email || undefined, paymentMethod: String(body.paymentMethod || "MPESA") as any, metadata: { promotionPurchaseId: purchase.id, listingId: listing.id, days } });
     await prisma.promotionPurchase.update({ where: { id: purchase.id }, data: { paymentIntentId: payment.intent.id } });
-    return NextResponse.json({ success: true, purchaseId: purchase.id, paymentIntentId: payment.intent.id, paymentConfigured: payment.configured, stk: payment.stk });
+    return NextResponse.json({ success: true, purchaseId: purchase.id, paymentIntentId: payment.intent.id, paymentConfigured: payment.configured, checkoutUrl: (payment as any).checkoutUrl || null, paymentMessage: (payment as any).paymentMessage || null, stk: payment.stk });
   } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "Unable to start promotion." }, { status: 500 }); }
 }
