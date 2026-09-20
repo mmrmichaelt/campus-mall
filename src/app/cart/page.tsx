@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import PaymentMethodSelector, { type PaymentMethod } from "../../components/PaymentMethodSelector";
 import Link from "next/link";
 import {
   ShoppingCart,
@@ -29,6 +30,7 @@ export default function Cart() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("MPESA");
 
   async function load() {
     setLoading(true);
@@ -102,8 +104,8 @@ export default function Cart() {
   }
 
   async function order(listingId: string) {
-    const phone = window.prompt("Enter the M-Pesa phone number for this purchase:");
-    if (!phone) return;
+    const phone = window.prompt("Enter the phone number for this purchase (if required):");
+    if (!phone && paymentMethod === "MPESA") return;
     setBusyId(listingId);
     setMessage("");
 
@@ -116,6 +118,7 @@ export default function Cart() {
         body: JSON.stringify({
           listingId,
           phone,
+          paymentMethod,
         }),
       });
 
@@ -217,6 +220,8 @@ export default function Cart() {
         </div>
       ) : (
         <>
+          <PaymentMethodSelector value={paymentMethod} onChange={setPaymentMethod} />
+
           <div className="cart-list">
             {items.map((item) => {
               const price = Number(
@@ -338,8 +343,7 @@ export default function Cart() {
             className="note"
             style={{ marginTop: "12px" }}
           >
-            Payment arrangements are agreed between
-            the buyer and seller.
+            The selected payment method is sent to the secure Campus Mall payment service. Provider credentials and country support determine which methods can be used for live checkout.
           </p>
         </>
       )}
