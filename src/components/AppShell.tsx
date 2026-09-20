@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import {
 Bell,
@@ -22,6 +23,7 @@ children: React.ReactNode;
 const [user, setUser] = useState<any>(null);
 const [q, setQ] = useState("");
 const [theme, setTheme] = useState<"light" | "dark">("light");
+const pathname = usePathname();
 
 useEffect(() => {
 let active = true;
