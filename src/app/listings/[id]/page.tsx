@@ -54,6 +54,8 @@ export default async function ListingPage({ params }: PageProps) {
         imageUrl: true,
         location: true,
         status: true,
+        promoted: true,
+        promotedUntil: true,
         soldAt: true,
         createdAt: true,
         updatedAt: true,
@@ -129,6 +131,9 @@ export default async function ListingPage({ params }: PageProps) {
           )}
 
           <p className="category">{listing.category}</p>
+          {listing.promoted && listing.promotedUntil && listing.promotedUntil > new Date() && (
+            <div className="success" style={{ marginBottom: "10px" }}>📣 Promoted listing — boosted until {listing.promotedUntil.toLocaleDateString()}</div>
+          )}
           <h1>{listing.title}</h1>
 
           <div style={{ fontSize: "1.35rem", fontWeight: 800, margin: "12px 0" }}>
