@@ -168,13 +168,18 @@ export default function AccountForms() {
 
       if (mode === "register") {
         setSuccess(
-          "Account created successfully. Redirecting..."
+          "Account created successfully. Taking you to account verification..."
         );
-
         window.location.href =
-          "/verify";
+          data.redirectTo || "/verify";
       } else {
-        window.location.href = "/";
+        setSuccess(
+          data.verification?.fullyVerified
+            ? "Login successful. Opening Campus Mall..."
+            : "Login successful. Your account needs verification first."
+        );
+        window.location.href =
+          data.redirectTo || "/verify";
       }
     } catch (err) {
       setError(
