@@ -1178,7 +1178,12 @@ CAMPUS MALL SPLASH
 .marketplace-filter-panel input, .marketplace-filter-panel select { width:100%; box-sizing:border-box; }
 .filter-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .filter-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:4px; }
-@media (max-width: 760px) {\n  .marketplace-filter { order: 3; }\n  .top-actions .small-btn { order: 4; }\n  .marketplace-filter-panel { right:-6px; }\n  .filter-row { grid-template-columns:1fr; }\n}
+@media (max-width: 760px) {
+  .marketplace-filter { order: 3; }
+  .top-actions .small-btn { order: 4; }
+  .marketplace-filter-panel { right:-6px; }
+  .filter-row { grid-template-columns:1fr; }
+}
 
 /* Guest institution search */
 .guest-institution-options {
