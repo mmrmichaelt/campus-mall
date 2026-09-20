@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   countries,
 } from "@/data/countries";
@@ -23,8 +24,9 @@ import {
 type Mode = "register" | "login";
 
 export default function AccountForms() {
+  const searchParams = useSearchParams();
   const [mode, setMode] =
-    useState<Mode>("register");
+    useState<Mode>(searchParams.get("mode") === "login" ? "login" : "register");
 
   const [name, setName] = useState("");
   const [country, setCountry] =
