@@ -156,8 +156,24 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
   }
 
   if (paymentMethod === "AIRTEL_MONEY") {
-    const configured=Boolean(process.env.AIRTEL_MONEY_CLIENT_ID && process.env.AIRTEL_MONEY_CLIENT_SECRET && process.env.AIRTEL_MONEY_COUNTRY);
-    return {intent,configured,stk:null,paymentMethod,checkoutUrl:null};
+    const key=process.env.PAYSTACK_SECRET_KEY;
+    if (!key || !input.email) return {intent,configured:false,stk:null,paymentMethod,checkoutUrl:null};
+    const response=await fetch("https://api.paystack.co/charge",{
+      method:"POST",
+      headers:{Authorization:`Bearer ${key}`,"Content-Type":"application/json"},
+      body:JSON.stringify({
+        email:input.email,
+        amount:String(Math.round(input.amount*100)),
+        currency:"KES",
+        mobile_money:{phone:input.phone,provider:"atl"},
+        metadata:{...(input.metadata ?? {}), paymentIntentReference:reference}
+      }),
+      cache:"no-store"
+    });
+    const data=await response.json();
+    if(!response.ok || !data?.status) throw new Error(data?.message || "Airtel Money payment could not be started.");
+    const updated=await prisma.paymentIntent.update({where:{id:intent.id},data:{provider:"PAYSTACK",merchantRequestId:data?.data?.reference || reference}});
+    return {intent:updated,configured:true,stk:null,paymentMethod,checkoutUrl:null,paymentMessage:data?.data?.display_text || "Approve the Airtel Money request on your phone."};
   }
 
   return {intent,configured:false,stk:null,paymentMethod,checkoutUrl:null};
