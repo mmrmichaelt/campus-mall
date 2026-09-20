@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
         purpose: "ORDER",
         amount: Number(listing.price),
         phone: String(body.phone || user.phone),
+        paymentMethod: String(body.paymentMethod || "MPESA") as any,
         metadata: { orderId: order.id, listingId: listing.id },
       });
 
