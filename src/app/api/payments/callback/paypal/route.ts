@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { finalizePaymentIntent } from "@/lib/payments";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const reference = url.searchParams.get("reference") || "";
   const orderId = url.searchParams.get("token") || "";
   const intent = reference ? await prisma.paymentIntent.findUnique({ where: { reference } }) : null;
-  if (!intent || !orderId) return NextResponse.redirect(new URL(`/payment-cancelled?reference=${encodeURIComponent(reference)}`, url.origin));
+  if (!intent || !orderId) await finalizePaymentIntent(reference);
+  return NextResponse.redirect(new URL(`/payment-cancelled?reference=${encodeURIComponent(reference)}`, url.origin));
   const clientId = process.env.PAYPAL_CLIENT_ID;
   const secret = process.env.PAYPAL_CLIENT_SECRET;
   if (!clientId || !secret) return NextResponse.redirect(new URL(`/payment-cancelled?reference=${encodeURIComponent(reference)}`, url.origin));
