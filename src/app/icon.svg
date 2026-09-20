@@ -1,58 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
-  <title id="title">Campus Mall</title>
-  <desc id="desc">Campus Mall red C and white M logo with the red diagonal cut-through</desc>
-
-  <rect width="512" height="512" rx="104" fill="#111111"/>
-
-  <!-- Red C -->
-  <path
-    d="M323 126
-       C288 104 247 92 205 92
-       C126 92 76 158 76 256
-       C76 354 126 420 205 420
-       C247 420 288 408 323 386
-       L276 319
-       C254 332 232 338 210 338
-       C166 338 140 308 140 256
-       C140 204 166 174 210 174
-       C232 174 254 180 276 193
-       Z"
-    fill="#ef1b2f"/>
-
-  <!-- White M -->
-  <path
-    d="M235 116
-       L310 116
-       L350 252
-       L390 116
-       L465 116
-       L465 396
-       L394 396
-       L394 239
-       L361 350
-       L339 350
-       L306 239
-       L306 396
-       L235 396
-       Z"
-    fill="#ffffff"/>
-
-  <!-- Distinctive red diagonal cut through the M -->
-  <path
-    d="M188 285
-       L456 170
-       L469 202
-       L201 318
-       Z"
-    fill="#ef1b2f"/>
-
-  <!-- Small highlight that keeps the C/M intersection crisp -->
-  <path
-    d="M188 285
-       L456 170
-       L445 193
-       L201 298
-       Z"
-    fill="#d9142b"
-    opacity=".98"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+<title id="title">Campus Mall</title>
+<rect width="512" height="512" rx="104" fill="#111111"/>
+<!-- Reference CM: red C cutting through white M -->
+<path d="M323 126C288 104 247 92 205 92C126 92 76 158 76 256C76 354 126 420 205 420C247 420 288 408 323 386L276 319C254 332 232 338 210 338C166 338 140 308 140 256C140 204 166 174 210 174C232 174 254 180 276 193Z" fill="#ef1b2f"/>
+<path d="M235 116L310 116L350 252L390 116L465 116L465 350L394 350L394 239L361 350L339 350L306 239L306 350L235 350Z" fill="#fff"/>
+<path d="M188 285L456 170L469 202L201 318Z" fill="#ef1b2f"/>
+<!-- trolley -->
+<g transform="translate(168 360)">
+  <path d="M20 10H2" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+  <path d="M12 10L30 68H142L160 28H34" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M44 82H126" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="51" cy="92" r="10" fill="#ef1b2f"/>
+  <circle cx="119" cy="92" r="10" fill="#ef1b2f"/>
+</g>
 </svg>
