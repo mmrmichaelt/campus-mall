@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import MarketplaceFilter from "./MarketplaceFilter";
 import Link from "next/link";
 import {
 Bell,
@@ -23,7 +24,6 @@ children: React.ReactNode;
 const [user, setUser] = useState<any>(null);
 const [q, setQ] = useState("");
 const [theme, setTheme] = useState<"light" | "dark">("light");
-const pathname = usePathname();
 const pathname = usePathname();
 
 useEffect(() => {
