@@ -80,7 +80,7 @@ export async function POST(request: Request) {
       message: fullyVerified
         ? `Welcome back, ${user.name}.`
         : "Welcome back. Please complete your account verification.",
-      redirectTo: fullyVerified ? "/" : "/verify",
+      redirectTo: "/",
       verification: {
         emailVerified: user.emailVerified,
         phoneVerified: user.phoneVerified,
