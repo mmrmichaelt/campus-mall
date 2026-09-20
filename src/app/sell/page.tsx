@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Image as ImageIcon, Upload, X } from "lucide-react";
+import PaymentMethodSelector, { type PaymentMethod } from "../../components/PaymentMethodSelector";
 
 const categories = [
   "Accommodation",
@@ -34,6 +35,7 @@ const [uploadingPhotos, setUploadingPhotos] = useState(false);
 const [imageUrls, setImageUrls] = useState<string[]>([]);
 const [photoMessage, setPhotoMessage] = useState("");
 const [boostDays, setBoostDays] = useState("0");
+const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("MPESA");
 
 function update(field: string, value: string) {
 setData((current) => ({
@@ -89,7 +91,7 @@ try {
 
   if (Number(boostDays) > 0 && result.listing?.id) {
     try {
-      const promotionResponse = await fetch("/api/promote", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ listingId: result.listing.id, days: Number(boostDays) }) });
+      const promotionResponse = await fetch("/api/promote", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ listingId: result.listing.id, days: Number(boostDays), paymentMethod }) });
       const promotion = await promotionResponse.json().catch(() => ({}));
       if (!promotionResponse.ok) throw new Error(promotion.error || "Unable to start the boost.");
     } catch (error) {
@@ -284,7 +286,8 @@ return (
           <option value="30">30 days — KES 800</option>
         </select>
       </label>
-      <p className="note" style={{ marginBottom: 0 }}>These are Campus Mall promotion/advertising fees. If selected, an M-Pesa payment request is started after your item is created.</p>
+      <p className="note" style={{ marginBottom: 8 }}>These are Campus Mall promotion/advertising fees. If selected, the chosen payment method is started after your item is created.</p>
+      {Number(boostDays) > 0 && <PaymentMethodSelector value={paymentMethod} onChange={setPaymentMethod} compact />}
     </div>
 
     <label>
