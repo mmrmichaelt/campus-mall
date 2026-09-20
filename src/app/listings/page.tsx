@@ -37,7 +37,7 @@ export default async function ListingsPage({
   const category = params.category?.trim() || "";
   const country = params.country?.trim() || "";
   const university = params.university?.trim() || "";
-  const minPrice = Number(params.minPrice);
+
   const maxPrice = Number(params.maxPrice);
   const sort = params.sort?.trim() || "newest";
   const location = params.location?.trim() || "";
