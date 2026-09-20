@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { finalizePaymentIntent } from "@/lib/payments";
 
 export async function GET(request: Request) {
   const url=new URL(request.url);
   const reference=url.searchParams.get("reference") || "";
   const sessionId=url.searchParams.get("session_id") || "";
   const intent=reference ? await prisma.paymentIntent.findUnique({where:{reference}}) : null;
-  if(!intent || !sessionId) return NextResponse.redirect(new URL(`/payment-cancelled?reference=${encodeURIComponent(reference)}`,url.origin));
+  if(!intent || !sessionId) await finalizePaymentIntent(reference);
+  return NextResponse.redirect(new URL(`/payment-cancelled?reference=${encodeURIComponent(reference)}`,url.origin));
   const key=process.env.STRIPE_SECRET_KEY;
   if(!key) return NextResponse.redirect(new URL(`/payment-cancelled?reference=${encodeURIComponent(reference)}`,url.origin));
   const response=await fetch(`https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(sessionId)}`,{headers:{Authorization:`Bearer ${key}`},cache:"no-store"});
