@@ -7,7 +7,6 @@ export default async function SiteHeaderWrapper() {
   return (
     <SiteHeader
       userName={user?.name ?? null}
-      profileImageUrl={user?.imageUrl ?? null}
       isVerified={
         Boolean(user?.emailVerified) &&
         Boolean(user?.phoneVerified)
