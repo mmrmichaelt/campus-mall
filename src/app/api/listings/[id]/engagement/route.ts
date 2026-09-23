@@ -4,10 +4,6 @@ import { getCurrentUser } from "@/lib/auth";
 
 type Context = { params: Promise<{ id: string }> };
 
-function verified(user: { emailVerified: boolean; phoneVerified: boolean }) {
-  return user.emailVerified || user.phoneVerified;
-}
-
 export async function GET(_request: Request, context: Context) {
   try {
     const { id } = await context.params;
@@ -44,7 +40,7 @@ export async function POST(request: Request, context: Context) {
     const { id } = await context.params;
     const user = await getCurrentUser();
     if (!user) return NextResponse.json({ error: "Create an account to continue.", accountRequired: true }, { status: 401 });
-    if (!verified(user)) return NextResponse.json({ error: "Verify your email or phone number to continue.", verificationRequired: true, redirectTo: "/verify" }, { status: 403 });
+
 
     const listing = await prisma.listing.findUnique({ where: { id }, select: { id: true, sellerId: true, status: true } });
     if (!listing) return NextResponse.json({ error: "Listing not found." }, { status: 404 });
