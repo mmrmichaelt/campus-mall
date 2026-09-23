@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import AppShell from "@/components/AppShell";
 import PwaRegister from "@/components/PwaRegister";
+import SplashScreen from "@/components/SplashScreen";
 
 export const metadata: Metadata = {
   title: { default: "Campus Mall", template: "%s | Campus Mall" },
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body>
         <PwaRegister />
+        <SplashScreen />
         <AppShell>{children}</AppShell>
       </body>
     </html>
