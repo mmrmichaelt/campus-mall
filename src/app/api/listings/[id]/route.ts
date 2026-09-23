@@ -229,7 +229,10 @@ const listing = await prisma.listing.update({
     price: new Prisma.Decimal(data.price),
     currency: data.currency.trim().toUpperCase(),
     category: data.category.trim().toLowerCase(),
-    imageUrl: data.imageUrl?.trim() || null,
+    imageUrl:
+      data.imageUrls?.length
+        ? JSON.stringify(data.imageUrls)
+        : data.imageUrl?.trim() || null,
     location: data.location.trim(),
   },
   select: {
