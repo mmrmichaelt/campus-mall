@@ -25,6 +25,7 @@ type Mode = "register" | "login";
 
 export default function AccountForms() {
   const searchParams = useSearchParams();
+  const nextPath = searchParams.get("next")?.startsWith("/") ? searchParams.get("next")! : "/";
   const [mode, setMode] =
     useState<Mode>(searchParams.get("mode") === "login" ? "login" : "register");
 
@@ -170,7 +171,7 @@ export default function AccountForms() {
 
       if (mode === "register") {
         setSuccess("Account created successfully. Opening Campus Mall...");
-        window.location.href = data.redirectTo || "/";
+        window.location.href = data.redirectTo || nextPath;
       } else {
         setSuccess("Login successful. Opening Campus Mall...");
         window.location.href = data.redirectTo || "/";
