@@ -169,19 +169,11 @@ export default function AccountForms() {
       }
 
       if (mode === "register") {
-        setSuccess(
-          "Account created successfully. Taking you to account verification..."
-        );
-        window.location.href =
-          data.redirectTo || "/verify";
+        setSuccess("Account created successfully. Opening Campus Mall...");
+        window.location.href = data.redirectTo || "/";
       } else {
-        setSuccess(
-          data.verification?.fullyVerified
-            ? "Login successful. Opening Campus Mall..."
-            : "Login successful. Your account needs verification first."
-        );
-        window.location.href =
-          data.redirectTo || "/verify";
+        setSuccess("Login successful. Opening Campus Mall...");
+        window.location.href = data.redirectTo || "/";
       }
     } catch (err) {
       setError(
@@ -631,12 +623,7 @@ export default function AccountForms() {
             <div className="success">
               {success}
             </div>
-          )}
-
-          <div className="hero-actions">
-            <Link href="/verify" className="secondary-btn">Verify Account</Link>
-          </div>
-
+          )}\n
           <button
             className="primary-btn"
             type="submit"
