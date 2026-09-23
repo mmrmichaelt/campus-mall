@@ -68,6 +68,21 @@ export const listingSchema = z.object({
   imageUrl: z.string().trim().url("Image URL must be valid").optional().or(z.literal("")),
   imageUrls: z.array(z.string().url("Each photo must be a valid uploaded image URL")).max(5, "You can upload up to 5 photos").optional().default([]),
   location: z.string().trim().min(2, "Location is required").max(200, "Location is too long"),
+  details: z.object({
+    brand: z.string().trim().max(100).optional(),
+    model: z.string().trim().max(100).optional(),
+    condition: z.string().trim().max(50).optional(),
+    conditionNotes: z.string().trim().max(500).optional(),
+    color: z.string().trim().max(50).optional(),
+    size: z.string().trim().max(50).optional(),
+    material: z.string().trim().max(100).optional(),
+    quantity: z.coerce.number().int().min(1).max(100000).optional(),
+    year: z.coerce.number().int().min(1900).max(2100).optional(),
+    warranty: z.string().trim().max(200).optional(),
+    negotiable: z.boolean().optional(),
+    delivery: z.string().trim().max(100).optional(),
+    tags: z.string().trim().max(300).optional(),
+  }).optional().default({}),
 });
 
 export const messageSchema = z.object({
