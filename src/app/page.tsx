@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ListingCard } from "@/components/ListingCard";
+import ListingCard from "@/components/ListingCard";
 import { countries } from "@/data/countries";
 
 const categories = ["All", "Accommodation", "Beauty & dressing", "Electronics", "Food", "Furniture", "Jobs", "Printing & photography", "Services", "Stationery", "Utensils", "Other"];
