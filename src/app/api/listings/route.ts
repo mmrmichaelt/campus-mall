@@ -44,8 +44,24 @@ export async function GET(request: Request) {
     const q = searchParams.get("q")?.trim() || "";
     const category = searchParams.get("category")?.trim() || "";
     const country = searchParams.get("country")?.trim() || "";
-    const university =
-      searchParams.get("university")?.trim() || "";
+    const university = searchParams.get("university")?.trim() || "";
+    const minPrice = Number(searchParams.get("minPrice"));
+    const maxPrice = Number(searchParams.get("maxPrice"));
+    const sort = searchParams.get("sort")?.trim() || "newest";
+    const location = searchParams.get("location")?.trim() || "";
+    const sellerType = searchParams.get("sellerType")?.trim() || "";
+
+    const priceFilter: Prisma.DecimalFilter = {};
+    if (Number.isFinite(minPrice) && minPrice >= 0) priceFilter.gte = minPrice;
+    if (Number.isFinite(maxPrice) && maxPrice >= 0) priceFilter.lte = maxPrice;
+
+    const orderBy: Prisma.ListingOrderByWithRelationInput[] =
+      sort === "price-low" ? [{ price: "asc" }] :
+      sort === "price-high" ? [{ price: "desc" }] :
+      sort === "title-az" ? [{ title: "asc" }] :
+      sort === "title-za" ? [{ title: "desc" }] :
+      sort === "oldest" ? [{ createdAt: "asc" }] :
+      [{ promoted: "desc" }, { promotedUntil: "desc" }, { createdAt: "desc" }];
 
     const rawPage = Number(searchParams.get("page") || "1");
     const rawLimit = Number(searchParams.get("limit") || "30");
@@ -65,6 +81,9 @@ export async function GET(request: Request) {
     const where: Prisma.ListingWhereInput = {
       status: "ACTIVE",
 
+      ...(Object.keys(priceFilter).length ? { price: priceFilter } : {}),
+      ...(location ? { location: { contains: location, mode: "insensitive" } } : {}),
+
       ...(category
         ? {
             category: {
@@ -74,7 +93,7 @@ export async function GET(request: Request) {
           }
         : {}),
 
-      ...(country || university
+      ...(country || university || sellerType
         ? {
             seller: {
               ...(country
@@ -85,14 +104,8 @@ export async function GET(request: Request) {
                     },
                   }
                 : {}),
-              ...(university
-                ? {
-                    university: {
-                      equals: university,
-                      mode: "insensitive",
-                    },
-                  }
-                : {}),
+              ...(university ? { university: { equals: university, mode: "insensitive" } } : {}),
+              ...(sellerType === "STUDENT" || sellerType === "OUTSIDER" ? { accountType: sellerType } : {}),
             },
           }
         : {}),
@@ -133,11 +146,7 @@ export async function GET(request: Request) {
       await prisma.$transaction([
         prisma.listing.findMany({
           where,
-          orderBy: [
-            { promoted: "desc" },
-            { promotedUntil: "desc" },
-            { createdAt: "desc" },
-          ],
+          orderBy,
           skip: (page - 1) * limit,
           take: limit,
           select: {
@@ -185,10 +194,10 @@ export async function GET(request: Request) {
         hasPreviousPage: page > 1,
       },
       filters: {
-        q,
-        category,
-        country,
-        university,
+        q, category, country, university,
+        minPrice: Number.isFinite(minPrice) ? minPrice : null,
+        maxPrice: Number.isFinite(maxPrice) ? maxPrice : null,
+        sort, location, sellerType,
       },
     });
   } catch (error) {
@@ -223,16 +232,6 @@ export async function POST(request: Request) {
             "You must be logged in to create a listing.",
         },
         { status: 401 }
-      );
-    }
-
-    if (!user.emailVerified && !user.phoneVerified) {
-      return NextResponse.json(
-        {
-          error: "Please verify your email or phone number before creating a listing.",
-          redirectTo: "/verify",
-        },
-        { status: 403 }
       );
     }
 
