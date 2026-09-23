@@ -122,12 +122,6 @@ export default function HomePage() {
         </div>
       )}
 
-      <section className="market-hero" aria-label={university}>
-        <div className="market-university-cover" aria-hidden="true">
-          <span>{university}</span>
-        </div>
-      </section>
-
       <div className="category-strip" aria-label="Marketplace categories">
         {categories.map(name => (
           <button key={name} type="button" className={category === (name === "All" ? "" : name) ? "category-chip active" : "category-chip"} onClick={() => setCategory(name === "All" ? "" : name)}>
