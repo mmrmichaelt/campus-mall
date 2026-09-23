@@ -305,3 +305,31 @@ footer{font-size:10px}
   letter-spacing:-.07em;
   user-select:none;
 }
+
+
+/* Campus Mall background identity: large, faint CM watermark on every page */
+.app{
+  position:relative;
+  isolation:isolate;
+}
+.app::before{
+  content:"CM";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  user-select:none;
+  font-size:clamp(180px,42vw,680px);
+  line-height:.75;
+  font-weight:1000;
+  letter-spacing:-.12em;
+  color:var(--ink);
+  opacity:.025;
+  transform:translateY(-1vh);
+}
+.market-sell-btn{
+  display:none !important;
+}
