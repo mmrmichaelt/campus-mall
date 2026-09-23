@@ -88,39 +88,6 @@ export default async function ProfilePage() {
             </span>
           </div>
 
-          <div
-            className="profile-verification"
-            style={{
-              display: "grid",
-              gap: "8px",
-              marginTop: "18px",
-            }}
-          >
-            <div
-              className={
-                user.emailVerified
-                  ? "success"
-                  : "note"
-              }
-            >
-              {user.emailVerified
-                ? "✓ Email verified"
-                : "Email not verified"}
-            </div>
-
-            <div
-              className={
-                user.phoneVerified
-                  ? "success"
-                  : "note"
-              }
-            >
-              {user.phoneVerified
-                ? "✓ Phone verified"
-                : "Phone not verified"}
-            </div>
-          </div>
-
           <Link
             href={`/profile/${user.id}`}
             className="secondary-btn"
@@ -160,9 +127,8 @@ export default async function ProfilePage() {
         <h2>Contact information</h2>
 
         <p className="note">
-          Your email address and phone number are
-          protected and cannot be changed from this
-          profile editor.
+          Your email address and phone number are optional
+          account contact details.
         </p>
 
         <div className="two-col">
@@ -177,12 +143,7 @@ export default async function ProfilePage() {
           </div>
         </div>
 
-        <Link
-          href="/verify"
-          className="text-link"
-        >
-          Manage verification
-        </Link>
+
       </section>
 
       <div
