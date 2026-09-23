@@ -28,6 +28,7 @@ export async function GET() {
         accountType: user.accountType,
         phone: user.phone,
         email: user.email,
+        imageUrl: user.imageUrl,
         emailVerified: user.emailVerified,
         phoneVerified: user.phoneVerified,
         fullyVerified: user.emailVerified || user.phoneVerified,
