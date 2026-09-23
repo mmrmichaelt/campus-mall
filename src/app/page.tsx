@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { PlusCircle, MapPin, ChevronRight } from "lucide-react";
+import { PlusCircle, MapPin } from "lucide-react";
 import ListingCard from "@/components/ListingCard";
 import { countries } from "@/data/countries";
 
@@ -122,12 +122,10 @@ export default function HomePage() {
       )}
 
       <section className="market-hero">
-        <div>
-          <span className="hero-kicker">CAMPUS MARKETPLACE</span>
-          <h1>Shop your campus.</h1>
-          <p>{user?.university || guestUniversity || "Your university"} · Items from your campus community</p>
+        <div className="market-university-cover" aria-label={user?.university || guestUniversity || "Your university"}>
+          <span>{user?.university || guestUniversity || "Your university"}</span>
         </div>
-        <Link className="primary-btn" href="/sell"><PlusCircle size={17} /> Sell</Link>
+        <Link className="primary-btn market-sell-btn" href="/sell"><PlusCircle size={17} /> Sell</Link>
       </section>
 
       <div className="category-strip">
@@ -139,11 +137,8 @@ export default function HomePage() {
       </div>
 
       <div className="market-section-head">
-        <div>
-          <h2>{category && category !== "All" ? category : "Recommended"}</h2>
-          <span>{user?.university || guestUniversity || "Campus Mall"}</span>
-        </div>
-        <Link href="/listings">View all <ChevronRight size={16} /></Link>
+        <h2>{category && category !== "All" ? category : "Recommended"}</h2>
+        <Link href="/listings">View all</Link>
       </div>
 
       {loading ? (
