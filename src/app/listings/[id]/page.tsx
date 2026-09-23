@@ -81,8 +81,6 @@ export default async function ListingPage({ params }: PageProps) {
   if (!isSeller && listing.status !== "ACTIVE") notFound();
 
   const imageUrls = getImageUrls(listing.imageUrl);
-  const sellerFullyVerified = listing.seller.emailVerified || listing.seller.phoneVerified;
-  const currentUserFullyVerified = !!user && (user.emailVerified || user.phoneVerified);
 
   return (
     <div className="panel">
@@ -186,24 +184,9 @@ export default async function ListingPage({ params }: PageProps) {
                   <>
                     <h3>Want to contact the seller?</h3>
                     <p className="note">
-                      Create a Campus Mall account and verify your email, your phone number, or both to start a conversation.
+                      Create a Campus Mall account to message sellers, save items, comment, share or place orders.
                     </p>
                     <Link href="/join" className="primary-btn">Join Campus Mall</Link>
-                  </>
-                ) : !currentUserFullyVerified ? (
-                  <>
-                    <h3>Verification required</h3>
-                    <p className="note">
-                      Verify at least one contact method — your email or your phone number — before you can contact sellers.
-                    </p>
-                    <Link href="/verify" className="primary-btn">Verify my account</Link>
-                  </>
-                ) : !sellerFullyVerified ? (
-                  <>
-                    <h3>Seller verification incomplete</h3>
-                    <p className="note">
-                      This seller cannot receive marketplace messages until their account is fully verified.
-                    </p>
                   </>
                 ) : (
                   <>
