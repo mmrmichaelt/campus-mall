@@ -283,8 +283,6 @@ export default function Settings() {
           <LogOut size={17} /> {loggingOut ? "Signing out..." : "Log out"}
         </button>
       </section>
-
-      {saving && }
     </div>
   );
 }
