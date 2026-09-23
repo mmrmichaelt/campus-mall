@@ -146,9 +146,7 @@ export async function PUT(request: Request) {
       data: {
         name,
         university,
-        ...(imageUrl
-          ? { imageUrl }
-          : {}),
+        imageUrl: imageUrl || null,
       },
       select: {
         id: true,
