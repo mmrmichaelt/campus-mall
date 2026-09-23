@@ -6,13 +6,11 @@ import MarketplaceFilter from "./MarketplaceFilter";
 
 type SiteHeaderProps = {
   userName?: string | null;
-  profileImageUrl?: string | null;
   isVerified?: boolean;
 };
 
 export default function SiteHeader({
   userName,
-  profileImageUrl,
   isVerified = false,
 }: SiteHeaderProps) {
   const [query, setQuery] = useState("");
@@ -98,36 +96,8 @@ export default function SiteHeader({
                 </Link>
               )}
 
-              <Link
-                href="/account"
-                className="site-profile-avatar"
-                aria-label="Open your account"
-                title="Account"
-              >
-                {profileImageUrl ? (
-                  <img
-                    src={profileImageUrl}
-                    alt=""
-                    className="site-profile-avatar-image"
-                  />
-                ) : (
-                  <span
-                    className="site-profile-avatar-fallback"
-                    aria-hidden="true"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M20 21a8 8 0 0 0-16 0" />
-                      <circle cx="12" cy="7" r="4" />
-                    </svg>
-                  </span>
-                )}
+              <Link href="/account">
+                {userName}
               </Link>
             </>
           ) : (
