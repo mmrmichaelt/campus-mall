@@ -1359,3 +1359,11 @@ CAMPUS MALL SPLASH
   object-fit: cover;
   border-radius: 50%;
 }
+
+
+/* HEADER ORDER — keep controls consistent for guests and signed-in users */
+.top-actions .theme-toggle { order: 1; }
+.top-actions > a[href="/notifications"] { order: 2; }
+.top-actions .marketplace-filter { order: 3; }
+.top-actions .avatar,
+.top-actions .small-btn { order: 4; }
