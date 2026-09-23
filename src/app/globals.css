@@ -333,3 +333,6 @@ footer{font-size:10px}
 .market-sell-btn{
   display:none !important;
 }
+
+.details-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px}.details-grid>div{display:flex;flex-direction:column;gap:3px;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}.details-grid strong{font-size:10px;color:var(--muted);text-transform:uppercase}.details-grid span{font-size:13px;color:var(--ink)}
+@media(max-width:600px){.details-grid{grid-template-columns:1fr}}
