@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { PlusCircle, MapPin } from "lucide-react";
-import ListingCard from "@/components/ListingCard";
+import { ListingCard } from "@/components/ListingCard";
 import { countries } from "@/data/countries";
 
 const categories = ["All", "Accommodation", "Beauty & dressing", "Electronics", "Food", "Furniture", "Jobs", "Printing & photography", "Services", "Stationery", "Utensils", "Other"];
@@ -91,6 +90,8 @@ export default function HomePage() {
     } catch { window.alert("Unable to connect to Campus Mall."); }
   }
 
+  const university = user?.university || guestUniversity || "Your university";
+
   return (
     <>
       {!user && guestSetup && (
@@ -121,14 +122,13 @@ export default function HomePage() {
         </div>
       )}
 
-      <section className="market-hero">
-        <div className="market-university-cover" aria-label={user?.university || guestUniversity || "Your university"}>
-          <span>{user?.university || guestUniversity || "Your university"}</span>
+      <section className="market-hero" aria-label={university}>
+        <div className="market-university-cover" aria-hidden="true">
+          <span>{university}</span>
         </div>
-        <Link className="primary-btn market-sell-btn" href="/sell"><PlusCircle size={17} /> Sell</Link>
       </section>
 
-      <div className="category-strip">
+      <div className="category-strip" aria-label="Marketplace categories">
         {categories.map(name => (
           <button key={name} type="button" className={category === (name === "All" ? "" : name) ? "category-chip active" : "category-chip"} onClick={() => setCategory(name === "All" ? "" : name)}>
             {name}
@@ -152,10 +152,6 @@ export default function HomePage() {
           <strong>No items yet</strong>
           <Link href="/sell">Sell the first item</Link>
         </div>
-      )}
-
-      {!user && guestUniversity && (
-        <div className="campus-context"><MapPin size={14} /> {guestUniversity}</div>
       )}
     </>
   );
