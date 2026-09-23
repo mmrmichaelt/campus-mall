@@ -104,9 +104,7 @@ export default async function AccountPage() {
           <section className="panel" style={{ marginTop: 20 }}>
             <p className="category">MARKETPLACE</p>
             <h2>Account actions</h2>
-            <p className="note">
-              Use these tools to manage your Campus Mall activity.
-            </p>
+            
 
             <div className="hero-actions" style={{ marginTop: 14 }}>
               <Link href="/sell" className="primary-btn">
@@ -130,15 +128,7 @@ export default async function AccountPage() {
             </div>
           </section>
 
-          <section className="panel" style={{ marginTop: 20 }}>
-            <p className="category">ACCOUNT STATUS</p>
-            <h2>Ready to use</h2>
-            <p className="note">
-              Your Campus Mall account can be used without email or phone
-              verification. Email and phone numbers are optional contact
-              details.
-            </p>
-          </section>
+          
         </>
       ) : (
         <div className="auth-card">
@@ -147,7 +137,7 @@ export default async function AccountPage() {
       )}
 
       <div className="panel" style={{ marginTop: 20 }}>
-        <p className="note">Need help with your account?</p>
+        
         <a
           href="mailto:campusmall.support@gmail.com"
           className="text-link"
