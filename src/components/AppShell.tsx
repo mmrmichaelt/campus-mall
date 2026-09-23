@@ -44,8 +44,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="app">
       <header className="topbar">
-        <Link href="/" className={"brand " + (pathname === "/" ? "active-page" : "")} aria-label="Campus Mall home">
-          <span className="brand-mark">CM</span><span>Campus Mall</span>
+        <Link href="/" className="top-home-link" aria-label="Campus Mall home">
+          <Home size={21} />
         </Link>
         <form className="global-search" onSubmit={submitSearch}>
           <Search size={18} aria-hidden="true" />
