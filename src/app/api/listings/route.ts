@@ -15,6 +15,7 @@ function formatListing(listing: {
   currency: string;
   category: string;
   imageUrl: string | null;
+  details: Prisma.JsonValue | null;
   location: string;
   status: string;
   promoted: boolean;
@@ -157,6 +158,7 @@ export async function GET(request: Request) {
             currency: true,
             category: true,
             imageUrl: true,
+            details: true,
             location: true,
             status: true,
             promoted: true,
@@ -264,6 +266,7 @@ export async function POST(request: Request) {
           data.imageUrls?.length
             ? JSON.stringify(data.imageUrls)
             : data.imageUrl?.trim() || null,
+        details: data.details,
         location: data.location.trim(),
         status: "ACTIVE",
       },
