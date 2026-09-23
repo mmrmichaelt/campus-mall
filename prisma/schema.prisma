@@ -129,6 +129,7 @@ model Listing {
   currency      String        @default("KES")
   category      String
   imageUrl      String?
+  details       Json?
   location      String
   status        ListingStatus @default(ACTIVE)
   soldAt        DateTime?
