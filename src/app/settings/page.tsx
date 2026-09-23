@@ -146,10 +146,8 @@ export default function Settings() {
       <div className="section-title">
         <div>
           <p className="category">CAMPUS MALL</p>
-          <h1>Marketplace settings</h1>
-          <p className="note">
-            Control your account, shopping, selling, privacy, notifications and marketplace experience.
-          </p>
+          <h1>Settings</h1>
+          
         </div>
         <Link href="/" className="secondary-btn">Marketplace</Link>
       </div>
@@ -169,9 +167,6 @@ export default function Settings() {
             <Link href="/account" className="secondary-btn">Account overview</Link>
             
           </div>
-          <p className="note" style={{ marginTop: 14 }}>
-            Email and phone are optional contact details. Campus Mall does not require contact verification to use marketplace features.
-          </p>
         </section>
 
         <section className="panel">
@@ -236,10 +231,10 @@ export default function Settings() {
         </section>
 
         <section className="panel">
-          <p className="category">PAYMENTS & PRO</p>
-          <h2><CreditCard size={20} /> Payments and subscriptions</h2>
+          <p className="category">PRO & PAYMENTS</p>
+          <h2><CreditCard size={20} /> Campus Mall Pro</h2>
           <div className="hero-actions">
-            <Link href="/account/pro" className="primary-btn">Manage Campus Mall Pro</Link>
+            <Link href="/account/pro" className="primary-btn">Manage Pro</Link>
             <Link href="/pro" className="secondary-btn">View Pro plans</Link>
             <Link href="/business" className="secondary-btn">Business plans</Link>
           </div>
@@ -248,9 +243,8 @@ export default function Settings() {
 
       <div className="two-col" style={{ marginTop: 20 }}>
         <section className="panel">
-          <p className="category">GROWTH</p>
-          <h2><Megaphone size={20} /> Promotion & advertising</h2>
-          <p className="note">Promote listings, create advertising campaigns and manage business visibility.</p>
+          <p className="category">ADVERTISING</p>
+          <h2><Megaphone size={20} /> Promote & advertise</h2>
           <div className="hero-actions">
             <Link href="/advertise" className="primary-btn">Create advert</Link>
             <Link href="/business" className="secondary-btn">Business account</Link>
@@ -260,15 +254,14 @@ export default function Settings() {
         <section className="panel">
           <p className="category">APPEARANCE</p>
           <h2><Palette size={20} /> App experience</h2>
-          <p className="note">Campus Mall is designed for phone and desktop use. Your browser or device can control dark/light appearance where supported.</p>
           <div className="hero-actions">
-            <Link href="/" className="secondary-btn">Return to marketplace</Link>
+            <Link href="/" className="secondary-btn">Marketplace</Link>
             <button type="button" className="secondary-btn" onClick={() => {
               const root = document.documentElement;
               const next = root.dataset.theme === "dark" ? "light" : "dark";
               root.dataset.theme = next;
               window.localStorage.setItem("campus_mall_theme", next);
-            }}>Toggle dark / light mode</button>
+            }}>Toggle dark / light</button>
           </div>
         </section>
       </div>
@@ -281,19 +274,17 @@ export default function Settings() {
           <Link href="/terms" className="secondary-btn">Terms</Link>
           <Link href="/privacy" className="secondary-btn">Privacy</Link>
         </div>
-        <p className="note" style={{ marginTop: 12 }}>Support: campusmall.support@gmail.com</p>
       </section>
 
       <section className="panel" style={{ marginTop: 20 }}>
         <p className="category">SESSION</p>
         <h2>Sign out</h2>
-        <p className="note">Sign out of this device. You can log in again at any time.</p>
         <button className="danger-btn" onClick={logout} disabled={loggingOut}>
           <LogOut size={17} /> {loggingOut ? "Signing out..." : "Log out"}
         </button>
       </section>
 
-      {saving && <p className="note" style={{ textAlign: "center", marginTop: 16 }}>Saving settings...</p>}
+      {saving && }
     </div>
   );
 }
