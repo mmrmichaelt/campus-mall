@@ -204,3 +204,81 @@ footer{font-size:10px}
     border-top-color:var(--line);
   }
 }
+
+
+/* Home campus cover and swipeable category rail */
+.market-hero{
+  position:relative;
+  min-height:150px;
+  margin:0 -18px 10px;
+  padding:16px 18px;
+  overflow:hidden;
+  border-radius:0 0 14px 14px;
+  background:var(--card);
+  border-bottom:1px solid var(--line);
+}
+.market-university-cover{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  pointer-events:none;
+}
+.market-university-cover span{
+  color:var(--ink);
+  font-size:clamp(42px,9vw,108px);
+  line-height:.9;
+  font-weight:900;
+  letter-spacing:-.06em;
+  white-space:nowrap;
+  opacity:.08;
+  transform:scale(1.02);
+  text-align:center;
+}
+.market-sell-btn{
+  position:absolute;
+  right:18px;
+  bottom:16px;
+  z-index:2;
+}
+.category-strip{
+  display:flex;
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  overflow-y:hidden;
+  gap:7px;
+  padding:3px 2px 12px;
+  margin:0;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain;
+}
+.category-strip::-webkit-scrollbar{display:none}
+.category-chip{
+  flex:0 0 auto;
+}
+.market-section-head{
+  margin:4px 0 10px;
+}
+.market-section-head h2{
+  margin:0;
+}
+@media(max-width:700px){
+  .market-hero{
+    min-height:125px;
+    margin:0 -10px 8px;
+    padding:12px 10px;
+  }
+  .market-university-cover span{
+    font-size:clamp(34px,11vw,64px);
+  }
+  .market-sell-btn{
+    right:10px;
+    bottom:12px;
+  }
+  .category-strip{
+    padding-bottom:10px;
+  }
+}
