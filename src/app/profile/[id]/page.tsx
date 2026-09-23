@@ -228,38 +228,6 @@ export default async function PublicProfilePage({
             </div>
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gap: "8px",
-              marginTop: "20px",
-            }}
-          >
-            <div
-              className={
-                profile.emailVerified
-                  ? "success"
-                  : "note"
-              }
-            >
-              {profile.emailVerified
-                ? "✓ Email verified"
-                : "Email not verified"}
-            </div>
-
-            <div
-              className={
-                profile.phoneVerified
-                  ? "success"
-                  : "note"
-              }
-            >
-              {profile.phoneVerified
-                ? "✓ Phone verified"
-                : "Phone not verified"}
-            </div>
-          </div>
-
           <p
             className="note"
             style={{ marginTop: "18px" }}
