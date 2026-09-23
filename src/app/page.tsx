@@ -2,355 +2,166 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-PlusCircle,
-SlidersHorizontal,
-MapPin,
-} from "lucide-react";
+import { PlusCircle, MapPin, ChevronRight } from "lucide-react";
 import ListingCard from "@/components/ListingCard";
 import { countries } from "@/data/countries";
 
-const categories = [
-  "Accommodation",
-  "Beauty & dressing",
-  "Electronics",
-  "Food",
-  "Furniture",
-  "Jobs",
-  "Printing & photography",
-  "Services",
-  "Stationery",
-  "Utensils",
-  "Other",
-];
+const categories = ["All", "Accommodation", "Beauty & dressing", "Electronics", "Food", "Furniture", "Jobs", "Printing & photography", "Services", "Stationery", "Utensils", "Other"];
 
 export default function HomePage() {
-const [items, setItems] = useState<any[]>([]);
-const [user, setUser] = useState<any>(null);
-const [loading, setLoading] = useState(true);
-const [guestCountry, setGuestCountry] = useState("KE");
-const [guestUniversity, setGuestUniversity] = useState("");
-const [guestInstitutions, setGuestInstitutions] = useState<{ name: string }[]>([]);
-const [guestSetup, setGuestSetup] = useState(false);
-const [guestLoading, setGuestLoading] = useState(false);
+  const [items, setItems] = useState<any[]>([]);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [guestCountry, setGuestCountry] = useState("KE");
+  const [guestUniversity, setGuestUniversity] = useState("");
+  const [guestInstitutions, setGuestInstitutions] = useState<{ name: string }[]>([]);
+  const [guestSetup, setGuestSetup] = useState(false);
+  const [guestLoading, setGuestLoading] = useState(false);
+  const [q, setQ] = useState("");
+  const [category, setCategory] = useState("");
 
-const [q, setQ] = useState("");
-const [category, setCategory] = useState("");
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setQ(params.get("q") || "");
+    const country = window.localStorage.getItem("campus_mall_guest_country");
+    const university = window.localStorage.getItem("campus_mall_guest_university");
+    if (country) setGuestCountry(country);
+    if (university) setGuestUniversity(university);
+    if (!country || !university) setGuestSetup(true);
+  }, []);
 
-useEffect(() => {
-const params = new URLSearchParams(window.location.search);
-const initialQuery = params.get("q") || "";
+  useEffect(() => {
+    fetch("/api/me").then(r => r.json()).then(data => setUser(data.user ?? null)).catch(() => setUser(null));
+  }, []);
 
-setQ(initialQuery);
-const savedCountry = window.localStorage.getItem("campus_mall_guest_country");
-const savedUniversity = window.localStorage.getItem("campus_mall_guest_university");
-if (savedCountry) setGuestCountry(savedCountry);
-if (savedUniversity) setGuestUniversity(savedUniversity);
-if (!savedCountry || !savedUniversity) setGuestSetup(true);
-}, []);
+  useEffect(() => {
+    if (user || !guestSetup) return;
+    const controller = new AbortController();
+    setGuestLoading(true);
+    fetch(`/api/institutions?country=${encodeURIComponent(guestCountry)}`, { signal: controller.signal })
+      .then(r => r.json())
+      .then(data => setGuestInstitutions(Array.isArray(data.institutions) ? data.institutions : []))
+      .catch(error => { if (error?.name !== "AbortError") setGuestInstitutions([]); })
+      .finally(() => { if (!controller.signal.aborted) setGuestLoading(false); });
+    return () => controller.abort();
+  }, [guestCountry, user, guestSetup]);
 
-useEffect(() => {
-fetch("/api/me")
-.then((response) => response.json())
-.then((data) => {
-setUser(data.user ?? null);
-})
-.catch(() => {
-setUser(null);
-});
-}, []);
-
-useEffect(() => {
-if (user || !guestSetup) return;
-const controller = new AbortController();
-setGuestLoading(true);
-fetch(`/api/institutions?country=${encodeURIComponent(guestCountry)}`, {
-  signal: controller.signal,
-})
-.then((response) => response.json())
-.then((data) => setGuestInstitutions(Array.isArray(data.institutions) ? data.institutions : []))
-.catch((error) => {
-  if (error?.name !== "AbortError") setGuestInstitutions([]);
-})
-.finally(() => {
-  if (!controller.signal.aborted) setGuestLoading(false);
-});
-return () => controller.abort();
-}, [guestCountry, user, guestSetup]);
-
-useEffect(() => {
-const controller = new AbortController();
-
-async function loadListings() {
-  setLoading(true);
-
-  try {
-    const url = new URL(
-      "/api/listings",
-      window.location.origin
-    );
-
-    if (q.trim()) {
-      url.searchParams.set("q", q.trim());
+  useEffect(() => {
+    const controller = new AbortController();
+    async function loadListings() {
+      setLoading(true);
+      try {
+        const url = new URL("/api/listings", window.location.origin);
+        if (q.trim()) url.searchParams.set("q", q.trim());
+        if (category && category !== "All") url.searchParams.set("category", category);
+        if (!user && guestCountry) url.searchParams.set("country", guestCountry);
+        if (!user && guestUniversity) url.searchParams.set("university", guestUniversity);
+        const response = await fetch(url.toString(), { signal: controller.signal });
+        const data = await response.json();
+        setItems(response.ok ? (data.listings || []) : []);
+      } catch (error: any) {
+        if (error?.name !== "AbortError") setItems([]);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
     }
+    loadListings();
+    return () => controller.abort();
+  }, [q, category, user, guestCountry, guestUniversity]);
 
-    if (category) {
-      url.searchParams.set("category", category);
-    }
-
-    if (!user && guestCountry) {
-      url.searchParams.set("country", guestCountry);
-    }
-
-    if (!user && guestUniversity) {
-      url.searchParams.set("university", guestUniversity);
-    }
-
-    const response = await fetch(url.toString(), {
-      signal: controller.signal,
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      setItems([]);
-      return;
-    }
-
-    setItems(data.listings || []);
-  } catch (error: any) {
-    if (error?.name !== "AbortError") {
-      setItems([]);
-    }
-  } finally {
-    if (!controller.signal.aborted) {
-      setLoading(false);
-    }
-  }
-}
-
-loadListings();
-
-return () => {
-  controller.abort();
-};
-
-}, [q, category, user, guestCountry, guestUniversity]);
-
-function saveGuestContext() {
-  if (!guestCountry || !guestUniversity) return;
-  window.localStorage.setItem("campus_mall_guest_country", guestCountry);
-  window.localStorage.setItem("campus_mall_guest_university", guestUniversity);
-  setGuestSetup(false);
-}
-
-async function addToCart(listingId: string) {
-if (!user) {
-window.location.href = "/join";
-return;
-}
-
-try {
-  const response = await fetch("/api/cart", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      listingId,
-      quantity: 1,
-    }),
-  });
-
-  const data = await response.json().catch(() => ({}));
-
-  if (response.status === 401) {
-    window.location.href = "/join";
-    return;
+  function saveGuestContext() {
+    if (!guestCountry || !guestUniversity) return;
+    window.localStorage.setItem("campus_mall_guest_country", guestCountry);
+    window.localStorage.setItem("campus_mall_guest_university", guestUniversity);
+    setGuestSetup(false);
   }
 
-  if (!response.ok) {
-    window.alert(
-      data.error || "Unable to add this item to your trolley."
-    );
-    return;
+  async function addToCart(listingId: string) {
+    if (!user) { window.location.href = "/join"; return; }
+    try {
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ listingId, quantity: 1 }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (response.status === 401) { window.location.href = "/join"; return; }
+      if (!response.ok) { window.alert(data.error || "Unable to add this item."); return; }
+      window.alert("Added to trolley.");
+    } catch { window.alert("Unable to connect to Campus Mall."); }
   }
 
-  window.alert("Added to trolley.");
-} catch {
-  window.alert(
-    "Unable to connect to Campus Mall. Please try again."
+  return (
+    <>
+      {!user && guestSetup && (
+        <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="guest-setup-title">
+          <div className="modal-card compact-modal">
+            <p className="category">CAMPUS MALL</p>
+            <h2 id="guest-setup-title">Choose your campus</h2>
+            <div className="form">
+              <label>Country
+                <select value={guestCountry} onChange={e => { setGuestCountry(e.target.value); setGuestUniversity(""); }}>
+                  {countries.map(country => <option key={country.code} value={country.code}>{country.flag} {country.name}</option>)}
+                </select>
+              </label>
+              <label>University / College
+                <input type="search" value={guestUniversity} onChange={e => setGuestUniversity(e.target.value)} placeholder={guestLoading ? "Loading..." : "Search institution"} autoComplete="off" disabled={guestLoading} required />
+                {guestUniversity.trim() && guestInstitutions.filter(i => i.name.toLowerCase().includes(guestUniversity.trim().toLowerCase())).length > 0 && (
+                  <div className="guest-institution-options">
+                    {guestInstitutions.filter(i => i.name.toLowerCase().includes(guestUniversity.trim().toLowerCase())).slice(0, 10).map((institution, index) => (
+                      <button type="button" key={institution.name + index} onClick={() => setGuestUniversity(institution.name)} className="guest-institution-option">{institution.name}</button>
+                    ))}
+                  </div>
+                )}
+              </label>
+              <button type="button" className="primary-btn" disabled={!guestUniversity} onClick={saveGuestContext}>Continue</button>
+              <Link className="secondary-btn" href="/join">Create account</Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <section className="market-hero">
+        <div>
+          <span className="hero-kicker">CAMPUS MARKETPLACE</span>
+          <h1>Shop your campus.</h1>
+          <p>{user?.university || guestUniversity || "Your university"} · Items from your campus community</p>
+        </div>
+        <Link className="primary-btn" href="/sell"><PlusCircle size={17} /> Sell</Link>
+      </section>
+
+      <div className="category-strip">
+        {categories.map(name => (
+          <button key={name} type="button" className={category === (name === "All" ? "" : name) ? "category-chip active" : "category-chip"} onClick={() => setCategory(name === "All" ? "" : name)}>
+            {name}
+          </button>
+        ))}
+      </div>
+
+      <div className="market-section-head">
+        <div>
+          <h2>{category && category !== "All" ? category : "Recommended"}</h2>
+          <span>{user?.university || guestUniversity || "Campus Mall"}</span>
+        </div>
+        <Link href="/listings">View all <ChevronRight size={16} /></Link>
+      </div>
+
+      {loading ? (
+        <div className="compact-loading">Loading...</div>
+      ) : items.length > 0 ? (
+        <div className="listing-grid">
+          {items.map(item => <ListingCard key={item.id} item={item} onCart={addToCart} />)}
+        </div>
+      ) : (
+        <div className="compact-empty">
+          <strong>No items yet</strong>
+          <Link href="/sell">Sell the first item</Link>
+        </div>
+      )}
+
+      {!user && guestUniversity && (
+        <div className="campus-context"><MapPin size={14} /> {guestUniversity}</div>
+      )}
+    </>
   );
 }
-
-}
-
-return (
-<>
-{!user && guestSetup && (
-  <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="guest-setup-title">
-    <div className="modal-card">
-      <p className="category">CAMPUS MALL GUEST</p>
-      <h2 id="guest-setup-title">Choose your country and university</h2>
-      <p className="note">Browse without an account. Create an account only when you want to like, comment, share, chat, order, save items, add items or sell.</p>
-      <div className="form">
-        <label>Country
-          <select value={guestCountry} onChange={(e) => { setGuestCountry(e.target.value); setGuestUniversity(""); }}>
-            {countries.map((country) => <option key={country.code} value={country.code}>{country.flag} {country.name}</option>)}
-          </select>
-        </label>
-        <label>University / College
-          <input
-            type="search"
-            value={guestUniversity}
-            onChange={(e) => setGuestUniversity(e.target.value)}
-            placeholder={guestLoading ? "Loading institutions..." : "Search your institution..."}
-            autoComplete="off"
-            disabled={guestLoading}
-            required
-          />
-          {guestUniversity.trim() && guestInstitutions.filter((institution) =>
-            institution.name.toLowerCase().includes(guestUniversity.trim().toLowerCase())
-          ).length > 0 && (
-            <div className="guest-institution-options">
-              {guestInstitutions
-                .filter((institution) =>
-                  institution.name.toLowerCase().includes(guestUniversity.trim().toLowerCase())
-                )
-                .slice(0, 10)
-                .map((institution, index) => (
-                  <button
-                    type="button"
-                    key={institution.name + index}
-                    onClick={() => setGuestUniversity(institution.name)}
-                    className="guest-institution-option"
-                  >
-                    {institution.name}
-                  </button>
-                ))}
-            </div>
-          )}
-          {!guestLoading && guestUniversity.trim() && guestInstitutions.filter((institution) =>
-            institution.name.toLowerCase().includes(guestUniversity.trim().toLowerCase())
-          ).length === 0 && (
-            <span className="note">No matching institution found. You can enter the institution name manually.</span>
-          )}
-        </label>
-        <button type="button" className="primary-btn" disabled={!guestUniversity} onClick={saveGuestContext}>Continue as guest</button>
-        <Link className="secondary-btn" href="/join" onClick={() => { if (guestCountry && guestUniversity) { window.localStorage.setItem("campus_mall_guest_country", guestCountry); window.localStorage.setItem("campus_mall_guest_university", guestUniversity); } }}>Create account</Link>
-      </div>
-    </div>
-  </div>
-)}
-<section className="hero">
-<h1>Campus Mall</h1>
-
-    <p>
-      Your campus marketplace for students and
-      outsiders. See items posted around{" "}
-      <b>
-        {user?.university || guestUniversity || "your selected university"}
-      </b>
-      , buy, sell, chat and manage orders in one place.
-    </p>
-
-    <div className="hero-actions">
-      <Link className="primary-btn" href="/sell">
-        <PlusCircle size={18} />
-        Add item
-      </Link>
-
-      {!user && (
-        <Link className="secondary-btn" href="/join">
-          Create account
-        </Link>
-      )}
-    </div>
-  </section>
-
-  <div className="section-title">
-    <h2>Marketplace</h2>
-
-    {!user && guestUniversity && (
-      <span className="note">
-        <MapPin size={14} />
-        Browsing as guest • {guestUniversity}
-      </span>
-    )}
-
-    {user && (
-      <span className="note">
-        <MapPin size={14} />
-        Showing your university
-      </span>
-    )}
-  </div>
-
-  <div className="filterbar">
-    <input
-      type="search"
-      placeholder="Search this campus..."
-      value={q}
-      onChange={(event) => setQ(event.target.value)}
-      aria-label="Search this campus"
-    />
-
-    <select
-      value={category}
-      onChange={(event) =>
-        setCategory(event.target.value)
-      }
-      aria-label="Filter by category"
-    >
-      <option value="">All categories</option>
-
-      {categories.map((categoryName) => (
-        <option
-          key={categoryName}
-          value={categoryName}
-        >
-          {categoryName}
-        </option>
-      ))}
-    </select>
-
-    <SlidersHorizontal
-      size={20}
-      style={{ margin: "10px" }}
-      aria-hidden="true"
-    />
-  </div>
-
-  {loading ? (
-    <div className="loading">
-      Loading marketplace...
-    </div>
-  ) : items.length > 0 ? (
-    <div className="listing-grid">
-      {items.map((item) => (
-        <ListingCard
-          key={item.id}
-          item={item}
-          onCart={addToCart}
-        />
-      ))}
-    </div>
-  ) : (
-    <div className="panel">
-      <h3>No active items found</h3>
-
-      <p className="note">
-        Try another search or category, or add the first
-        item for your university.
-      </p>
-
-      <Link className="primary-btn" href="/sell">
-        <PlusCircle size={17} />
-        Add the first item
-      </Link>
-    </div>
-  )}
-</>
-
-);
-    }
