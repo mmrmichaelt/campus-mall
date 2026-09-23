@@ -197,8 +197,23 @@ export default function ProfileForm({
                 if (!response.ok || !data.urls?.[0]) {
                   throw new Error(data.error || "Unable to upload profile photo.");
                 }
-                setImageUrl(data.urls[0]);
-                setMessage("Profile photo uploaded. Save changes to keep it on your profile.");
+                const uploadedUrl = data.urls[0] as string;
+                setImageUrl(uploadedUrl);
+
+                const saveResponse = await fetch("/api/profile", {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    name: name.trim(),
+                    university: university.trim(),
+                    imageUrl: uploadedUrl,
+                  }),
+                });
+                const saveData = await saveResponse.json().catch(() => ({}));
+                if (!saveResponse.ok) {
+                  throw new Error(saveData.error || "Photo uploaded, but we could not save it to your profile.");
+                }
+                setMessage("Profile photo uploaded and saved successfully.");
               } catch (error) {
                 setError(error instanceof Error ? error.message : "Unable to upload profile photo.");
               } finally {
