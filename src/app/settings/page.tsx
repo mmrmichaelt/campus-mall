@@ -167,10 +167,10 @@ export default function Settings() {
           <div className="hero-actions">
             <Link href="/profile" className="primary-btn">Edit profile</Link>
             <Link href="/account" className="secondary-btn">Account overview</Link>
-            <Link href="/verify" className="secondary-btn">Verify email & phone</Link>
+            
           </div>
           <p className="note" style={{ marginTop: 14 }}>
-            Your email address is used for account access and verification. Campus Mall does not ask you to confirm it twice during registration.
+            Email and phone are optional contact details. Campus Mall does not require contact verification to use marketplace features.
           </p>
         </section>
 
@@ -205,7 +205,7 @@ export default function Settings() {
           <h2><ShieldCheck size={20} /> Privacy controls</h2>
           <Toggle label="Public profile" description="Allow other marketplace users to view your public profile and active listings." checked={settings.publicProfile} onChange={() => toggle("publicProfile")} />
           <div className="hero-actions" style={{ marginTop: 16 }}>
-            <Link href="/verify" className="secondary-btn"><LockKeyhole size={17} /> Verification & security</Link>
+            
             <Link href="/notifications" className="secondary-btn"><Bell size={17} /> Notifications</Link>
           </div>
         </section>
