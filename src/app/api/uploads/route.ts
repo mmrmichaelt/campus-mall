@@ -24,13 +24,6 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!process.env.BLOB_READ_WRITE_TOKEN) {
-      return NextResponse.json(
-        { error: "Photo storage is not configured yet." },
-        { status: 503 }
-      );
-    }
-
     const formData = await request.formData();
     const files = formData.getAll("files").filter(
       (value): value is File => value instanceof File
@@ -71,7 +64,6 @@ export async function POST(request: Request) {
           access: "public",
           addRandomSuffix: true,
           contentType: file.type,
-          token: process.env.BLOB_READ_WRITE_TOKEN,
         }
       );
 
