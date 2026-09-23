@@ -30,10 +30,6 @@ export default function ListingEngagement({ listingId, sellerId, active }: Props
         window.location.href = "/join?next=" + encodeURIComponent(window.location.pathname) + "&action=" + action;
         return;
       }
-      if (r.status === 403 && result.verificationRequired) {
-        window.location.href = "/verify?next=" + encodeURIComponent(window.location.pathname);
-        return;
-      }
       if (!r.ok) throw new Error(result.error || "Unable to complete this action.");
       setData(result);
       if (action === "comment") setComment("");
@@ -77,10 +73,6 @@ export default function ListingEngagement({ listingId, sellerId, active }: Props
       const gateData = await gate.json().catch(() => ({}));
       if (gate.status === 401) {
         window.location.href = "/join?next=" + encodeURIComponent(window.location.pathname) + "&action=share";
-        return;
-      }
-      if (gate.status === 403 && gateData.verificationRequired) {
-        window.location.href = "/verify?next=" + encodeURIComponent(window.location.pathname);
         return;
       }
       if (!gate.ok) throw new Error(gateData.error || "Unable to share this listing.");
