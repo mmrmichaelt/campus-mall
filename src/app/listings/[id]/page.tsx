@@ -166,11 +166,6 @@ export default async function ListingPage({ params }: PageProps) {
               </Link>
             </div>
 
-            <div style={{ marginTop: "14px" }}>
-              <span className={sellerFullyVerified ? "success" : "note"}>
-                {sellerFullyVerified ? "✓ Verified account" : "Verification incomplete"}
-              </span>
-            </div>
           </section>
 
           <ListingEngagement listingId={listing.id} sellerId={listing.seller.id} active={listing.status === "ACTIVE"} />
