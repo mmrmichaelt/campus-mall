@@ -58,10 +58,22 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <Link href="/notifications" className={pathname.startsWith("/notifications") ? "active-page" : ""} aria-label="Notifications" title="Notifications"><Bell size={20} /></Link>
           <MarketplaceFilter />
           {user ? <>
-            <Link href="/profile" className={"avatar " + (pathname.startsWith("/profile") ? "active-page" : "")} aria-label="Profile">
-              <UserCircle size={22} /><span>{user.name?.split(" ")[0] || "Account"}</span>
+            <Link
+              href="/profile"
+              className={"avatar " + (pathname.startsWith("/profile") ? "active-page" : "")}
+              aria-label="Profile"
+              title="Profile"
+            >
+              {user.imageUrl ? (
+                <img
+                  src={user.imageUrl}
+                  alt=""
+                  className="header-profile-image"
+                />
+              ) : (
+                <UserCircle size={24} aria-hidden="true" />
+              )}
             </Link>
-            <button type="button" className="icon-btn" onClick={logout} title="Log out" aria-label="Log out"><LogOut size={18} /></button>
           </> : <Link className={"small-btn " + (pathname.startsWith("/join") ? "active-page" : "")} href="/join">Join</Link>}
         </div>
       </header>
