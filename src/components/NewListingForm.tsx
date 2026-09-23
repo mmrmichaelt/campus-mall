@@ -37,6 +37,19 @@ export default function NewListingForm({
   const [category, setCategory] = useState("Electronics");
   const [imageUrl, setImageUrl] = useState("");
   const [location, setLocation] = useState("");
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [condition, setCondition] = useState("Used");
+  const [conditionNotes, setConditionNotes] = useState("");
+  const [color, setColor] = useState("");
+  const [size, setSize] = useState("");
+  const [material, setMaterial] = useState("");
+  const [quantity, setQuantity] = useState("1");
+  const [year, setYear] = useState("");
+  const [warranty, setWarranty] = useState("");
+  const [negotiable, setNegotiable] = useState(true);
+  const [delivery, setDelivery] = useState("Pickup");
+  const [tags, setTags] = useState("");
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -181,6 +194,89 @@ export default function NewListingForm({
               </select>
             </label>
           </div>
+
+          <div><p className="category">ITEM DETAILS</p></div>
+
+          <div className="two-col">
+            <label>
+              Brand
+              <input value={brand} onChange={event => setBrand(event.target.value)} placeholder="e.g. HP, Samsung, Nike" maxLength={100} />
+            </label>
+            <label>
+              Model
+              <input value={model} onChange={event => setModel(event.target.value)} placeholder="e.g. EliteBook 840 G8" maxLength={100} />
+            </label>
+          </div>
+
+          <div className="two-col">
+            <label>
+              Condition
+              <select value={condition} onChange={event => setCondition(event.target.value)}>
+                <option>New</option>
+                <option>Like new</option>
+                <option>Used</option>
+                <option>Good</option>
+                <option>Fair</option>
+                <option>For parts / repair</option>
+              </select>
+            </label>
+            <label>
+              Quantity
+              <input type="number" min="1" max="100000" value={quantity} onChange={event => setQuantity(event.target.value)} />
+            </label>
+          </div>
+
+          <label>
+            Condition details
+            <input value={conditionNotes} onChange={event => setConditionNotes(event.target.value)} placeholder="e.g. Minor scratches, fully working" maxLength={500} />
+          </label>
+
+          <div className="two-col">
+            <label>
+              Color
+              <input value={color} onChange={event => setColor(event.target.value)} placeholder="e.g. Black" maxLength={50} />
+            </label>
+            <label>
+              Size
+              <input value={size} onChange={event => setSize(event.target.value)} placeholder="e.g. M, 42, 15.6 inch" maxLength={50} />
+            </label>
+          </div>
+
+          <div className="two-col">
+            <label>
+              Material
+              <input value={material} onChange={event => setMaterial(event.target.value)} placeholder="e.g. Leather, Cotton" maxLength={100} />
+            </label>
+            <label>
+              Year
+              <input type="number" min="1900" max="2100" value={year} onChange={event => setYear(event.target.value)} placeholder="e.g. 2024" />
+            </label>
+          </div>
+
+          <div className="two-col">
+            <label>
+              Warranty
+              <input value={warranty} onChange={event => setWarranty(event.target.value)} placeholder="e.g. 6 months / None" maxLength={200} />
+            </label>
+            <label>
+              Delivery
+              <select value={delivery} onChange={event => setDelivery(event.target.value)}>
+                <option>Pickup</option>
+                <option>Delivery available</option>
+                <option>Pickup or delivery</option>
+              </select>
+            </label>
+          </div>
+
+          <label>
+            Search tags
+            <input value={tags} onChange={event => setTags(event.target.value)} placeholder="e.g. laptop, hp, core i5, student" maxLength={300} />
+          </label>
+
+          <label className="settings-toggle" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <input type="checkbox" checked={negotiable} onChange={event => setNegotiable(event.target.checked)} />
+            Price is negotiable
+          </label>
 
           <div><p className="category">LOCATION</p></div>
 
