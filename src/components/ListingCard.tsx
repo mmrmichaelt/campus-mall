@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  ShoppingCart,
-  MapPin,
-  BadgeCheck,
-  Tag,
-} from "lucide-react";
+import { Heart, MapPin, ShoppingCart, BadgeCheck, Tag } from "lucide-react";
 
 type ListingCardProps = {
   item: {
@@ -38,94 +33,45 @@ function getImageUrl(value?: string | null) {
   return value;
 }
 
-export default function ListingCard({
-  item,
-  onCart,
-}: ListingCardProps) {
+export default function ListingCard({ item, onCart }: ListingCardProps) {
   const price = Number(item.price);
-
-  const verified =
-    item.seller?.emailVerified || item.seller?.phoneVerified;
+  const verified = item.seller?.emailVerified || item.seller?.phoneVerified;
   const imageUrl = getImageUrl(item.imageUrl);
 
   return (
-    <article
-      className={`listing-card ${
-        item.promoted ? "promoted" : ""
-      }`}
-    >
+    <article className={`listing-card compact-product-card ${item.promoted ? "promoted" : ""}`}>
       <div className="listing-photo">
         {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt={item.title}
-            loading="lazy"
-          />
+          <img src={imageUrl} alt={item.title} loading="lazy" />
         ) : (
-          <div className="photo-placeholder">
-            <Tag size={30} />
-            <span>Campus Mall</span>
-          </div>
+          <div className="photo-placeholder"><Tag size={26} /></div>
         )}
-
-        {item.promoted && (
-          <span className="promoted-label">
-            PROMOTED
-          </span>
-        )}
+        {item.promoted && <span className="promoted-label">PROMOTED</span>}
+        <button type="button" className="product-like" aria-label={`Save ${item.title}`} title="Save">
+          <Heart size={17} />
+        </button>
       </div>
 
       <div className="listing-body">
-        <div className="listing-top">
-          <span className="category">
-            {item.category}
-          </span>
-
-          <strong>
-            {item.currency || "KES"}{" "}
-            {Number.isFinite(price)
-              ? price.toLocaleString()
-              : "0"}
-          </strong>
-        </div>
-
+        <span className="product-category">{item.category}</span>
         <h3>{item.title}</h3>
+        <strong className="product-price">
+          {item.currency || "KES"} {Number.isFinite(price) ? price.toLocaleString() : "0"}
+        </strong>
 
-        <p>{item.description}</p>
-
-        <div className="meta">
-          <span>
-            <MapPin size={14} />
-            {item.location}
-          </span>
+        <div className="product-meta">
+          <span><MapPin size={13} /> {item.location}</span>
+          {item.seller?.university && <span>{item.seller.university}</span>}
         </div>
 
-        <div className="seller">
-          <span>
-            {item.seller?.name || "Seller"}
-          </span>
-
-          {verified && (
-            <BadgeCheck
-              size={15}
-              aria-label="Verified seller"
-            />
-          )}
-
-          {item.seller?.university && (
-            <small>
-              {item.seller.university}
-            </small>
-          )}
+        <div className="product-seller">
+          <span>{item.seller?.name || "Seller"}</span>
+          {verified && <BadgeCheck size={14} aria-label="Verified seller" />}
         </div>
 
         {onCart && (
-          <button
-            type="button"
-            className="primary-btn"
-            onClick={() => onCart(item.id)}
-          >
-            <ShoppingCart size={17} />
+          <button type="button" className="product-cart-btn" onClick={() => onCart(item.id)}>
+            <ShoppingCart size={16} />
             Add to trolley
           </button>
         )}
