@@ -86,17 +86,13 @@ export default function InstitutionMemberships() {
     <section className="panel" style={{ marginTop: 20 }}>
       <p className="category">MULTI-INSTITUTION MEMBERSHIP</p>
       <h2>Post or visit more campuses</h2>
-      <p className="note">
-        Your membership is tied to your account. Standard accounts can belong to up to 2 institutions.
-        Campus Mall Pro unlocks additional institution memberships.
-      </p>
 
       <div className="success" style={{ margin: "12px 0" }}>
         {memberships.length} of {limit} institution slots used
       </div>
 
       {loading ? (
-        <p className="note">Loading institution memberships...</p>
+        <p>Loading...</p>
       ) : (
         <>
           {memberships.length > 0 && (
@@ -115,7 +111,7 @@ export default function InstitutionMemberships() {
                 >
                   <span>
                     <strong>{membership.institution}</strong>
-                    <small className="note" style={{ display: "block", marginTop: 3 }}>
+                    <small style={{ display: "block", marginTop: 3 }}>
                       {membership.country} · {membership.type === "POSTING" ? "Posting member" : "Visiting member"}
                     </small>
                   </span>
