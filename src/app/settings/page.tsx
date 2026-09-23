@@ -38,13 +38,6 @@ export default function Settings(){
       <Row href="/business" icon={<Store size={18}/>} label="Business account"/>
     </section>
 
-    <section className="settings-group"><h3>More</h3>
-      <Row href="/notifications" icon={<Bell size={18}/>} label="Notifications"/>
-      <Row href="/chats" icon={<UserRound size={18}/>} label="Chats & messages"/>
-      <Row href="/cart" icon={<ShoppingBag size={18}/>} label="Trolley / cart"/>
-      <Row href="/sell" icon={<Store size={18}/>} label="Add item"/>
-      <Row href="/listings" icon={<Store size={18}/>} label="Browse marketplace"/>
-    </section>
 
     <section className="settings-group"><h3>Preferences</h3>
       <Toggle label="Email notifications" checked={settings.emailAlerts} onChange={()=>toggle("emailAlerts")}/>
@@ -52,7 +45,6 @@ export default function Settings(){
       <Toggle label="Offers & promotions" checked={settings.marketing} onChange={()=>toggle("marketing")}/>
       <Toggle label="Public profile" checked={settings.publicProfile} onChange={()=>toggle("publicProfile")}/>
       <button type="button" className="settings-row settings-button" onClick={()=>{const root=document.documentElement;const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;window.localStorage.setItem("campus_mall_theme",next)}}><span className="settings-row-icon"><Palette size={18}/></span><strong>Appearance</strong><span/></button>
-      <Row href="/notifications" icon={<Bell size={18}/>} label="Notification center"/>
     </section>
 
     <section className="settings-group"><h3>Support & legal</h3>
