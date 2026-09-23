@@ -34,44 +34,6 @@ export default async function ChatsPage() {
     );
   }
 
-  const fullyVerified = user.emailVerified || user.phoneVerified;
-
-  if (!fullyVerified) {
-    return (
-      <div className="auth-wrap">
-        <div className="auth-card">
-          <div className="brand-mark">CM</div>
-
-          <p className="category">
-            VERIFICATION REQUIRED
-          </p>
-
-          <h1>
-            Verify your account to use chats
-          </h1>
-
-          <p className="note">
-            Verify at least your email address or phone number before you can send or receive marketplace messages.
-          </p>
-
-          <Link
-            href="/verify"
-            className="primary-btn"
-          >
-            Verify my account
-          </Link>
-
-          <Link
-            href="/"
-            className="text-link"
-          >
-            ← Back to marketplace
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="panel">
       <div className="section-title">
