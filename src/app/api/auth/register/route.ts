@@ -130,20 +130,6 @@ export async function POST(request: Request) {
         },
       },
       { status: 201 }
-    );    return NextResponse.json(
-      {
-        success: true,
-        message:
-          emailSent || phoneSent
-            ? "Account created. Verify at least one of your email address or phone number to activate the account."
-            : "Account created. Please open the verification page to complete verification.",
-        redirectTo: "/verify",
-        verification: {
-          emailSent,
-          phoneSent,
-        },
-      },
-      { status: 201 }
     );
   } catch (error: unknown) {
     console.error("Campus Mall registration error:", error);
