@@ -53,7 +53,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </form>
         <div className="top-actions">
           <button type="button" className="theme-toggle" onClick={toggleTheme} aria-label={"Switch to " + (theme === "dark" ? "light" : "dark") + " mode"} title={"Switch to " + (theme === "dark" ? "light" : "dark") + " mode"}>
-            {theme === "dark" ? "☀️" : "🌙"} <span>{theme === "dark" ? "Light" : "Dark"}</span>
+            <span aria-hidden="true">{theme === "dark" ? "☀️" : "🌙"}</span>
           </button>
           <Link href="/notifications" className={pathname.startsWith("/notifications") ? "active-page" : ""} aria-label="Notifications" title="Notifications"><Bell size={20} /></Link>
           <MarketplaceFilter />
