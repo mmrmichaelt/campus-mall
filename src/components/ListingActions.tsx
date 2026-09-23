@@ -253,7 +253,7 @@ SELLER CONTROLS
 
   <div style={{ marginTop: "16px" }}>
     <h4><Megaphone size={16} style={{ display: "inline", verticalAlign: "middle" }} /> Boost item to reach more people</h4>
-    <p className="note">This advertising option stays below your item while it is active, so you can promote it later even if you skipped promotion when uploading.</p>
+    
     <PaymentMethodSelector value={paymentMethod} onChange={setPaymentMethod} compact />
     <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
       {[1, 3, 7, 14, 30].map((days) => (
@@ -262,7 +262,7 @@ SELLER CONTROLS
         </button>
       ))}
     </div>
-    {promotionMessage && <p className="note" role="status">{promotionMessage}</p>}
+    {promotionMessage && <span role="status" className="note">{promotionMessage}</span>}
   </div>
 
   {error && (
