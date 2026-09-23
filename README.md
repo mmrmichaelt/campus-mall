@@ -1,104 +1,70 @@
-# Campus Mall — Renewed Project
+# Campus Mall
 
-This version rebuilds the handwritten Campus Mall plan into a real Next.js + Prisma PostgreSQL application.
+Campus Mall is a production-oriented campus marketplace built with Next.js, Prisma PostgreSQL and Vercel.
 
-## What is included
+## Production feature set
 
-- Welcome/splash screen route (`/welcome`) with the requested 3-second automatic transition.
-- Create account flow:
-  - Student / Outsider
-  - Country selector with flags
-  - University / College
-  - Email + phone
-  - Secure password hashing
-  - Session cookie login
-- Marketplace filtered to the user's selected university.
-- Categories from the sketch:
-  Accommodation, Beauty & dressing, Electronics, Food, Furniture, Jobs, Printing & photography, Stationery, Utensils.
-- Search bar above the marketplace and global header.
-- Filtering by price, condition, seller verification and date can be expanded from the API; category/condition/price query parameters are supported.
-- Add item with title, description, condition, category, brand, picture URL, price, location and availability.
-- Seller ownership protection.
-- **Mark Sold:** seller-only API changes the listing to SOLD and immediately removes it from active marketplace results and the trolley.
-- Trolley/cart with totals.
-- Orders and seller/buyer status flow.
-- Notifications.
-- Messaging API and chat page.
-- Profile management.
-- Change university.
-- Promotion endpoint (payment-provider hook left explicit rather than pretending payment is complete).
-- Prisma PostgreSQL schema.
-- Support email: `campusmall.support@gmail.com`.
-- Responsive web UI suitable for Android WebView/PWA wrapping later.
-- Demo seed data.
+- Account registration and password login
+- Optional email and phone contact details; contact verification is not required
+- User profiles and profile pictures
+- Marketplace listings with categories, descriptions, prices, currencies, images and locations
+- Search across titles, descriptions, categories and locations
+- Full marketplace filtering: category, minimum/maximum price, newest/oldest, price low/high, title A-Z/Z-A, location, seller type, country and university
+- Individual listing/product pages
+- Cart / trolley
+- Buyer and seller messaging tied to listings
+- Likes, favourites, comments and sharing
+- Orders and seller/buyer order management
+- Payment infrastructure with M-Pesa and additional provider callbacks
+- Listing promotion / boosting and advertising
+- Campus Mall Pro subscriptions
+- Business subscriptions
+- Data and airtime digital products
+- Notifications
+- Multi-institution memberships
+- Privacy Policy and Terms of Service
+- Responsive mobile and desktop interface
+- PWA/mobile packaging support through Capacitor
+- Admin dashboard with marketplace statistics and listing moderation
+- Revenue reporting and affiliate-revenue tooling
+- Health endpoint for deployment monitoring
 
-## Important architecture decision
+## Admin access
 
-The sketch says the marketplace should show items around the selected university and should not let a user post into a different university page. This implementation enforces that by tying listings to the seller's current account university and only returning active listings whose seller belongs to the current user's university.
+Set ADMIN_EMAILS in Vercel as a comma-separated list of administrator email addresses.
 
-When the seller marks an item **Sold**, it is no longer returned by `/api/listings` and is removed from all carts immediately.
+Example: ADMIN_EMAILS=admin@example.com
 
-## Run locally
+Administrators can open /admin. The dashboard provides user/listing/order/revenue totals and listing moderation controls. Keep administrator accounts protected with strong passwords and never expose admin credentials in client-side code.
+
+## Environment
+
+At minimum, production requires DATABASE_URL, SESSION_SECRET, APP_URL, SUPPORT_EMAIL and ADMIN_EMAILS. Add payment-provider variables only for payment methods you actually enable. Google OAuth and messaging providers are optional integrations and are not required for the core marketplace.
+
+## Local development
 
 1. Install Node.js 20+.
-2. Copy `.env.example` to `.env`.
-3. Put your Prisma Postgres connection string in `DATABASE_URL`.
-4. Set a strong random `SESSION_SECRET`.
-5. Install packages:
+2. Copy .env.example to .env.
+3. Set DATABASE_URL and a strong random SESSION_SECRET.
+4. Run npm install.
+5. Run npx prisma generate and npx prisma db push.
+6. Run npm run dev.
 
-   npm install
+## Vercel
 
-6. Generate/push the database:
-
-   npx prisma generate
-   npx prisma db push
-
-7. Optional demo data:
-
-   npm run seed
-
-   Demo login:
-   - email: `demo@campusmall.local`
-   - password: `ChangeMe123!`
-
-   Change this password before any real deployment.
-
-8. Start:
-
-   npm run dev
-
-## Vercel deployment
-
-- Import the repository into Vercel.
-- Add `DATABASE_URL`, `SESSION_SECRET`, `APP_URL`, and `SUPPORT_EMAIL`.
-- If using Google OAuth later, add the Google variables too.
-- Build command is already configured through `npm run build`, which runs `prisma generate && next build`.
-- Use Prisma Postgres or another PostgreSQL provider.
-
-## Google OAuth
-
-The environment variables are prepared, but this renewed version deliberately keeps native email/password authentication as the reliable core. Add Google OAuth routes after the Google Cloud consent screen/client are configured. The redirect URI should be:
-
-`https://YOUR-DOMAIN/api/auth/google/callback`
-
-Do not place client secrets in browser code.
+The build command runs Prisma generation and the Next.js production build through scripts/build.mjs. After changing environment variables, redeploy the affected Vercel environment.
 
 ## Payments
 
-Orders currently create an order with a payment method label and notify the seller. The promotion endpoint also records a promotion window. A real payment gateway should be connected before charging users; the project does not fake successful payments.
+The application contains payment infrastructure and callbacks, but a payment provider is only truly live when its credentials, callback/webhook configuration and merchant account are configured correctly. The application must never claim a payment succeeded merely because a checkout request was created.
 
-## Android / desktop
+## Security before commercial launch
 
-The responsive web app is designed so it can later be packaged as an Android app (for example, through a WebView/Trusted Web Activity or a native client using the same API). The API and database remain the source of truth.
-
-## Security checklist before production
-
-- Set a long random `SESSION_SECRET`.
-- Use HTTPS.
-- Add rate limiting to auth and messaging.
-- Add CSRF protection where needed for your final deployment model.
-- Add image storage (Vercel Blob/S3/Cloudinary) instead of trusting arbitrary image URLs.
-- Add email/phone verification.
-- Add moderation/reporting.
-- Add real payment gateway integration.
-- Add database backups and monitoring.
+- Use a long random SESSION_SECRET.
+- Keep all secret API keys server-side.
+- Use HTTPS in production.
+- Configure rate limiting for authentication, messaging and payment endpoints.
+- Use trusted image storage rather than arbitrary remote image URLs.
+- Configure database backups and monitoring.
+- Configure payment callbacks/webhooks with provider-recommended signature validation.
+- Protect administrator accounts and the ADMIN_EMAILS configuration.
