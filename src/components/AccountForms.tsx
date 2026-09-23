@@ -623,7 +623,8 @@ export default function AccountForms() {
             <div className="success">
               {success}
             </div>
-          )}\n
+          )}
+
           <button
             className="primary-btn"
             type="submit"
