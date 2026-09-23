@@ -131,6 +131,20 @@ display: flex;
 align-items: center;
 }
 
+.filter-button {
+background: var(--red);
+color: #fff;
+border: 0;
+border-radius: 10px;
+padding: 10px 15px;
+font-weight: 700;
+cursor: pointer;
+}
+
+.filter-button:hover {
+background: var(--red-dark);
+}
+
 .avatar {
 display: inline-flex;
 align-items: center;
