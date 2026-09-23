@@ -52,6 +52,7 @@ export default async function ListingPage({ params }: PageProps) {
         currency: true,
         category: true,
         imageUrl: true,
+        details: true,
         location: true,
         status: true,
         promoted: true,
@@ -142,6 +143,23 @@ export default async function ListingPage({ params }: PageProps) {
             <span>📍 {listing.location}</span>
             <span>Listed {listing.createdAt.toLocaleDateString()}</span>
           </div>
+
+          {listing.details && typeof listing.details === "object" && !Array.isArray(listing.details) && Object.values(listing.details).some(Boolean) && (
+            <section className="panel" style={{ marginTop: "20px", padding: "18px" }}>
+              <h2>Item details</h2>
+              <div className="details-grid">
+                {Object.entries(listing.details as Record<string, unknown>).map(([key, value]) => {
+                  if (value === undefined || value === null || value === "" || value === false) return null;
+                  const labels: Record<string, string> = {
+                    brand: "Brand", model: "Model", condition: "Condition", conditionNotes: "Condition details",
+                    color: "Color", size: "Size", material: "Material", quantity: "Quantity", year: "Year",
+                    warranty: "Warranty", negotiable: "Negotiable", delivery: "Delivery", tags: "Tags",
+                  };
+                  return <div key={key}><strong>{labels[key] || key}</strong><span>{value === true ? "Yes" : String(value)}</span></div>;
+                })}
+              </div>
+            </section>
+          )}
 
           <section className="panel" style={{ marginTop: "20px", padding: "18px" }}>
             <h2>Description</h2>
