@@ -10,53 +10,7 @@ type Props = {
   sellerUniversity: string;
 };
 
-const categories = [
-  {
-    value: "Accommodation",
-    description:
-      "Hostels, rooms, apartments and accommodation",
-  },
-  {
-    value: "Beauty & dressing",
-    description:
-      "Beauty products, clothing and dressing",
-  },
-  {
-    value: "Electronics",
-    description:
-      "Phones, laptops, accessories and electronics",
-  },
-  {
-    value: "Food",
-    description:
-      "Meals, snacks, drinks and other food",
-  },
-  {
-    value: "Furniture",
-    description:
-      "Beds, chairs, tables and other furniture",
-  },
-  {
-    value: "Jobs",
-    description:
-      "Part-time jobs and other opportunities",
-  },
-  {
-    value: "Printing & photography",
-    description:
-      "Printing, photography and related services",
-  },
-  {
-    value: "Stationery",
-    description:
-      "Books, pens, papers and school supplies",
-  },
-  {
-    value: "Utensils",
-    description:
-      "Kitchen utensils and household items",
-  },
-];
+const categories = ["Accommodation","Beauty & dressing","Electronics","Food","Furniture","Jobs","Printing & photography","Services","Stationery","Utensils"];
 
 export default function NewListingForm({
   sellerName,
@@ -180,19 +134,7 @@ export default function NewListingForm({
         )}
 
         <div className="form">
-          <div>
-            <p className="category">
-              LISTING DETAILS
-            </p>
-
-            <h2>What are you offering?</h2>
-
-            <p className="note">
-              Give buyers enough information to
-              understand what you are selling or
-              offering.
-            </p>
-          </div>
+          <div><p className="category">LISTING</p></div>
 
           <label>
             Title
@@ -207,9 +149,7 @@ export default function NewListingForm({
               maxLength={150}
               required
             />
-            <small className="note">
-              {title.length}/150 characters
-            </small>
+            
           </label>
 
           <label>
@@ -225,9 +165,7 @@ export default function NewListingForm({
               rows={7}
               required
             />
-            <small className="note">
-              {description.length}/5000 characters
-            </small>
+            
           </label>
 
           <label>
@@ -251,21 +189,11 @@ export default function NewListingForm({
             </select>
 
             {selectedCategory && (
-              <small className="note">
-                {selectedCategory.description}
-              </small>
+              
             )}
           </label>
 
-          <div>
-            <p className="category">PRICE</p>
-
-            <h2>Set your price</h2>
-
-            <p className="note">
-              Enter zero if the listing is free.
-            </p>
-          </div>
+          <div><p className="category">PRICE</p></div>
 
           <div className="two-col">
             <label>
@@ -322,11 +250,7 @@ export default function NewListingForm({
             </label>
           </div>
 
-          <div>
-            <p className="category">LOCATION</p>
-
-            <h2>Where is it available?</h2>
-          </div>
+          <div><p className="category">LOCATION</p></div>
 
           <label>
             Location
@@ -341,22 +265,10 @@ export default function NewListingForm({
               maxLength={200}
               required
             />
-            <small className="note">
-              Give buyers a useful campus, town or
-              area.
-            </small>
+            
           </label>
 
-          <div>
-            <p className="category">IMAGE</p>
-
-            <h2>Add a listing image</h2>
-
-            <p className="note">
-              Add an image URL if you have a publicly
-              accessible image.
-            </p>
-          </div>
+          <div><p className="category">IMAGE</p></div>
 
           <label>
             Image URL
@@ -370,10 +282,7 @@ export default function NewListingForm({
               }
             />
 
-            <small className="note">
-              Leave this empty if you do not have an
-              image.
-            </small>
+            
           </label>
 
           {imageUrl && (
@@ -440,60 +349,7 @@ export default function NewListingForm({
         </div>
       </form>
 
-      <aside className="panel">
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-          }}
-        >
-          <ShieldCheck size={22} />
-
-          <p className="category">
-            SELL SAFELY
-          </p>
-        </div>
-
-        <h2>Good listings get attention.</h2>
-
-        <ul
-          style={{
-            paddingLeft: "20px",
-            lineHeight: 1.8,
-          }}
-        >
-          <li>Use a clear and honest title.</li>
-          <li>
-            Describe the condition accurately.
-          </li>
-          <li>Use a useful location.</li>
-          <li>Set a realistic price.</li>
-          <li>Never share your password.</li>
-          <li>
-            Mark the listing as sold when it is no
-            longer available.
-          </li>
-        </ul>
-
-        <div
-          className="panel"
-          style={{
-            marginTop: "18px",
-            background: "var(--red-light)",
-          }}
-        >
-          <ImageIcon
-            size={20}
-            style={{ marginBottom: "8px" }}
-          />
-
-          <p className="note">
-            A clear image can help buyers understand
-            your listing before contacting you.
-          </p>
-        </div>
-      </aside>
+      
     </div>
   );
 }
