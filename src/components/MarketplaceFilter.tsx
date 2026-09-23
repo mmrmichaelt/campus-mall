@@ -41,7 +41,7 @@ export default function MarketplaceFilter() {
         aria-controls="marketplace-filter-panel"
         onClick={() => setOpen((value) => !value)}
       >
-        <span>Filter</span>
+        <span aria-hidden="true">☰</span>
       </button>
 
       {open && (
