@@ -54,13 +54,6 @@ export async function GET(request: Request) {
       );
     }
 
-    if (!user.emailVerified && !user.phoneVerified) {
-      return NextResponse.json(
-        { error: "Verify your email or phone number before using Campus Mall chats.", verificationRequired: true, redirectTo: "/verify" },
-        { status: 403 }
-      );
-    }
-
     const { searchParams } = new URL(request.url);
 
     const listingId =
@@ -144,19 +137,6 @@ export async function GET(request: Request) {
           error: "The other user could not be found.",
         },
         { status: 404 }
-      );
-    }
-
-    if (
-      !otherUser.emailVerified ||
-      !otherUser.phoneVerified
-    ) {
-      return NextResponse.json(
-        {
-          error:
-            "The other user has not verified an email address or phone number yet.",
-        },
-        { status: 403 }
       );
     }
 
@@ -251,18 +231,6 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!user.emailVerified || !user.phoneVerified) {
-      return NextResponse.json(
-        {
-          error:
-            "Verify both your email and phone number before sending messages.",
-          verificationRequired: true,
-          redirectTo: "/verify",
-        },
-        { status: 403 }
-      );
-    }
-
     const body = await request.json();
 
     const parsed = messageSchema.safeParse(body);
@@ -349,19 +317,6 @@ export async function POST(request: Request) {
           error: "The recipient could not be found.",
         },
         { status: 404 }
-      );
-    }
-
-    if (
-      !receiver.emailVerified ||
-      !receiver.phoneVerified
-    ) {
-      return NextResponse.json(
-        {
-          error:
-            "The recipient has not verified an email address or phone number.",
-        },
-        { status: 403 }
       );
     }
 
