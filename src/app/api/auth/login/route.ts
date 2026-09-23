@@ -72,20 +72,10 @@ export async function POST(request: Request) {
 
     await createSession(user.id);
 
-    const fullyVerified =
-      user.emailVerified || user.phoneVerified;
-
     return NextResponse.json({
       success: true,
-      message: fullyVerified
-        ? `Welcome back, ${user.name}.`
-        : "Welcome back. Please complete your account verification.",
+      message: `Welcome back, ${user.name}.`,
       redirectTo: "/",
-      verification: {
-        emailVerified: user.emailVerified,
-        phoneVerified: user.phoneVerified,
-        fullyVerified,
-      },
     });
   } catch (error) {
     console.error("Campus Mall login error:", error);
