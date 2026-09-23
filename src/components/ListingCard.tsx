@@ -1,6 +1,7 @@
 "use client";
 
-import { Heart, MapPin, ShoppingCart, BadgeCheck, Tag } from "lucide-react";
+import { useState } from "react";
+import { Heart, ShoppingCart, BadgeCheck, Tag, ChevronDown } from "lucide-react";
 
 type ListingCardProps = {
   item: {
@@ -20,6 +21,7 @@ type ListingCardProps = {
       emailVerified?: boolean;
       phoneVerified?: boolean;
     };
+    details?: Record<string, unknown> | null;
   };
   onCart?: (id: string) => void;
 };
@@ -33,7 +35,13 @@ function getImageUrl(value?: string | null) {
   return value;
 }
 
+function detail(item: ListingCardProps["item"], key: string) {
+  const value = item.details?.[key];
+  return value === undefined || value === null || value === "" || value === false ? "—" : String(value);
+}
+
 export default function ListingCard({ item, onCart }: ListingCardProps) {
+  const [more, setMore] = useState(false);
   const price = Number(item.price);
   const verified = item.seller?.emailVerified || item.seller?.phoneVerified;
   const imageUrl = getImageUrl(item.imageUrl);
@@ -41,38 +49,44 @@ export default function ListingCard({ item, onCart }: ListingCardProps) {
   return (
     <article className={`listing-card compact-product-card ${item.promoted ? "promoted" : ""}`}>
       <div className="listing-photo">
-        {imageUrl ? (
-          <img src={imageUrl} alt={item.title} loading="lazy" />
-        ) : (
-          <div className="photo-placeholder"><Tag size={26} /></div>
-        )}
+        {imageUrl ? <img src={imageUrl} alt={item.title} loading="lazy" /> : <div className="photo-placeholder"><Tag size={26} /></div>}
         {item.promoted && <span className="promoted-label">PROMOTED</span>}
-        <button type="button" className="product-like" aria-label={`Save ${item.title}`} title="Save">
-          <Heart size={17} />
-        </button>
+        <button type="button" className="product-like" aria-label={`Save ${item.title}`} title="Save"><Heart size={17} /></button>
       </div>
 
       <div className="listing-body">
-        <span className="product-category">{item.category}</span>
-        <h3>{item.title}</h3>
-        <strong className="product-price">
-          {item.currency || "KES"} {Number.isFinite(price) ? price.toLocaleString() : "0"}
-        </strong>
-
-        <div className="product-meta">
-          <span><MapPin size={13} /> {item.location}</span>
-          {item.seller?.university && <span>{item.seller.university}</span>}
+        <div className="listing-card-columns">
+          <div className="listing-card-column">
+            <div><strong>Title</strong><span>{item.title}</span></div>
+            <div><strong>Condition</strong><span>{detail(item, "condition")}</span></div>
+            <div><strong>Colour</strong><span>{detail(item, "color")}</span></div>
+          </div>
+          <div className="listing-card-column">
+            <div><strong>Brand</strong><span>{detail(item, "brand")}</span></div>
+            <div><strong>Price</strong><span>{item.currency || "KES"} {Number.isFinite(price) ? price.toLocaleString() : "0"}</span></div>
+            <div><strong>Delivery</strong><span>{detail(item, "delivery")}</span></div>
+          </div>
         </div>
 
-        <div className="product-seller">
-          <span>{item.seller?.name || "Seller"}</span>
-          {verified && <BadgeCheck size={14} aria-label="Verified seller" />}
-        </div>
+        <button type="button" className="listing-more-btn" onClick={() => setMore(v => !v)} aria-expanded={more}>
+          <span>{more ? "Less" : "More"}</span><ChevronDown size={15} className={more ? "rotated" : ""} />
+        </button>
+
+        {more && (
+          <div className="listing-expanded-details">
+            <div><strong>Category</strong><span>{item.category}</span></div>
+            <div><strong>Model</strong><span>{detail(item, "model")}</span></div>
+            <div><strong>Year</strong><span>{detail(item, "year")}</span></div>
+            <div><strong>Warranty</strong><span>{detail(item, "warranty")}</span></div>
+            <div><strong>Currency</strong><span>{item.currency || "KES"}</span></div>
+            <div><strong>Location</strong><span>{item.location || "—"}</span></div>
+            <div><strong>Seller information</strong><span>{item.seller?.name || "Seller"}{verified ? " · Verified" : ""}{item.seller?.university ? ` · ${item.seller.university}` : ""}</span></div>
+          </div>
+        )}
 
         {onCart && (
           <button type="button" className="product-cart-btn" onClick={() => onCart(item.id)}>
-            <ShoppingCart size={16} />
-            Add to trolley
+            <ShoppingCart size={16} /> Add to trolley
           </button>
         )}
       </div>
