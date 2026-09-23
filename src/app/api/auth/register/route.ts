@@ -124,10 +124,6 @@ export async function POST(request: Request) {
         success: true,
         message: "Account created successfully. You can use Campus Mall immediately.",
         redirectTo: "/",
-        verification: {
-          emailSent: false,
-          phoneSent: false,
-        },
       },
       { status: 201 }
     );
