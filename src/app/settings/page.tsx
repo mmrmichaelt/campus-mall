@@ -3,286 +3,64 @@
 import Link from "next/link";
 import InstitutionMemberships from "@/components/InstitutionMemberships";
 import { useEffect, useState } from "react";
-import {
-  Bell,
-  ShieldCheck,
-  ShoppingBag,
-  Store,
-  CreditCard,
-  Palette,
-  LockKeyhole,
-  HelpCircle,
-  Megaphone,
-  UserRound,
-  MapPin,
-  LogOut,
-} from "lucide-react";
+import { Bell, ShieldCheck, ShoppingBag, Store, CreditCard, Palette, HelpCircle, Megaphone, UserRound, MapPin, LogOut, ChevronRight } from "lucide-react";
 
-type SettingsState = {
-  emailAlerts: boolean;
-  messageAlerts: boolean;
-  marketing: boolean;
-  publicProfile: boolean;
-};
+type SettingsState = { emailAlerts:boolean; messageAlerts:boolean; marketing:boolean; publicProfile:boolean };
+const defaults:SettingsState={emailAlerts:true,messageAlerts:true,marketing:false,publicProfile:true};
 
-const defaults: SettingsState = {
-  emailAlerts: true,
-  messageAlerts: true,
-  marketing: false,
-  publicProfile: true,
-};
+export default function Settings(){
+  const [settings,setSettings]=useState<SettingsState>(defaults);
+  const [uni,setUni]=useState(""); const [msg,setMsg]=useState(""); const [saving,setSaving]=useState(false); const [loading,setLoading]=useState(true); const [loggingOut,setLoggingOut]=useState(false);
 
-export default function Settings() {
-  const [settings, setSettings] = useState<SettingsState>(defaults);
-  const [uni, setUni] = useState("");
-  const [msg, setMsg] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [loggingOut, setLoggingOut] = useState(false);
+  useEffect(()=>{(async()=>{try{const r=await fetch("/api/settings",{cache:"no-store"});const d=await r.json().catch(()=>({}));if(r.ok&&d.settings)setSettings(d.settings)}finally{setLoading(false)}})()},[]);
+  async function save(next:SettingsState){setSettings(next);setSaving(true);setMsg("");try{const r=await fetch("/api/settings",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(next)});const d=await r.json().catch(()=>({}));setMsg(r.ok?"Saved.":(d.error||"Unable to save."))}catch{setMsg("Unable to save.")}finally{setSaving(false)}}
+  function toggle(key:keyof SettingsState){void save({...settings,[key]:!settings[key]})}
+  async function changeUniversity(){try{const r=await fetch("/api/university",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({university:uni})});const d=await r.json().catch(()=>({}));setMsg(r.ok?"University switched.":(d.error||"Log in first."))}catch{setMsg("Unable to switch university.")}}
+  async function logout(){setLoggingOut(true);try{await fetch("/api/auth/logout",{method:"POST"});window.location.href="/"}finally{setLoggingOut(false)}}
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const response = await fetch("/api/settings", { cache: "no-store" });
-        const data = await response.json().catch(() => ({}));
-        if (response.ok && data.settings) {
-          setSettings(data.settings);
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
-    void load();
-  }, []);
+  const Row=({href,icon,label}:any)=><Link href={href} className="settings-row"><span className="settings-row-icon">{icon}</span><strong>{label}</strong><ChevronRight size={17}/></Link>;
+  const Toggle=({label,checked,onChange}:any)=><label className="settings-row settings-toggle"><span><strong>{label}</strong></span><input type="checkbox" checked={checked} onChange={onChange} disabled={saving||loading}/></label>;
 
-  async function save(next: SettingsState) {
-    setSettings(next);
-    setSaving(true);
-    setMsg("");
-    try {
-      const response = await fetch("/api/settings", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(next),
-      });
-      const data = await response.json().catch(() => ({}));
-      setMsg(response.ok ? "Settings saved." : (data.error || "Unable to save settings."));
-    } catch {
-      setMsg("Unable to save settings.");
-    } finally {
-      setSaving(false);
-    }
-  }
+  return <div className="settings-page">
+    <div className="market-page-head"><div><span className="hero-kicker">CAMPUS MALL</span><h1>Settings</h1></div><Link href="/" className="secondary-btn">Marketplace</Link></div>
+    {msg&&<div className={msg.includes("Unable")?"error":"success"} style={{marginBottom:10}}>{msg}</div>}
 
-  function toggle(key: keyof SettingsState) {
-    void save({ ...settings, [key]: !settings[key] });
-  }
-
-  async function changeUniversity() {
-    setMsg("");
-    try {
-      const response = await fetch("/api/university", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ university: uni }),
-      });
-      const data = await response.json().catch(() => ({}));
-      setMsg(response.ok ? "University switched successfully." : (data.error || "Log in first."));
-    } catch {
-      setMsg("Unable to switch university.");
-    }
-  }
-
-  async function logout() {
-    setLoggingOut(true);
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-      window.location.href = "/";
-    } finally {
-      setLoggingOut(false);
-    }
-  }
-
-  const Toggle = ({
-    label,
-    description,
-    checked,
-    onChange,
-  }: {
-    label: string;
-    description: string;
-    checked: boolean;
-    onChange: () => void;
-  }) => (
-    <label
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: 18,
-        padding: "14px 0",
-        borderBottom: "1px solid #eee",
-        cursor: "pointer",
-      }}
-    >
-      <span>
-        <strong>{label}</strong>
-        <small className="note" style={{ display: "block", marginTop: 4 }}>
-          {description}
-        </small>
-      </span>
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={onChange}
-        disabled={saving || loading}
-        style={{ width: 22, height: 22 }}
-      />
-    </label>
-  );
-
-  return (
-    <div>
-      <div className="section-title">
-        <div>
-          <p className="category">CAMPUS MALL</p>
-          <h1>Settings</h1>
-          
-        </div>
-        <Link href="/" className="secondary-btn">Marketplace</Link>
+    <section className="settings-list">
+      <Row href="/profile" icon={<UserRound size={18}/>} label="Account & profile"/>
+      <div className="settings-inline">
+        <span className="settings-row-icon"><MapPin size={18}/></span>
+        <div><strong>University / college</strong><input value={uni} onChange={e=>setUni(e.target.value)} placeholder="Search university"/><button className="primary-btn" onClick={changeUniversity}>Switch</button></div>
       </div>
-
-      {msg && <div className={msg.includes("Unable") || msg.includes("error") ? "error" : "success"} style={{ marginBottom: 18 }}>{msg}</div>}
-
-      <div className="two-col">
-        <section className="panel">
-          <div className="section-title">
-            <div>
-              <p className="category">ACCOUNT</p>
-              <h2><UserRound size={20} /> Account & profile</h2>
-            </div>
-          </div>
-          <div className="hero-actions">
-            <Link href="/profile" className="primary-btn">Edit profile</Link>
-            <Link href="/account" className="secondary-btn">Account overview</Link>
-            
-          </div>
-        </section>
-
-        <section className="panel">
-          <p className="category">CAMPUS</p>
-          <h2><MapPin size={20} /> University / college</h2>
-          <input
-            value={uni}
-            onChange={(event) => setUni(event.target.value)}
-            placeholder="Enter university / college"
-            style={{ width: "100%", padding: 11, border: "1px solid #ddd", borderRadius: 10 }}
-          />
-          <button className="primary-btn" style={{ marginTop: 10 }} onClick={changeUniversity}>
-            Switch university
-          </button>
-        </section>
-      </div>
-
       <InstitutionMemberships />
+    </section>
 
-      <section className="panel" style={{ marginTop: 20 }}>
-        <p className="category">NOTIFICATIONS</p>
-        <h2><Bell size={20} /> Notification preferences</h2>
-        <Toggle label="Email notifications" description="Receive important account and marketplace updates by email." checked={settings.emailAlerts} onChange={() => toggle("emailAlerts")} />
-        <Toggle label="Chat notifications" description="Get notified about buyer and seller messages." checked={settings.messageAlerts} onChange={() => toggle("messageAlerts")} />
-        <Toggle label="Offers and promotions" description="Receive optional Campus Mall offers and marketing." checked={settings.marketing} onChange={() => toggle("marketing")} />
-      </section>
+    <section className="settings-group"><h3>Shopping</h3>
+      <Row href="/cart" icon={<ShoppingBag size={18}/>} label="Trolley / cart"/>
+      <Row href="/orders" icon={<ShoppingBag size={18}/>} label="My orders"/>
+      <Row href="/listings" icon={<Store size={18}/>} label="Browse marketplace"/>
+    </section>
 
-      <div className="two-col" style={{ marginTop: 20 }}>
-        <section className="panel">
-          <p className="category">PRIVACY & SECURITY</p>
-          <h2><ShieldCheck size={20} /> Privacy controls</h2>
-          <Toggle label="Public profile" description="Allow other marketplace users to view your public profile and active listings." checked={settings.publicProfile} onChange={() => toggle("publicProfile")} />
-          <div className="hero-actions" style={{ marginTop: 16 }}>
-            
-            <Link href="/notifications" className="secondary-btn"><Bell size={17} /> Notifications</Link>
-          </div>
-        </section>
+    <section className="settings-group"><h3>Selling & growth</h3>
+      <Row href="/sell" icon={<Store size={18}/>} label="Add item"/>
+      <Row href="/advertise" icon={<Megaphone size={18}/>} label="Promote & advertise"/>
+      <Row href="/business" icon={<Store size={18}/>} label="Business account"/>
+      <Row href="/account/pro" icon={<CreditCard size={18}/>} label="Campus Mall Pro"/>
+    </section>
 
-        <section className="panel">
-          <p className="category">SHOPPING</p>
-          <h2><ShoppingBag size={20} /> Shopping preferences</h2>
-          <div className="hero-actions">
-            <Link href="/cart" className="secondary-btn"><ShoppingBag size={17} /> Trolley / cart</Link>
-            <Link href="/listings" className="secondary-btn">Browse marketplace</Link>
-            <Link href="/orders" className="secondary-btn">My orders</Link>
-          </div>
-        </section>
-      </div>
+    <section className="settings-group"><h3>Preferences</h3>
+      <Toggle label="Email notifications" checked={settings.emailAlerts} onChange={()=>toggle("emailAlerts")}/>
+      <Toggle label="Chat notifications" checked={settings.messageAlerts} onChange={()=>toggle("messageAlerts")}/>
+      <Toggle label="Offers & promotions" checked={settings.marketing} onChange={()=>toggle("marketing")}/>
+      <Toggle label="Public profile" checked={settings.publicProfile} onChange={()=>toggle("publicProfile")}/>
+      <button type="button" className="settings-row settings-button" onClick={()=>{const root=document.documentElement;const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;window.localStorage.setItem("campus_mall_theme",next)}}><span className="settings-row-icon"><Palette size={18}/></span><strong>Appearance</strong><span/></button>
+    </section>
 
-      <div className="two-col" style={{ marginTop: 20 }}>
-        <section className="panel">
-          <p className="category">SELLING</p>
-          <h2><Store size={20} /> Seller tools</h2>
-          <div className="hero-actions">
-            <Link href="/sell" className="primary-btn">Add an item</Link>
-            <Link href="/advertise" className="secondary-btn">Advertise a product</Link>
-            <Link href="/business" className="secondary-btn">Business account</Link>
-          </div>
-          <p className="note" style={{ marginTop: 12 }}>
-            Listing creation can remain free while featured placement, promotions and advertising can be paid services.
-          </p>
-        </section>
+    <section className="settings-group"><h3>Help</h3>
+      <a href="mailto:campusmall.support@gmail.com" className="settings-row"><span className="settings-row-icon"><HelpCircle size={18}/></span><strong>Support</strong><ChevronRight size={17}/></a>
+      <Row href="/terms" icon={<HelpCircle size={18}/>} label="Terms"/>
+      <Row href="/privacy" icon={<ShieldCheck size={18}/>} label="Privacy"/>
+    </section>
 
-        <section className="panel">
-          <p className="category">PRO & PAYMENTS</p>
-          <h2><CreditCard size={20} /> Campus Mall Pro</h2>
-          <div className="hero-actions">
-            <Link href="/account/pro" className="primary-btn">Manage Pro</Link>
-            <Link href="/pro" className="secondary-btn">View Pro plans</Link>
-            <Link href="/business" className="secondary-btn">Business plans</Link>
-          </div>
-        </section>
-      </div>
-
-      <div className="two-col" style={{ marginTop: 20 }}>
-        <section className="panel">
-          <p className="category">ADVERTISING</p>
-          <h2><Megaphone size={20} /> Promote & advertise</h2>
-          <div className="hero-actions">
-            <Link href="/advertise" className="primary-btn">Create advert</Link>
-            <Link href="/business" className="secondary-btn">Business account</Link>
-          </div>
-        </section>
-
-        <section className="panel">
-          <p className="category">APPEARANCE</p>
-          <h2><Palette size={20} /> App experience</h2>
-          <div className="hero-actions">
-            <Link href="/" className="secondary-btn">Marketplace</Link>
-            <button type="button" className="secondary-btn" onClick={() => {
-              const root = document.documentElement;
-              const next = root.dataset.theme === "dark" ? "light" : "dark";
-              root.dataset.theme = next;
-              window.localStorage.setItem("campus_mall_theme", next);
-            }}>Toggle dark / light</button>
-          </div>
-        </section>
-      </div>
-
-      <section className="panel" style={{ marginTop: 20 }}>
-        <p className="category">HELP & LEGAL</p>
-        <h2><HelpCircle size={20} /> Support</h2>
-        <div className="hero-actions">
-          <a href="mailto:campusmall.support@gmail.com" className="secondary-btn">Email support</a>
-          <Link href="/terms" className="secondary-btn">Terms</Link>
-          <Link href="/privacy" className="secondary-btn">Privacy</Link>
-        </div>
-      </section>
-
-      <section className="panel" style={{ marginTop: 20 }}>
-        <p className="category">SESSION</p>
-        <h2>Sign out</h2>
-        <button className="danger-btn" onClick={logout} disabled={loggingOut}>
-          <LogOut size={17} /> {loggingOut ? "Signing out..." : "Log out"}
-        </button>
-      </section>
-    </div>
-  );
+    <section className="settings-group settings-danger"><button className="settings-row settings-button danger-row" onClick={logout} disabled={loggingOut}><span className="settings-row-icon"><LogOut size={18}/></span><strong>{loggingOut?"Signing out...":"Log out"}</strong><span/></button></section>
+  </div>;
 }
