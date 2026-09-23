@@ -4,10 +4,6 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../../../../lib/prisma";
 import { createSession } from "../../../../lib/auth";
 import { registerSchema } from "../../../../lib/validation";
-import {
-  sendEmailVerificationCode,
-  sendPhoneVerificationCode,
-} from "../../../../lib/verification";
 import { getCountryByCode } from "../../../../data/countries";
 
 export const dynamic = "force-dynamic";
@@ -123,29 +119,18 @@ export async function POST(request: Request) {
 
     await createSession(user.id);
 
-    const [emailResult, phoneResult] = await Promise.all([
-      email
-        ? sendEmailVerificationCode(user.id)
-            .then(() => true)
-            .catch((error) => {
-              console.error("Campus Mall email verification delivery failed:", error);
-              return false;
-            })
-        : Promise.resolve(false),
-      phone
-        ? sendPhoneVerificationCode(user.id)
-            .then(() => true)
-            .catch((error) => {
-              console.error("Campus Mall phone verification delivery failed:", error);
-              return false;
-            })
-        : Promise.resolve(false),
-    ]);
-
-    const emailSent = Boolean(email && emailResult);
-    const phoneSent = Boolean(phone && phoneResult);
-
     return NextResponse.json(
+      {
+        success: true,
+        message: "Account created successfully. You can use Campus Mall immediately.",
+        redirectTo: "/",
+        verification: {
+          emailSent: false,
+          phoneSent: false,
+        },
+      },
+      { status: 201 }
+    );    return NextResponse.json(
       {
         success: true,
         message:
