@@ -62,7 +62,7 @@ export async function GET(request: Request) {
       sort === "title-az" ? [{ title: "asc" }] :
       sort === "title-za" ? [{ title: "desc" }] :
       sort === "oldest" ? [{ createdAt: "asc" }] :
-      [{ promoted: "desc" }, { promotedUntil: "desc" }, { createdAt: "desc" }];
+      [{ createdAt: "desc" }];
 
     const rawPage = Number(searchParams.get("page") || "1");
     const rawLimit = Number(searchParams.get("limit") || "30");
