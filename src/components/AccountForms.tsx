@@ -42,7 +42,6 @@ export default function AccountForms() {
     useState(false);
 
   useEffect(() => {
-    if (mode === "login") return;
     const controller = new AbortController();
     setInstitutionLoading(true);
     fetch(`/api/institutions?country=${encodeURIComponent(country)}`, { signal: controller.signal, cache: "no-store" })
@@ -354,8 +353,27 @@ export default function AccountForms() {
           )}
 
           {mode === "login" && (
-            <label>
-              Institution
+            <>
+              <label>
+                Country
+                <select
+                  value={country}
+                  onChange={(event) => {
+                    setCountry(event.target.value);
+                    setUniversity("");
+                  }}
+                  required
+                >
+                  {countries.map((item) => (
+                    <option key={item.code} value={item.code}>
+                      {item.flag} {item.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Institution
               <select
                 value={university}
                 onChange={(event) => setUniversity(event.target.value)}
