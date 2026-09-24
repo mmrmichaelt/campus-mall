@@ -7,6 +7,7 @@ import { countries } from "@/data/countries";
 type Props = {
   sellerName: string;
   sellerCountry: string;
+  sellerUniversity: string;
 };
 
 const categories = [
@@ -14,7 +15,7 @@ const categories = [
   "Printing & photography","Services","Stationery","Utensils","Other",
 ];
 
-export default function NewListingForm({ sellerName, sellerCountry }: Props) {
+export default function NewListingForm({ sellerName, sellerCountry, sellerUniversity }: Props) {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [brand, setBrand] = useState("");
@@ -28,25 +29,10 @@ export default function NewListingForm({ sellerName, sellerCountry }: Props) {
   const [year, setYear] = useState("");
   const [warranty, setWarranty] = useState("");
   const [location, setLocation] = useState("");
-  const [institution, setInstitution] = useState("");
-  const [institutions, setInstitutions] = useState<{ name: string }[]>([]);
-  const [institutionLoading, setInstitutionLoading] = useState(false);
+  const [institution] = useState(sellerUniversity);
   const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    const code = countries.find(item => item.name.toLowerCase() === sellerCountry.toLowerCase())?.code || "";
-    if (!code) return;
-    const controller = new AbortController();
-    setInstitutionLoading(true);
-    fetch(`/api/institutions?country=${encodeURIComponent(code)}`, { signal: controller.signal, cache: "no-store" })
-      .then(r => r.json())
-      .then(data => setInstitutions(Array.isArray(data.institutions) ? data.institutions : []))
-      .catch(error => { if (error?.name !== "AbortError") setInstitutions([]); })
-      .finally(() => { if (!controller.signal.aborted) setInstitutionLoading(false); });
-    return () => controller.abort();
-  }, [sellerCountry]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -166,10 +152,8 @@ export default function NewListingForm({ sellerName, sellerCountry }: Props) {
 
           <label>
             Institution
-            <select value={institution} onChange={e => setInstitution(e.target.value)} required disabled={institutionLoading}>
-              <option value="">{institutionLoading ? "Loading institutions..." : "Select institution"}</option>
-              {institutions.map((item, index) => <option key={item.name + index} value={item.name}>{item.name}</option>)}
-            </select>
+            <input value={institution} readOnly disabled aria-readonly="true" />
+            <small className="note">Taken from your account profile. It cannot be changed while posting this item.</small>
           </label>
 
           <label>
