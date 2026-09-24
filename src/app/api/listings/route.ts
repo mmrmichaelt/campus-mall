@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { getCurrentUser } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
 import { listingSchema } from "../../../lib/validation";
+import { getCountryByCode } from "../../../data/countries";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +46,7 @@ export async function GET(request: Request) {
     const q = searchParams.get("q")?.trim() || "";
     const category = searchParams.get("category")?.trim() || "";
     const country = searchParams.get("country")?.trim() || "";
+    const countryName = getCountryByCode(country)?.name || country;
     const institution = searchParams.get("institution")?.trim() || "";
     const minPrice = Number(searchParams.get("minPrice"));
     const maxPrice = Number(searchParams.get("maxPrice"));
@@ -100,7 +102,7 @@ export async function GET(request: Request) {
               ...(country
                 ? {
                     country: {
-                      equals: country,
+                      equals: countryName,
                       mode: "insensitive",
                     },
                   }
