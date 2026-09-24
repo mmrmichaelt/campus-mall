@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, ShoppingCart, BadgeCheck, Tag, ChevronDown } from "lucide-react";
+import Link from "next/link";
+import { Heart, ShoppingCart, Tag, ChevronDown, ExternalLink } from "lucide-react";
 
 type ListingCardProps = {
   item: {
@@ -42,22 +43,55 @@ function detail(item: ListingCardProps["item"], key: string) {
 
 export default function ListingCard({ item, onCart }: ListingCardProps) {
   const [more, setMore] = useState(false);
+  const [cartLoading, setCartLoading] = useState(false);
   const price = Number(item.price);
   const verified = item.seller?.emailVerified || item.seller?.phoneVerified;
   const imageUrl = getImageUrl(item.imageUrl);
 
+  async function handleCart() {
+    if (onCart) {
+      onCart(item.id);
+      return;
+    }
+
+    setCartLoading(true);
+    try {
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ listingId: item.id, quantity: 1 }),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (response.status === 401) {
+        window.location.href = "/join";
+        return;
+      }
+
+      if (!response.ok) {
+        window.alert(data.error || "Unable to add this item to your cart.");
+        return;
+      }
+
+      window.alert("Added to cart.");
+    } catch {
+      window.alert("Unable to connect to Campus Mall.");
+    } finally {
+      setCartLoading(false);
+    }
+  }
+
   return (
     <article className={`listing-card compact-product-card ${item.promoted ? "promoted" : ""}`}>
-      <div className="listing-photo">
+      <Link href={`/listings/${item.id}`} className="listing-photo listing-photo-link" aria-label={`View details for ${item.title}`}>
         {imageUrl ? <img src={imageUrl} alt={item.title} loading="lazy" /> : <div className="photo-placeholder"><Tag size={26} /></div>}
         {item.promoted && <span className="promoted-label">PROMOTED</span>}
-        <button type="button" className="product-like" aria-label={`Save ${item.title}`} title="Save"><Heart size={17} /></button>
-      </div>
+      </Link>
 
       <div className="listing-body">
         <div className="listing-card-columns listing-card-summary">
           <div className="listing-card-column">
-            <div><strong>Title</strong><span>{item.title}</span></div>
+            <div><strong>Title</strong><Link href={`/listings/${item.id}`} className="listing-title-link">{item.title}</Link></div>
             <div><strong>Condition</strong><span>{detail(item, "condition")}</span></div>
           </div>
           <div className="listing-card-column">
@@ -84,11 +118,18 @@ export default function ListingCard({ item, onCart }: ListingCardProps) {
           <span>{more ? "Show less" : "More"}</span><ChevronDown size={15} className={more ? "rotated" : ""} />
         </button>
 
-        {onCart && (
-          <button type="button" className="product-cart-btn" onClick={() => onCart(item.id)}>
-            <ShoppingCart size={16} /> Add to trolley
+        <div className="listing-card-actions">
+          <Link href={`/listings/${item.id}`} className="secondary-btn listing-details-btn">
+            <ExternalLink size={16} /> View details
+          </Link>
+          <button type="button" className="product-cart-btn" onClick={handleCart} disabled={cartLoading}>
+            <ShoppingCart size={16} /> {cartLoading ? "Adding..." : "Add to cart"}
           </button>
-        )}
+        </div>
+
+        <button type="button" className="product-like" aria-label={`Save ${item.title}`} title="Save">
+          <Heart size={17} />
+        </button>
       </div>
     </article>
   );
