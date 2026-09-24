@@ -94,7 +94,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   <Tag size={18} aria-hidden="true" />
                   <span>Offers &amp; promotions</span>
                 </Link>
-                <div className="top-menu-section-label">Support &amp; legal</div>
                 <a href="mailto:campusmall.support@gmail.com" onClick={() => setMenuOpen(false)}>
                   <HelpCircle size={18} aria-hidden="true" />
                   <span>Support</span>
