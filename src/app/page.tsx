@@ -83,13 +83,51 @@ export default function HomePage() {
           url.searchParams.set("university", guestUniversity);
         }
 
-        const response = await fetch(url.toString(), {
+        url.searchParams.set("limit", "12");
+
+        let response = await fetch(url.toString(), {
           signal: controller.signal,
           cache: "no-store",
         });
 
-        const data = await response.json();
-        setItems(response.ok ? (data.listings || []) : []);
+        let data = await response.json().catch(() => ({}));
+        let listings = response.ok && Array.isArray(data.listings) ? data.listings : [];
+
+        // Guest users should see marketplace items immediately even when the
+        // saved institution has no exact matching listings yet. Fall back
+        // progressively instead of leaving the home page empty until "View all".
+        if (!user && listings.length === 0 && guestUniversity) {
+          const countryUrl = new URL("/api/listings", window.location.origin);
+          if (q.trim()) countryUrl.searchParams.set("q", q.trim());
+          if (category && category !== "All") countryUrl.searchParams.set("category", category);
+          if (guestCountry) countryUrl.searchParams.set("country", guestCountry);
+          countryUrl.searchParams.set("limit", "12");
+
+          response = await fetch(countryUrl.toString(), {
+            signal: controller.signal,
+            cache: "no-store",
+          });
+          data = await response.json().catch(() => ({}));
+          listings = response.ok && Array.isArray(data.listings) ? data.listings : [];
+        }
+
+        // Final fallback: never make the home marketplace appear broken just
+        // because a guest context has no matching records.
+        if (!user && listings.length === 0 && (guestCountry || guestUniversity)) {
+          const globalUrl = new URL("/api/listings", window.location.origin);
+          if (q.trim()) globalUrl.searchParams.set("q", q.trim());
+          if (category && category !== "All") globalUrl.searchParams.set("category", category);
+          globalUrl.searchParams.set("limit", "12");
+
+          response = await fetch(globalUrl.toString(), {
+            signal: controller.signal,
+            cache: "no-store",
+          });
+          data = await response.json().catch(() => ({}));
+          listings = response.ok && Array.isArray(data.listings) ? data.listings : [];
+        }
+
+        setItems(listings);
       } catch (error: any) {
         if (error?.name !== "AbortError") setItems([]);
       } finally {
