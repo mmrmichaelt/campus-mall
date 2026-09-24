@@ -5,16 +5,19 @@ const SPLASH_DURATION_MS = 7000;
 const SPLASH_SESSION_KEY = "campus_mall_splash_seen";
 
 export default function SplashScreen() {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     try {
-      if (window.sessionStorage.getItem(SPLASH_SESSION_KEY) === "1") return;
+      if (window.sessionStorage.getItem(SPLASH_SESSION_KEY) === "1") {
+        setVisible(false);
+        return;
+      }
       window.sessionStorage.setItem(SPLASH_SESSION_KEY, "1");
-      setVisible(true);
     } catch {
-      setVisible(true);
+      // If sessionStorage is unavailable, still show the splash normally.
     }
+
     const timer = window.setTimeout(() => setVisible(false), SPLASH_DURATION_MS);
     return () => window.clearTimeout(timer);
   }, []);
