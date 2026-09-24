@@ -40,12 +40,15 @@ const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("MPESA");
 
 useEffect(() => {
   const controller = new AbortController();
-  setInstitutionLoading(true);
-  fetch("/api/institutions", { signal: controller.signal, cache: "no-store" })
+  fetch("/api/profile", { signal: controller.signal, cache: "no-store" })
     .then((response) => response.json())
-    .then((result) => setInstitutions(Array.isArray(result.institutions) ? result.institutions : []))
-    .catch((error) => { if (error?.name !== "AbortError") setInstitutions([]); })
-    .finally(() => { if (!controller.signal.aborted) setInstitutionLoading(false); });
+    .then((result) => {
+      const savedInstitution = result?.profile?.university;
+      if (typeof savedInstitution === "string") setInstitution(savedInstitution);
+    })
+    .catch((error) => {
+      if (error?.name !== "AbortError") setInstitution("");
+    });
   return () => controller.abort();
 }, []);
 
