@@ -1,0 +1,52 @@
+{
+  "info": {
+    "name": "Campus Mall - Safaricom M-Pesa Sandbox",
+    "description": "Sanitized Campus Mall collection. No real credentials are included.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key":"SAFARICOM_CONSUMER_KEY","value":"","type":"string"},
+    {"key":"SAFARICOM_CONSUMER_SECRET","value":"","type":"string"},
+    {"key":"MPESA_SHORTCODE","value":"174379","type":"string"},
+    {"key":"MPESA_PASSKEY","value":"","type":"string"},
+    {"key":"MPESA_CALLBACK_URL","value":"","type":"string"},
+    {"key":"MPESA_PHONE","value":"","type":"string"},
+    {"key":"MPESA_AMOUNT","value":"1","type":"string"},
+    {"key":"MPESA_ACCOUNT_REFERENCE","value":"CampusMall","type":"string"},
+    {"key":"MPESA_TRANSACTION_DESC","value":"Campus Mall payment","type":"string"},
+    {"key":"access_token","value":"","type":"string"}
+  ],
+  "item": [
+    {
+      "name":"OAuth Access Token",
+      "request":{
+        "method":"GET",
+        "auth":{"type":"basic","basic":[
+          {"key":"username","value":"{{SAFARICOM_CONSUMER_KEY}}","type":"string"},
+          {"key":"password","value":"{{SAFARICOM_CONSUMER_SECRET}}","type":"string"}
+        ]},
+        "url":{"raw":"https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials","protocol":"https","host":["sandbox","safaricom","co","ke"],"path":["oauth","v1","generate"],"query":[{"key":"grant_type","value":"client_credentials"}]}
+      }
+    },
+    {
+      "name":"STK Push",
+      "request":{
+        "method":"POST",
+        "auth":{"type":"bearer","bearer":[{"key":"token","value":"{{access_token}}","type":"string"}]},
+        "header":[{"key":"Content-Type","value":"application/json","type":"text"}],
+        "body":{"mode":"raw","raw":"{\n  \"BusinessShortCode\": \"{{MPESA_SHORTCODE}}\",\n  \"Password\": \"{{MPESA_STK_PASSWORD}}\",\n  \"Timestamp\": \"{{MPESA_TIMESTAMP}}\",\n  \"TransactionType\": \"CustomerPayBillOnline\",\n  \"Amount\": \"{{MPESA_AMOUNT}}\",\n  \"PartyA\": \"{{MPESA_PHONE}}\",\n  \"PartyB\": \"{{MPESA_SHORTCODE}}\",\n  \"PhoneNumber\": \"{{MPESA_PHONE}}\",\n  \"CallBackURL\": \"{{MPESA_CALLBACK_URL}}\",\n  \"AccountReference\": \"{{MPESA_ACCOUNT_REFERENCE}}\",\n  \"TransactionDesc\": \"{{MPESA_TRANSACTION_DESC}}\"\n}","options":{"raw":{"language":"json"}}},
+        "url":{"raw":"https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest","protocol":"https","host":["sandbox","safaricom","co","ke"],"path":["mpesa","stkpush","v1","processrequest"]}
+      }
+    },
+    {
+      "name":"STK Push Query",
+      "request":{
+        "method":"POST",
+        "auth":{"type":"bearer","bearer":[{"key":"token","value":"{{access_token}}","type":"string"}]},
+        "header":[{"key":"Content-Type","value":"application/json","type":"text"}],
+        "body":{"mode":"raw","raw":"{\n  \"BusinessShortCode\": \"{{MPESA_SHORTCODE}}\",\n  \"Password\": \"{{MPESA_STK_PASSWORD}}\",\n  \"Timestamp\": \"{{MPESA_TIMESTAMP}}\",\n  \"CheckoutRequestID\": \"{{CHECKOUT_REQUEST_ID}}\"\n}","options":{"raw":{"language":"json"}}},
+        "url":{"raw":"https://sandbox.safaricom.co.ke/mpesa/stkpushquery/v1/query","protocol":"https","host":["sandbox","safaricom","co","ke"],"path":["mpesa","stkpushquery","v1","query"]}
+      }
+    }
+  ]
+}
