@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Image as ImageIcon, Upload, X } from "lucide-react";
 import PaymentMethodSelector, { type PaymentMethod } from "../../components/PaymentMethodSelector";
 
@@ -30,12 +30,26 @@ location: "",
 });
 
 const [message, setMessage] = useState("");
+const [institution, setInstitution] = useState("");
+const [institutions, setInstitutions] = useState<{ name: string }[]>([]);
+const [institutionLoading, setInstitutionLoading] = useState(false);
 const [busy, setBusy] = useState(false);
 const [uploadingPhotos, setUploadingPhotos] = useState(false);
 const [imageUrls, setImageUrls] = useState<string[]>([]);
 const [photoMessage, setPhotoMessage] = useState("");
 const [boostDays, setBoostDays] = useState("0");
 const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("MPESA");
+
+useEffect(() => {
+  const controller = new AbortController();
+  setInstitutionLoading(true);
+  fetch("/api/institutions", { signal: controller.signal, cache: "no-store" })
+    .then((response) => response.json())
+    .then((result) => setInstitutions(Array.isArray(result.institutions) ? result.institutions : []))
+    .catch((error) => { if (error?.name !== "AbortError") setInstitutions([]); })
+    .finally(() => { if (!controller.signal.aborted) setInstitutionLoading(false); });
+  return () => controller.abort();
+}, []);
 
 function update(field: string, value: string) {
 setData((current) => ({
@@ -60,6 +74,7 @@ try {
       title: data.title,
       description: data.description,
       category: data.category,
+      institution: institution.trim(),
       imageUrl: imageUrls[0] || null,
       imageUrls,
       price: Number(data.price),
@@ -117,9 +132,7 @@ return (
 <h1>Add item</h1>
 
   <p className="note">
-    Post an item, food, job or service to your selected
-    university. You remain the owner and can manage your
-    listing from your account.
+    Post an item, food, job or service and choose the institution where it is posted. You remain the owner and can manage your listing from your account.
   </p>
 
   <form className="form" onSubmit={submit}>
@@ -160,6 +173,16 @@ return (
           <option key={category} value={category}>
             {category}
           </option>
+        ))}
+      </select>
+    </label>
+
+    <label>
+      Institution
+      <select required value={institution} onChange={(event) => setInstitution(event.target.value)} disabled={institutionLoading}>
+        <option value="">{institutionLoading ? "Loading institutions..." : "Select institution"}</option>
+        {institutions.map((item, index) => (
+          <option key={item.name + index} value={item.name}>{item.name}</option>
         ))}
       </select>
     </label>
