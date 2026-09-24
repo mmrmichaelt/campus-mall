@@ -5,9 +5,8 @@ import type { Prisma } from "@prisma/client";
 type PaymentMetadata = Prisma.InputJsonValue;
 
 export type PaymentMethod =
-  | "MPESA" | "AIRTEL_MONEY" | "CARD" | "BANK_TRANSFER" | "PESALINK"
-  | "MOBILE_MONEY" | "PAYPAL" | "APPLE_PAY" | "GOOGLE_PAY" | "STRIPE"
-  | "FLUTTERWAVE" | "PAYSTACK" | "CASH_ON_DELIVERY";
+  | "MPESA" | "CARD" | "BANK_TRANSFER" | "PESALINK"
+  | "PAYPAL" | "GOOGLE_PAY" | "STRIPE" | "CASH_ON_DELIVERY";
 
 export async function createPaymentIntent(input:{userId:string;purpose:string;amount:number;phone:string;email?:string;paymentMethod?:PaymentMethod;metadata?:PaymentMetadata}){
   const reference=`CM-${Date.now()}-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
@@ -61,53 +60,6 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
   const appUrl = process.env.APP_URL || "";
   if (!appUrl) return { intent, configured:false, stk:null, paymentMethod, checkoutUrl:null };
 
-  if (paymentMethod === "PAYSTACK") {
-    const key=process.env.PAYSTACK_SECRET_KEY;
-    if (!key || !input.email) return { intent, configured:false, stk:null, paymentMethod, checkoutUrl:null };
-    const response=await fetch("https://api.paystack.co/transaction/initialize",{
-      method:"POST",
-      headers:{Authorization:`Bearer ${key}`,"Content-Type":"application/json"},
-      body:JSON.stringify({
-        amount:String(Math.round(input.amount*100)),
-        email:input.email,
-        currency:process.env.PAYSTACK_CURRENCY || "KES",
-        reference,
-        callback_url:`${appUrl}/api/payments/callback/paystack?reference=${encodeURIComponent(reference)}`,
-        channels:["card","bank","apple_pay","ussd","qr","mobile_money","bank_transfer","eft"],
-        metadata:JSON.stringify(input.metadata ?? {})
-      }),
-      cache:"no-store"
-    });
-    const data=await response.json();
-    if(!response.ok || !data?.status || !data?.data?.authorization_url) throw new Error(data?.message || "Paystack checkout could not be started.");
-    const updated=await prisma.paymentIntent.update({where:{id:intent.id},data:{provider:"PAYSTACK",merchantRequestId:data.data.reference}});
-    return {intent:updated,configured:true,stk:null,paymentMethod,checkoutUrl:data.data.authorization_url};
-  }
-
-  if (paymentMethod === "FLUTTERWAVE" || paymentMethod === "MOBILE_MONEY") {
-    const key=process.env.FLW_SECRET_KEY;
-    if (!key || !input.email) return { intent, configured:false, stk:null, paymentMethod, checkoutUrl:null };
-    const response=await fetch("https://api.flutterwave.com/v3/payments",{
-      method:"POST",
-      headers:{Authorization:`Bearer ${key}`,"Content-Type":"application/json"},
-      body:JSON.stringify({
-        tx_ref:reference,
-        amount:input.amount,
-        currency:process.env.FLW_CURRENCY || "KES",
-        redirect_url:`${appUrl}/api/payments/callback/flutterwave?reference=${encodeURIComponent(reference)}`,
-        customer:{email:input.email,phonenumber:input.phone},
-        customizations:{title:"Campus Mall"},
-        payment_options:process.env.FLW_PAYMENT_OPTIONS || "card,mpesa,banktransfer,ussd",
-        meta:input.metadata ?? {}
-      }),
-      cache:"no-store"
-    });
-    const data=await response.json();
-    if(!response.ok || data?.status !== "success" || !data?.data?.link) throw new Error(data?.message || "Flutterwave checkout could not be started.");
-    const updated=await prisma.paymentIntent.update({where:{id:intent.id},data:{provider:"FLUTTERWAVE",merchantRequestId:reference}});
-    return {intent:updated,configured:true,stk:null,paymentMethod,checkoutUrl:data.data.link};
-  }
-
   if (paymentMethod === "PAYPAL") {
     const clientId=process.env.PAYPAL_CLIENT_ID;
     const secret=process.env.PAYPAL_CLIENT_SECRET;
@@ -134,7 +86,7 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
     return {intent:updated,configured:true,stk:null,paymentMethod,checkoutUrl:approve};
   }
 
-  if (paymentMethod === "CARD" || paymentMethod === "APPLE_PAY" || paymentMethod === "GOOGLE_PAY" || paymentMethod === "STRIPE") {
+  if (paymentMethod === "CARD" || paymentMethod === "GOOGLE_PAY" || paymentMethod === "STRIPE") {
     const key=process.env.STRIPE_SECRET_KEY;
     if (!key || !input.email) return { intent, configured:false, stk:null, paymentMethod, checkoutUrl:null };
     const params=new URLSearchParams();
@@ -155,26 +107,6 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
     return {intent:updated,configured:true,stk:null,paymentMethod,checkoutUrl:data.url};
   }
 
-  if (paymentMethod === "AIRTEL_MONEY") {
-    const key=process.env.PAYSTACK_SECRET_KEY;
-    if (!key || !input.email) return {intent,configured:false,stk:null,paymentMethod,checkoutUrl:null};
-    const response=await fetch("https://api.paystack.co/charge",{
-      method:"POST",
-      headers:{Authorization:`Bearer ${key}`,"Content-Type":"application/json"},
-      body:JSON.stringify({
-        email:input.email,
-        amount:String(Math.round(input.amount*100)),
-        currency:"KES",
-        mobile_money:{phone:input.phone,provider:"atl"},
-        metadata:{...(input.metadata && typeof input.metadata === "object" && !Array.isArray(input.metadata) ? input.metadata : {}), paymentIntentReference:reference}
-      }),
-      cache:"no-store"
-    });
-    const data=await response.json();
-    if(!response.ok || !data?.status) throw new Error(data?.message || "Airtel Money payment could not be started.");
-    const updated=await prisma.paymentIntent.update({where:{id:intent.id},data:{provider:"PAYSTACK",merchantRequestId:data?.data?.reference || reference}});
-    return {intent:updated,configured:true,stk:null,paymentMethod,checkoutUrl:null,paymentMessage:data?.data?.display_text || "Approve the Airtel Money request on your phone."};
-  }
 
   return {intent,configured:false,stk:null,paymentMethod,checkoutUrl:null};
 }
