@@ -612,3 +612,8 @@ footer{font-size:10px}
     min-height:36px;
   }
 }
+
+
+html.splash-blocking .app{
+  visibility:hidden !important;
+}
