@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { prisma } from "../../lib/prisma";
+import { getCountryByCode } from "../../data/countries";
 import ListingCard from "../../components/ListingCard";
 
 export const dynamic = "force-dynamic";
 
-type SearchParams = Promise<{ q?: string; category?: string; country?: string; university?: string; minPrice?: string; maxPrice?: string; sort?: string; location?: string; sellerType?: string }>;
+type SearchParams = Promise<{ q?: string; category?: string; country?: string; institution?: string; university?: string; minPrice?: string; maxPrice?: string; sort?: string; location?: string; sellerType?: string }>;
 
 const categories = ["", "Accommodation", "Beauty & dressing", "Electronics", "Food", "Furniture", "Jobs", "Printing & photography", "Services", "Stationery", "Utensils", "Other"];
 
@@ -14,6 +15,8 @@ export default async function ListingsPage({ searchParams }: { searchParams: Sea
   const category = params.category?.trim() || "";
   const country = params.country?.trim() || "";
   const university = params.university?.trim() || "";
+  const institution = params.institution?.trim() || "";
+  const countryName = getCountryByCode(country)?.name || country;
   const minPrice = Number(params.minPrice);
   const maxPrice = Number(params.maxPrice);
   const sort = params.sort?.trim() || "newest";
@@ -26,15 +29,15 @@ export default async function ListingsPage({ searchParams }: { searchParams: Sea
   };
 
   const sellerFilters: any = {};
-  if (country) sellerFilters.country = { equals: country, mode: "insensitive" };
+  if (country) sellerFilters.country = { equals: countryName, mode: "insensitive" };
   if (sellerType === "STUDENT" || sellerType === "OUTSIDER") sellerFilters.accountType = sellerType;
-  if (university) sellerFilters.university = { equals: university, mode: "insensitive" };
 
   const listings = await prisma.listing.findMany({
     where: {
       status: "ACTIVE",
       ...(category ? { category: { equals: category, mode: "insensitive" as const } } : {}),
       ...(Object.keys(sellerFilters).length ? { seller: sellerFilters } : {}),
+      ...(institution ? { details: { path: ["institution"], string_contains: institution, mode: "insensitive" as const } } : {}),
       ...(Object.keys(priceFilter).length ? { price: priceFilter } : {}),
       ...(location ? { location: { contains: location, mode: "insensitive" as const } } : {}),
       ...(q ? { OR: [
@@ -54,12 +57,12 @@ export default async function ListingsPage({ searchParams }: { searchParams: Sea
     take: 60,
     select: {
       id: true, title: true, description: true, price: true, currency: true, category: true,
-      imageUrl: true, location: true, promoted: true, createdAt: true,
+      imageUrl: true, location: true, promoted: true, createdAt: true, details: true,
       seller: { select: { id: true, name: true, university: true, country: true, emailVerified: true, phoneVerified: true } },
     },
   });
 
-  const hasFilters = Boolean(q || category || country || university || params.minPrice || params.maxPrice || (params.sort && params.sort !== "newest") || location || sellerType);
+  const hasFilters = Boolean(q || category || country || institution || params.minPrice || params.maxPrice || (params.sort && params.sort !== "newest") || location || sellerType);
 
   return (
     <div className="marketplace-page">
@@ -85,7 +88,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Sea
             <ListingCard key={listing.id} item={{
               id: listing.id, title: listing.title, description: listing.description,
               price: listing.price.toString(), currency: listing.currency, category: listing.category,
-              imageUrl: listing.imageUrl, location: listing.location, promoted: listing.promoted,
+              imageUrl: listing.imageUrl, location: listing.location, promoted: listing.promoted, details: listing.details as Record<string, unknown> | null,
               seller: { id: listing.seller.id, name: listing.seller.name, university: listing.seller.university, emailVerified: listing.seller.emailVerified, phoneVerified: listing.seller.phoneVerified },
             }} />
           ))}
