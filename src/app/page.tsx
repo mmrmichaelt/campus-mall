@@ -77,7 +77,11 @@ export default function HomePage() {
           url.searchParams.set("category", category);
         }
 
-        const selectedUniversity = user?.university?.trim() || guestUniversity.trim();
+        // The university confirmed for the current Campus Mall session is the
+        // marketplace campus. Do not silently replace it with an older/different
+        // university stored on the account profile: listings are owned by sellers
+        // whose university must match the campus the user just selected.
+        const selectedUniversity = guestUniversity.trim() || user?.university?.trim() || "";
 
         if (selectedUniversity) {
           url.searchParams.set("university", selectedUniversity);
