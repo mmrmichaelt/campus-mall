@@ -151,12 +151,8 @@ export async function GET(request: Request) {
         prisma.listing.findMany({
           where,
           orderBy,
-          ...(hasPagination
-            ? {
-                skip: (page - 1) * limit,
-                take: limit,
-              }
-            : {}),
+          skip: hasPagination ? (page - 1) * limit : undefined,
+          take: hasPagination ? limit : undefined,
           select: {
             id: true,
             title: true,
