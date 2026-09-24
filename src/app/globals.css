@@ -557,3 +557,58 @@ footer{font-size:10px}
     text-align:center;
   }
 }
+
+
+/* Categories + filter: filter stays fixed while categories swipe independently */
+.category-filter-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  width:100%;
+  min-width:0;
+  margin:0;
+}
+.category-filter-row .category-strip{
+  flex:1 1 auto;
+  min-width:0;
+  overflow-x:auto;
+  overflow-y:hidden;
+  flex-wrap:nowrap;
+  touch-action:pan-x;
+  overscroll-behavior-x:contain;
+  padding:3px 2px 10px;
+}
+.category-filter-row .marketplace-filter{
+  flex:0 0 auto;
+  order:2;
+}
+.category-filter-row .filter-button{
+  width:42px;
+  min-width:42px;
+  height:38px;
+  min-height:38px;
+  padding:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.topbar{
+  z-index:1000;
+}
+.top-menu-panel{
+  z-index:1100;
+}
+@media(max-width:700px){
+  .category-filter-row{
+    gap:6px;
+  }
+  .category-filter-row .category-strip{
+    padding-bottom:9px;
+  }
+  .category-filter-row .filter-button{
+    width:40px;
+    min-width:40px;
+    height:36px;
+    min-height:36px;
+  }
+}
