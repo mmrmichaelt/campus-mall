@@ -17,10 +17,6 @@ import {
   countries,
 } from "@/data/countries";
 
-import {
-  getUniversitiesByCountry,
-} from "@/data/universities";
-
 type Mode = "register" | "login";
 
 export default function AccountForms() {
@@ -32,8 +28,6 @@ export default function AccountForms() {
   const [name, setName] = useState("");
   const [country, setCountry] =
     useState("KE");
-  const [university, setUniversity] =
-    useState("");
   const [accountType, setAccountType] =
     useState("STUDENT");
   const [phone, setPhone] =
@@ -45,73 +39,6 @@ export default function AccountForms() {
 
   const [showPassword, setShowPassword] =
     useState(false);
-
-  const [institutionFocused, setInstitutionFocused] =
-    useState(false);
-
-  const [loading, setLoading] =
-    useState(false);
-
-  const [error, setError] =
-    useState("");
-
-  const [success, setSuccess] =
-    useState("");
-
-  const selectedCountryName = useMemo(() => {
-    return (
-      countries.find(
-        (item) => item.code === country
-      )?.name ?? country
-    );
-  }, [country]);
-
-  const institutionOptions = useMemo(() => {
-    const institutions =
-      getUniversitiesByCountry(country);
-
-    const search = university
-      .trim()
-      .toLowerCase();
-
-    if (!search) {
-      return institutions.slice(0, 8);
-    }
-
-    return institutions
-      .filter((institution) => {
-        const name =
-          institution.name.toLowerCase();
-
-        const city =
-          institution.city?.toLowerCase() ?? "";
-
-        const county =
-          institution.county?.toLowerCase() ?? "";
-
-        return (
-          name.includes(search) ||
-          city.includes(search) ||
-          county.includes(search)
-        );
-      })
-      .slice(0, 10);
-  }, [country, university]);
-
-  function selectInstitution(
-    institutionName: string
-  ) {
-    setUniversity(institutionName);
-    setInstitutionFocused(false);
-  }
-
-  function handleCountryChange(
-    value: string
-  ) {
-    setCountry(value);
-    setUniversity("");
-    setInstitutionFocused(false);
-  }
 
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>
@@ -133,8 +60,6 @@ export default function AccountForms() {
           ? {
               name: name.trim(),
               country,
-              university:
-                university.trim(),
               accountType,
               phone: phone.trim(),
               email:
@@ -206,7 +131,7 @@ export default function AccountForms() {
 
           <p className="note">
             {mode === "register"
-              ? "Create an account as a student or outsider and select the campus you want to use."
+              ? "Create an account as a student or outsider. Choose an institution when you post an item."
               : "Log in to continue to Campus Mall."}
           </p>
         </div>
@@ -288,191 +213,6 @@ export default function AccountForms() {
                     )
                   )}
                 </select>
-              </label>
-
-              <label className="institution-search">
-                University / College
-
-                <div
-                  style={{
-                    position:
-                      "relative",
-                  }}
-                >
-                  <Search
-                    size={18}
-                    style={{
-                      position:
-                        "absolute",
-                      left: "12px",
-                      top: "50%",
-                      transform:
-                        "translateY(-50%)",
-                      color:
-                        "#6b7280",
-                      pointerEvents:
-                        "none",
-                    }}
-                  />
-
-                  <input
-                    value={university}
-                    onChange={(event) => {
-                      setUniversity(
-                        event.target.value
-                      );
-                      setInstitutionFocused(
-                        true
-                      );
-                    }}
-                    onFocus={() =>
-                      setInstitutionFocused(
-                        true
-                      )
-                    }
-                    placeholder="Search your institution..."
-                    autoComplete="off"
-                    required
-                    style={{
-                      paddingLeft:
-                        "40px",
-                    }}
-                  />
-
-                  {institutionFocused &&
-                    institutionOptions.length >
-                      0 && (
-                      <div
-                        style={{
-                          position:
-                            "absolute",
-                          zIndex: 50,
-                          top:
-                            "calc(100% + 6px)",
-                          left: 0,
-                          right: 0,
-                          maxHeight:
-                            "280px",
-                          overflowY:
-                            "auto",
-                          background:
-                            "#ffffff",
-                          border:
-                            "1px solid #e5e7eb",
-                          borderRadius:
-                            "12px",
-                          boxShadow:
-                            "0 12px 30px rgba(0,0,0,0.12)",
-                        }}
-                      >
-                        {institutionOptions.map(
-                          (institution) => (
-                            <button
-                              type="button"
-                              key={
-                                institution.id
-                              }
-                              onMouseDown={(
-                                event
-                              ) =>
-                                event.preventDefault()
-                              }
-                              onClick={() =>
-                                selectInstitution(
-                                  institution.name
-                                )
-                              }
-                              style={{
-                                width:
-                                  "100%",
-                                display:
-                                  "block",
-                                textAlign:
-                                  "left",
-                                border: 0,
-                                borderBottom:
-                                  "1px solid #f0f0f0",
-                                background:
-                                  "#fff",
-                                padding:
-                                  "12px 14px",
-                                cursor:
-                                  "pointer",
-                              }}
-                            >
-                              <strong
-                                style={{
-                                  display:
-                                    "block",
-                                  color:
-                                    "#111111",
-                                }}
-                              >
-                                {
-                                  institution.name
-                                }
-                              </strong>
-
-                              <span
-                                style={{
-                                  display:
-                                    "block",
-                                  marginTop:
-                                    "3px",
-                                  fontSize:
-                                    "0.82rem",
-                                  color:
-                                    "#6b7280",
-                                }}
-                              >
-                                {institution.type}
-                                {institution.city
-                                  ? ` · ${institution.city}`
-                                  : institution.county
-                                    ? ` · ${institution.county}`
-                                    : ` · ${selectedCountryName}`}
-                              </span>
-                            </button>
-                          )
-                        )}
-                      </div>
-                    )}
-
-                  {institutionFocused &&
-                    university.trim() &&
-                    institutionOptions.length ===
-                      0 && (
-                      <div
-                        style={{
-                          position:
-                            "absolute",
-                          zIndex: 50,
-                          top:
-                            "calc(100% + 6px)",
-                          left: 0,
-                          right: 0,
-                          background:
-                            "#ffffff",
-                          border:
-                            "1px solid #e5e7eb",
-                          borderRadius:
-                            "12px",
-                          padding:
-                            "14px",
-                          boxShadow:
-                            "0 12px 30px rgba(0,0,0,0.12)",
-                          color:
-                            "#6b7280",
-                          fontSize:
-                            "0.9rem",
-                        }}
-                      >
-                        No institutions found
-                        for "
-                        {university}".
-                      </div>
-                    )}
-                </div>
               </label>
 
               <label>
