@@ -108,7 +108,7 @@ export default function ListingCard({ item, onCart }: ListingCardProps) {
             <div><strong>Warranty</strong><span>{detail(item, "warranty")}</span></div>
             <div><strong>Currency</strong><span>{item.currency || "KES"}</span></div>
             <div><strong>Location</strong><span>{item.location || "—"}</span></div>
-            <div><strong>Seller information</strong><span>{item.seller?.name || "Seller"}{verified ? " · Verified" : ""}{item.seller?.university ? ` · ${item.seller.university}` : ""}</span></div>
+            <div><strong>Seller information</strong><span>{item.seller?.name || "Seller"}{verified ? " · Verified" : ""}{detail(item, "institution") !== "—" ? ` · ${detail(item, "institution")}` : ""}</span></div>
             <div><strong>Colour</strong><span>{detail(item, "color")}</span></div>
             <div><strong>Delivery</strong><span>{detail(item, "delivery")}</span></div>
           </div>
