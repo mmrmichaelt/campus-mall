@@ -128,8 +128,33 @@ export default function HomePage() {
         }
 
         setItems(listings);
+
+        // If the first request was temporarily unavailable, retry once
+        // automatically. The user should never have to press "View all"
+        // just to start the marketplace loading.
+        if (listings.length === 0) {
+          const retryUrl = new URL("/api/listings", window.location.origin);
+          if (q.trim()) retryUrl.searchParams.set("q", q.trim());
+          if (category && category !== "All") retryUrl.searchParams.set("category", category);
+          retryUrl.searchParams.set("limit", "12");
+
+          const retryResponse = await fetch(retryUrl.toString(), {
+            signal: controller.signal,
+            cache: "no-store",
+          });
+          const retryData = await retryResponse.json().catch(() => ({}));
+          if (retryResponse.ok && Array.isArray(retryData.listings)) {
+            setItems(retryData.listings);
+          }
+        }
       } catch (error: any) {
-        if (error?.name !== "AbortError") setItems([]);
+        if (error?.name !== "AbortError") {
+          setItems([]);
+          // Give the marketplace one automatic recovery attempt.
+          window.setTimeout(() => {
+            if (!controller.signal.aborted) loadListings();
+          }, 1200);
+        }
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
@@ -161,6 +186,11 @@ export default function HomePage() {
     setGuestCountry(country);
     setGuestUniversity(university);
     setGuestSetup(false);
+
+    // Start the marketplace load immediately with the newly selected campus.
+    // A full navigation also guarantees that the homepage initializes with
+    // the saved guest context instead of waiting for another user action.
+    window.location.href = "/";
   }
 
   async function addToCart(listingId: string) {
