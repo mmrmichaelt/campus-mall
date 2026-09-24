@@ -8,7 +8,6 @@ const methods = [
   ["PAYPAL", "PAYPAL_CLIENT_ID", "PayPal"],
   ["GOOGLE_PAY", "STRIPE_SECRET_KEY", "Google Pay"],
   ["STRIPE", "STRIPE_SECRET_KEY", "Stripe"],
-  ["CASH_ON_DELIVERY", "CASH_ON_DELIVERY_ENABLED", "Cash on delivery / in person"],
 ] as const;
 
 export async function GET() {
