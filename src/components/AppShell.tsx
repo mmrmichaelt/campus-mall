@@ -46,7 +46,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="app">
       <header className="topbar">
-        <div className="topbar-spacer" aria-hidden="true" />
         <form className="global-search" onSubmit={submitSearch}>
           <Search size={18} aria-hidden="true" />
           <input value={q} onChange={event => setQ(event.target.value)} placeholder="Search items, food, jobs, services..." aria-label="Search Campus Mall" />
