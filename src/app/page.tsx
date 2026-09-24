@@ -12,6 +12,7 @@ export default function HomePage() {
   const [items, setItems] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [authResolved, setAuthResolved] = useState(false);
   const [guestCountry, setGuestCountry] = useState("KE");
   const [guestUniversity, setGuestUniversity] = useState("");
   const [guestInstitutions, setGuestInstitutions] = useState<{ name: string }[]>([]);
@@ -31,7 +32,11 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    fetch("/api/me").then(r => r.json()).then(data => setUser(data.user ?? null)).catch(() => setUser(null));
+    fetch("/api/me")
+      .then(r => r.json())
+      .then(data => setUser(data.user ?? null))
+      .catch(() => setUser(null))
+      .finally(() => setAuthResolved(true));
   }, []);
 
   useEffect(() => {
@@ -47,6 +52,7 @@ export default function HomePage() {
   }, [guestCountry, user, guestSetup]);
 
   useEffect(() => {
+    if (!authResolved) return;
     const controller = new AbortController();
     async function loadListings() {
       setLoading(true);
@@ -67,7 +73,7 @@ export default function HomePage() {
     }
     loadListings();
     return () => controller.abort();
-  }, [q, category, user, guestCountry, guestUniversity]);
+  }, [authResolved, q, category, user, guestCountry, guestUniversity]);
 
   function saveGuestContext() {
     if (!guestCountry || !guestUniversity) return;
