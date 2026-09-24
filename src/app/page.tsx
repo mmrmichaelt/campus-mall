@@ -85,6 +85,7 @@ export default function HomePage() {
 
         // Load the marketplace itself, not a recommended/restricted subset.
         // The homepage shows every active item matching the confirmed campus.
+        url.searchParams.set("limit", "60");
         url.searchParams.set("sort", "newest");
 
         const response = await fetch(url.toString(), {
