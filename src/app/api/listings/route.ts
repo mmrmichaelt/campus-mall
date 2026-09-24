@@ -210,7 +210,7 @@ export async function GET(request: Request) {
         q, category, country, institution,
         minPrice: Number.isFinite(minPrice) ? minPrice : null,
         maxPrice: Number.isFinite(maxPrice) ? maxPrice : null,
-        sort, location, sellerType, institution,
+        sort, location, sellerType,
       },
     });
   } catch (error) {
