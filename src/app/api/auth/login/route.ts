@@ -56,11 +56,18 @@ export async function POST(request: Request) {
       );
     }
 
-    if (user.university.trim().toLowerCase() !== parsed.data.university.trim().toLowerCase()) {
-      return NextResponse.json(
-        { error: "The selected institution does not match this account." },
-        { status: 401 }
-      );
+    if (user.university.trim()) {
+      if (user.university.trim().toLowerCase() !== parsed.data.university.trim().toLowerCase()) {
+        return NextResponse.json(
+          { error: "The selected institution does not match this account." },
+          { status: 401 }
+        );
+      }
+    } else {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { university: parsed.data.university.trim() },
+      });
     }
 
     const passwordMatches = await bcrypt.compare(
