@@ -2,6 +2,7 @@
 
 import {
   FormEvent,
+  useEffect,
   useState,
 } from "react";
 import {
@@ -40,6 +41,9 @@ export default function AccountForms() {
 
   const [showPassword, setShowPassword] =
     useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
