@@ -68,19 +68,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Sea
           <span className="hero-kicker">MARKETPLACE</span>
           <h1>All items</h1>
         </div>
-        <Link href="/sell" className="primary-btn">Sell item</Link>
       </div>
-
-      <form action="/listings" method="GET" className="market-searchbar">
-        <input name="q" type="search" placeholder="Search items..." defaultValue={q} />
-        <select name="category" defaultValue={category}>
-          {categories.map(item => <option key={item} value={item}>{item || "All categories"}</option>)}
-        </select>
-        <button type="submit" className="primary-btn">Search</button>
-        {country && <input type="hidden" name="country" value={country} />}
-        {university && <input type="hidden" name="university" value={university} />}
-        {hasFilters && <Link href="/listings" className="secondary-btn">Clear</Link>}
-      </form>
 
       <div className="market-section-head">
         <div>
