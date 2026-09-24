@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { countries } from "@/data/countries";
 
 type Props = {
   sellerName: string;
@@ -28,9 +29,25 @@ export default function NewListingForm({ sellerName, sellerCountry, sellerUniver
   const [year, setYear] = useState("");
   const [warranty, setWarranty] = useState("");
   const [location, setLocation] = useState("");
+  const [institution, setInstitution] = useState("");
+  const [institutions, setInstitutions] = useState<{ name: string }[]>([]);
+  const [institutionLoading, setInstitutionLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const code = countries.find(item => item.name.toLowerCase() === sellerCountry.toLowerCase())?.code || "";
+    if (!code) return;
+    const controller = new AbortController();
+    setInstitutionLoading(true);
+    fetch(`/api/institutions?country=${encodeURIComponent(code)}`, { signal: controller.signal, cache: "no-store" })
+      .then(r => r.json())
+      .then(data => setInstitutions(Array.isArray(data.institutions) ? data.institutions : []))
+      .catch(error => { if (error?.name !== "AbortError") setInstitutions([]); })
+      .finally(() => { if (!controller.signal.aborted) setInstitutionLoading(false); });
+    return () => controller.abort();
+  }, [sellerCountry]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -46,6 +63,7 @@ export default function NewListingForm({ sellerName, sellerCountry, sellerUniver
           price,
           currency,
           category,
+          institution: institution.trim(),
           imageUrl: imageUrl.trim(),
           location: location.trim(),
           details: {
@@ -148,6 +166,14 @@ export default function NewListingForm({ sellerName, sellerCountry, sellerUniver
           </label>
 
           <label>
+            Institution
+            <select value={institution} onChange={e => setInstitution(e.target.value)} required disabled={institutionLoading}>
+              <option value="">{institutionLoading ? "Loading institutions..." : "Select institution"}</option>
+              {institutions.map((item, index) => <option key={item.name + index} value={item.name}>{item.name}</option>)}
+            </select>
+          </label>
+
+          <label>
             Location
             <input value={location} onChange={e => setLocation(e.target.value)} maxLength={200} required />
           </label>
@@ -161,7 +187,7 @@ export default function NewListingForm({ sellerName, sellerCountry, sellerUniver
             <strong>Seller information</strong>
             <div className="seller" style={{ marginTop: 10 }}>
               <strong>{sellerName}</strong>
-              <small>{sellerUniversity}</small>
+              <small>{institution || "Institution selected above"}</small>
               <small>{sellerCountry}</small>
             </div>
           </div>
