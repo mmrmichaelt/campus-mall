@@ -24,7 +24,6 @@ export const PAYMENT_METHODS: Array<{
   { id: "PAYPAL", label: "PayPal", description: "PayPal checkout" },
   { id: "GOOGLE_PAY", label: "Google Pay", description: "Wallet checkout where supported" },
   { id: "STRIPE", label: "Stripe", description: "Stripe checkout and supported local methods" },
-  { id: "CASH_ON_DELIVERY", label: "Cash on delivery / in person", description: "Pay the seller in person" },
 ];
 
 type Props = {
@@ -62,7 +61,7 @@ export default function PaymentMethodSelector({ value, onChange, compact = false
       </label>
       <p className="note" style={{ marginBottom: 0 }}>
         {PAYMENT_METHODS.find((method) => method.id === value)?.description}.
-        {!availability[value] && value !== "CASH_ON_DELIVERY" && value !== "BANK_TRANSFER" && value !== "PESALINK"
+        {!availability[value] && value !== "BANK_TRANSFER" && value !== "PESALINK"
           ? " This provider needs its merchant credentials before live checkout can be used."
           : ""}
       </p>
