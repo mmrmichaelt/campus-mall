@@ -4,17 +4,12 @@ import { useEffect, useState } from "react";
 
 export type PaymentMethod =
   | "MPESA"
-  | "AIRTEL_MONEY"
   | "CARD"
   | "BANK_TRANSFER"
   | "PESALINK"
-  | "MOBILE_MONEY"
   | "PAYPAL"
-  | "APPLE_PAY"
   | "GOOGLE_PAY"
   | "STRIPE"
-  | "FLUTTERWAVE"
-  | "PAYSTACK"
   | "CASH_ON_DELIVERY";
 
 export const PAYMENT_METHODS: Array<{
@@ -23,17 +18,12 @@ export const PAYMENT_METHODS: Array<{
   description: string;
 }> = [
   { id: "MPESA", label: "M-Pesa", description: "STK Push for supported Kenyan payments" },
-  { id: "AIRTEL_MONEY", label: "Airtel Money", description: "Airtel mobile-money checkout when configured" },
   { id: "CARD", label: "Visa / Mastercard", description: "Debit or credit card checkout" },
   { id: "BANK_TRANSFER", label: "Bank transfer", description: "Direct bank payment" },
   { id: "PESALINK", label: "PesaLink", description: "Kenyan bank-to-bank payment" },
-  { id: "MOBILE_MONEY", label: "Other mobile money", description: "Supported mobile-money networks by country" },
   { id: "PAYPAL", label: "PayPal", description: "PayPal checkout" },
-  { id: "APPLE_PAY", label: "Apple Pay", description: "Wallet checkout where supported" },
   { id: "GOOGLE_PAY", label: "Google Pay", description: "Wallet checkout where supported" },
   { id: "STRIPE", label: "Stripe", description: "Stripe checkout and supported local methods" },
-  { id: "FLUTTERWAVE", label: "Flutterwave", description: "Flutterwave hosted checkout" },
-  { id: "PAYSTACK", label: "Paystack", description: "Paystack hosted checkout" },
   { id: "CASH_ON_DELIVERY", label: "Cash on delivery / in person", description: "Pay the seller in person" },
 ];
 
