@@ -64,9 +64,6 @@ export async function GET(request: Request) {
       sort === "oldest" ? [{ createdAt: "asc" }] :
       [{ createdAt: "desc" }];
 
-    const hasPagination =
-      searchParams.has("page") || searchParams.has("limit");
-
     const rawPage = Number(searchParams.get("page") || "1");
     const rawLimit = Number(searchParams.get("limit") || "30");
 
@@ -151,8 +148,8 @@ export async function GET(request: Request) {
         prisma.listing.findMany({
           where,
           orderBy,
-          skip: hasPagination ? (page - 1) * limit : undefined,
-          take: hasPagination ? limit : undefined,
+          skip: (page - 1) * limit,
+          take: limit,
           select: {
             id: true,
             title: true,
