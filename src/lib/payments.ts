@@ -25,10 +25,6 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
     }
   });
 
-  if (paymentMethod === "CASH_ON_DELIVERY") {
-    return { intent, configured: process.env.CASH_ON_DELIVERY_ENABLED === "true", stk:null, paymentMethod, checkoutUrl:null };
-  }
-
   if (paymentMethod === "BANK_TRANSFER" || paymentMethod === "PESALINK") {
     const configured=Boolean(process.env.CAMPUS_MALL_BANK_NAME && process.env.CAMPUS_MALL_BANK_ACCOUNT);
     return {
