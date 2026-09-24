@@ -7,7 +7,7 @@ import { Palette } from "lucide-react";
 type SettingsState = { emailAlerts:boolean; messageAlerts:boolean; marketing:boolean; publicProfile:boolean };
 const defaults:SettingsState={emailAlerts:true,messageAlerts:true,marketing:false,publicProfile:true};
 
-function Toggle({label,checked,onChange}:{label:string;checked:boolean;onChange:()=>void}){
+function SettingToggle({label,checked,onChange}:{label:string;checked:boolean;onChange:()=>void}){
   return (
     <button
       type="button"
@@ -47,9 +47,9 @@ export default function Settings(){
     <div className="market-page-head"><div><span className="hero-kicker">CAMPUS MALL</span><h1>Settings</h1></div><Link href="/" className="secondary-btn">Marketplace</Link></div>
     {msg&&<div className={msg.includes("Unable")?"error":"success"} style={{marginBottom:10}}>{msg}</div>}
     <section className="settings-group"><h3>Preferences</h3>
-      <Toggle label="Email notifications" checked={settings.emailAlerts} onChange={()=>toggle("emailAlerts")}/>
-      <Toggle label="Chat notifications" checked={settings.messageAlerts} onChange={()=>toggle("messageAlerts")}/>
-      <Toggle label="Public profile" checked={settings.publicProfile} onChange={()=>toggle("publicProfile")}/>
+      <SettingToggle label="Email notifications" checked={settings.emailAlerts} onChange={()=>toggle("emailAlerts")}/>
+      <SettingToggle label="Chat notifications" checked={settings.messageAlerts} onChange={()=>toggle("messageAlerts")}/>
+      <SettingToggle label="Public profile" checked={settings.publicProfile} onChange={()=>toggle("publicProfile")}/>
       <button type="button" className="settings-row settings-button" onClick={()=>{const root=document.documentElement;const next=root.dataset.theme==="dark"?"light":"dark";root.dataset.theme=next;window.localStorage.setItem("campus_mall_theme",next)}}><span className="settings-row-icon"><Palette size={18}/></span><strong>Appearance</strong><span/></button>
     </section>
   </div>;
