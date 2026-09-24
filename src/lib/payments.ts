@@ -6,7 +6,7 @@ type PaymentMetadata = Prisma.InputJsonValue;
 
 export type PaymentMethod =
   | "MPESA" | "CARD" | "BANK_TRANSFER" | "PESALINK"
-  | "PAYPAL" | "GOOGLE_PAY" | "STRIPE" | "CASH_ON_DELIVERY";
+  | "PAYPAL" | "GOOGLE_PAY" | "STRIPE";
 
 export async function createPaymentIntent(input:{userId:string;purpose:string;amount:number;phone:string;email?:string;paymentMethod?:PaymentMethod;metadata?:PaymentMetadata}){
   const reference=`CM-${Date.now()}-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
