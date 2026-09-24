@@ -14,8 +14,10 @@ export default function HomePage() {
   const [authResolved, setAuthResolved] = useState(false);
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("");
+  const [guestInstitution, setGuestInstitution] = useState("");
 
   useEffect(() => {
+    setGuestInstitution(localStorage.getItem("campus_mall_guest_institution") || localStorage.getItem("campus_mall_guest_university") || "");
     fetch("/api/me", { cache: "no-store" })
       .then(r => r.json())
       .then(data => setUser(data.user ?? null))
@@ -39,8 +41,10 @@ export default function HomePage() {
           url.searchParams.set("category", category);
         }
 
+        const savedInstitution = user?.university?.trim() || guestInstitution.trim();
+        if (savedInstitution) url.searchParams.set("institution", savedInstitution);
+
         // Load the marketplace itself, not a recommended/restricted subset.
-        // The homepage shows every active item matching the confirmed campus.
         url.searchParams.set("limit", "60");
         url.searchParams.set("sort", "newest");
 
@@ -73,6 +77,7 @@ export default function HomePage() {
     q,
     category,
     user,
+    guestInstitution,
   ]);
 
   async function addToCart(listingId: string) {
