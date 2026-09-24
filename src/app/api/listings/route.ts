@@ -207,7 +207,7 @@ export async function GET(request: Request) {
         hasPreviousPage: page > 1,
       },
       filters: {
-        q, category, country, university,
+        q, category, country, institution,
         minPrice: Number.isFinite(minPrice) ? minPrice : null,
         maxPrice: Number.isFinite(maxPrice) ? maxPrice : null,
         sort, location, sellerType, institution,
@@ -264,6 +264,14 @@ export async function POST(request: Request) {
     }
 
     const data = parsed.data;
+    const sellerInstitution = user.university.trim();
+
+    if (sellerInstitution.length < 2) {
+      return NextResponse.json(
+        { error: "Your account does not have an institution saved. Please update your profile before posting an item." },
+        { status: 400 }
+      );
+    }
 
     const listing = await prisma.listing.create({
       data: {
@@ -279,7 +287,7 @@ export async function POST(request: Request) {
             : data.imageUrl?.trim() || null,
         details: {
           ...(data.details || {}),
-          institution: data.institution.trim(),
+          institution: sellerInstitution,
         },
         location: data.location.trim(),
         status: "ACTIVE",
