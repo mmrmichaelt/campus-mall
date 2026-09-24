@@ -31,8 +31,6 @@ location: "",
 
 const [message, setMessage] = useState("");
 const [institution, setInstitution] = useState("");
-const [institutions, setInstitutions] = useState<{ name: string }[]>([]);
-const [institutionLoading, setInstitutionLoading] = useState(false);
 const [busy, setBusy] = useState(false);
 const [uploadingPhotos, setUploadingPhotos] = useState(false);
 const [imageUrls, setImageUrls] = useState<string[]>([]);
@@ -179,12 +177,8 @@ return (
 
     <label>
       Institution
-      <select required value={institution} onChange={(event) => setInstitution(event.target.value)} disabled={institutionLoading}>
-        <option value="">{institutionLoading ? "Loading institutions..." : "Select institution"}</option>
-        {institutions.map((item, index) => (
-          <option key={item.name + index} value={item.name}>{item.name}</option>
-        ))}
-      </select>
+      <input required value={institution} readOnly disabled aria-readonly="true" />
+      <small className="note">Taken automatically from your account profile. It cannot be changed while posting this item.</small>
     </label>
 
     <div className="panel">
