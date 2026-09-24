@@ -46,6 +46,7 @@ export async function GET(request: Request) {
     const category = searchParams.get("category")?.trim() || "";
     const country = searchParams.get("country")?.trim() || "";
     const university = searchParams.get("university")?.trim() || "";
+    const institution = searchParams.get("institution")?.trim() || "";
     const minPrice = Number(searchParams.get("minPrice"));
     const maxPrice = Number(searchParams.get("maxPrice"));
     const sort = searchParams.get("sort")?.trim() || "newest";
@@ -94,7 +95,7 @@ export async function GET(request: Request) {
           }
         : {}),
 
-      ...(country || university || sellerType
+      ...(country || sellerType
         ? {
             seller: {
               ...(country
@@ -105,8 +106,17 @@ export async function GET(request: Request) {
                     },
                   }
                 : {}),
-              ...(university ? { university: { equals: university, mode: "insensitive" } } : {}),
               ...(sellerType === "STUDENT" || sellerType === "OUTSIDER" ? { accountType: sellerType } : {}),
+            },
+          }
+        : {}),
+
+      ...(institution
+        ? {
+            details: {
+              path: ["institution"],
+              string_contains: institution,
+              mode: "insensitive",
             },
           }
         : {}),
@@ -199,7 +209,7 @@ export async function GET(request: Request) {
         q, category, country, university,
         minPrice: Number.isFinite(minPrice) ? minPrice : null,
         maxPrice: Number.isFinite(maxPrice) ? maxPrice : null,
-        sort, location, sellerType,
+        sort, location, sellerType, institution,
       },
     });
   } catch (error) {
@@ -266,7 +276,10 @@ export async function POST(request: Request) {
           data.imageUrls?.length
             ? JSON.stringify(data.imageUrls)
             : data.imageUrl?.trim() || null,
-        details: data.details,
+        details: {
+          ...(data.details || {}),
+          institution: data.institution.trim(),
+        },
         location: data.location.trim(),
         status: "ACTIVE",
       },
