@@ -40,6 +40,7 @@ export async function POST(request: Request) {
         name: true,
         email: true,
         passwordHash: true,
+        university: true,
         emailVerified: true,
         phoneVerified: true,
       },
@@ -51,6 +52,13 @@ export async function POST(request: Request) {
           error:
             "The email address or password is incorrect.",
         },
+        { status: 401 }
+      );
+    }
+
+    if (user.university.trim().toLowerCase() !== parsed.data.university.trim().toLowerCase()) {
+      return NextResponse.json(
+        { error: "The selected institution does not match this account." },
         { status: 401 }
       );
     }
