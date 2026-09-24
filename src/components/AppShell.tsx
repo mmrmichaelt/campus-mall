@@ -40,7 +40,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   function submitSearch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const value = q.trim();
-    window.location.href = value ? "/?q=" + encodeURIComponent(value) : "/";
+    window.location.href = value ? "/listings?q=" + encodeURIComponent(value) : "/listings";
   }
 
   return (
