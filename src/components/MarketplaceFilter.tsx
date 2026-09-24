@@ -42,20 +42,17 @@ export default function MarketplaceFilter() {
         onClick={() => setOpen((value) => !value)}
       >
         <svg
-          className="real-filter-icon"
-          width="21"
-          height="21"
+          className="camera-filter-icon"
+          width="22"
+          height="22"
           viewBox="0 0 24 24"
           fill="none"
           aria-hidden="true"
         >
-          <path
-            d="M3 5h18l-7 8v5.5l-4 2V13L3 5Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <circle cx="9" cy="6" r="2" fill="currentColor"/>
+          <circle cx="15" cy="12" r="2" fill="currentColor"/>
+          <circle cx="10" cy="18" r="2" fill="currentColor"/>
         </svg>
       </button>
 
