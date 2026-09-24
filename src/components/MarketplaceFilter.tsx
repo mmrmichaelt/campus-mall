@@ -24,10 +24,10 @@ export default function MarketplaceFilter() {
   const [institutionLoading, setInstitutionLoading] = useState(false);
 
   useEffect(() => {
-    if (!open || !country) { setInstitutions([]); return; }
+    if (!open) { setInstitutions([]); return; }
     const controller = new AbortController();
     setInstitutionLoading(true);
-    fetch(`/api/institutions?country=${encodeURIComponent(country)}`, { signal: controller.signal, cache: "no-store" })
+    fetch(country ? `/api/institutions?country=${encodeURIComponent(country)}` : "/api/institutions", { signal: controller.signal, cache: "no-store" })
       .then(r => r.json())
       .then(data => setInstitutions(Array.isArray(data.institutions) ? data.institutions : []))
       .catch(error => { if (error?.name !== "AbortError") setInstitutions([]); })
@@ -90,8 +90,8 @@ export default function MarketplaceFilter() {
 
             <label>
               Institution
-              <select name="institution" defaultValue="" disabled={!country || institutionLoading}>
-                <option value="">{!country ? "Select a country first" : institutionLoading ? "Loading institutions..." : "All institutions"}</option>
+              <select name="institution" defaultValue="" disabled={institutionLoading}>
+                <option value="">{institutionLoading ? "Loading institutions..." : "All institutions"}</option>
                 {institutions.map((item, index) => <option key={item.name + index} value={item.name}>{item.name}</option>)}
               </select>
             </label>
