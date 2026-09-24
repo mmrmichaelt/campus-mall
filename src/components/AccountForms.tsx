@@ -15,7 +15,7 @@ import {
   countries,
 } from "@/data/countries";
 
-type Mode = "register" | "login";
+type Mode = "register" | "login" | "guest";
 
 export default function AccountForms() {
   const searchParams = useSearchParams();
@@ -26,6 +26,9 @@ export default function AccountForms() {
   const [name, setName] = useState("");
   const [country, setCountry] =
     useState("KE");
+  const [university, setUniversity] = useState("");
+  const [institutions, setInstitutions] = useState<{ name: string }[]>([]);
+  const [institutionLoading, setInstitutionLoading] = useState(false);
   const [accountType, setAccountType] =
     useState("STUDENT");
   const [phone, setPhone] =
@@ -38,6 +41,18 @@ export default function AccountForms() {
   const [showPassword, setShowPassword] =
     useState(false);
 
+  useEffect(() => {
+    if (mode === "login") return;
+    const controller = new AbortController();
+    setInstitutionLoading(true);
+    fetch(`/api/institutions?country=${encodeURIComponent(country)}`, { signal: controller.signal, cache: "no-store" })
+      .then((response) => response.json())
+      .then((data) => setInstitutions(Array.isArray(data.institutions) ? data.institutions : []))
+      .catch((error) => { if (error?.name !== "AbortError") setInstitutions([]); })
+      .finally(() => { if (!controller.signal.aborted) setInstitutionLoading(false); });
+    return () => controller.abort();
+  }, [country, mode]);
+
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>
   ) {
@@ -48,6 +63,15 @@ export default function AccountForms() {
     setSuccess("");
 
     try {
+      if (mode === "guest") {
+        if (!country || !university.trim()) throw new Error("Select your country and institution to continue as a guest.");
+        localStorage.setItem("campus_mall_guest_country", country);
+        localStorage.setItem("campus_mall_guest_university", university.trim());
+        localStorage.setItem("campus_mall_guest_institution", university.trim());
+        window.location.href = nextPath;
+        return;
+      }
+
       const endpoint =
         mode === "register"
           ? "/api/auth/register"
@@ -58,6 +82,7 @@ export default function AccountForms() {
           ? {
               name: name.trim(),
               country,
+              university: university.trim(),
               accountType,
               phone: phone.trim(),
               email:
@@ -67,6 +92,7 @@ export default function AccountForms() {
             }
           : {
               identifier: (email.trim() || phone.trim()),
+              university: university.trim(),
               password,
             };
 
@@ -124,13 +150,17 @@ export default function AccountForms() {
           <h1>
             {mode === "register"
               ? "Join campus mall"
-              : "Welcome back"}
+              : mode === "login"
+                ? "Welcome back"
+                : "Browse as guest"}
           </h1>
 
           <p className="note">
             {mode === "register"
-              ? "Create an account as a student or outsider. Choose an institution when you post an item."
-              : "Log in to continue to Campus Mall."}
+              ? "Your country and institution are saved to your Campus Mall account and profile."
+              : mode === "login"
+                ? "Select the institution saved on your account before logging in."
+                : "Choose your country and institution to browse that campus as a guest."}
           </p>
         </div>
 
@@ -166,12 +196,65 @@ export default function AccountForms() {
           >
             Log In
           </button>
+
+          <button
+            type="button"
+            className={mode === "guest" ? "primary-btn" : "secondary-btn"}
+            onClick={() => {
+              setMode("guest");
+              setError("");
+              setSuccess("");
+            }}
+          >
+            Guest
+          </button>
         </div>
 
         <form
           className="form"
           onSubmit={handleSubmit}
         >
+          {mode === "guest" && (
+            <>
+              <label>
+                Country
+                <select
+                  value={country}
+                  onChange={(event) => {
+                    setCountry(event.target.value);
+                    setUniversity("");
+                  }}
+                  required
+                >
+                  {countries.map((item) => (
+                    <option key={item.code} value={item.code}>
+                      {item.flag} {item.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Institution
+                <select
+                  value={university}
+                  onChange={(event) => setUniversity(event.target.value)}
+                  required
+                  disabled={institutionLoading}
+                >
+                  <option value="">
+                    {institutionLoading ? "Loading institutions..." : "Select institution"}
+                  </option>
+                  {institutions.map((item, index) => (
+                    <option key={item.name + index} value={item.name}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </>
+          )}
+
           {mode === "register" && (
             <>
               <label>
@@ -193,9 +276,8 @@ export default function AccountForms() {
                 <select
                   value={country}
                   onChange={(event) =>
-                    handleCountryChange(
-                      event.target.value
-                    )
+                    setCountry(event.target.value);
+                    setUniversity("");
                   }
                   required
                 >
@@ -211,6 +293,28 @@ export default function AccountForms() {
                     )
                   )}
                 </select>
+              </label>
+
+              <label>
+                Institution
+                <select
+                  value={university}
+                  onChange={(event) => setUniversity(event.target.value)}
+                  required
+                  disabled={institutionLoading}
+                >
+                  <option value="">
+                    {institutionLoading ? "Loading institutions..." : "Select institution"}
+                  </option>
+                  {institutions.map((item, index) => (
+                    <option key={item.name + index} value={item.name}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+                <small className="note">
+                  This institution is saved to your account/profile and automatically used when you post an item.
+                </small>
               </label>
 
               <label>
@@ -247,6 +351,27 @@ export default function AccountForms() {
                 />
               </label>
             </>
+          )}
+
+          {mode === "login" && (
+            <label>
+              Institution
+              <select
+                value={university}
+                onChange={(event) => setUniversity(event.target.value)}
+                required
+                disabled={institutionLoading}
+              >
+                <option value="">
+                  {institutionLoading ? "Loading institutions..." : "Select institution"}
+                </option>
+                {institutions.map((item, index) => (
+                  <option key={item.name + index} value={item.name}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </label>
           )}
 
           <label>
