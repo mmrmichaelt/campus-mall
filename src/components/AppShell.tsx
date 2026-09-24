@@ -53,11 +53,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <input value={q} onChange={event => setQ(event.target.value)} placeholder="Search items, food, jobs, services..." aria-label="Search Campus Mall" />
         </form>
         <div className="top-actions">
+          <Link href="/notifications" className={pathname.startsWith("/notifications") ? "active-page" : ""} aria-label="Notifications" title="Notifications"><Bell size={20} /></Link>
           <button type="button" className="theme-toggle" onClick={toggleTheme} aria-label={"Switch to " + (theme === "dark" ? "light" : "dark") + " mode"} title={"Switch to " + (theme === "dark" ? "light" : "dark") + " mode"}>
             <span aria-hidden="true">{theme === "dark" ? "☀️" : "🌙"}</span>
           </button>
-          <Link href="/notifications" className={pathname.startsWith("/notifications") ? "active-page" : ""} aria-label="Notifications" title="Notifications"><Bell size={20} /></Link>
-          <MarketplaceFilter />
           <div className="top-menu-wrap">
             <button
               type="button"
@@ -81,6 +80,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
+      <div className="below-header-filter">
+        <MarketplaceFilter />
+      </div>
 
       <nav className="mobile-nav" aria-label="Mobile navigation">
         <Link href="/" className={pathname === "/" ? "active" : ""}><Home size={19} /><span>Home</span></Link>
