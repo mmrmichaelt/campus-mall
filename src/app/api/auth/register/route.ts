@@ -93,7 +93,7 @@ export async function POST(request: Request) {
       data: {
         name: data.name.trim(),
         country: country.name,
-        university: data.university.trim(),
+        university: "",
         accountType: data.accountType,
         phone,
         email,
