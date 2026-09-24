@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import ListingCard from "@/components/ListingCard";
+import MarketplaceFilter from "@/components/MarketplaceFilter";
 import { countries } from "@/data/countries";
 
 const categories = ["All", "Accommodation", "Beauty & dressing", "Electronics", "Food", "Furniture", "Jobs", "Printing & photography", "Services", "Stationery", "Utensils", "Other"];
@@ -122,12 +123,15 @@ export default function HomePage() {
         </div>
       )}
 
-      <div className="category-strip" aria-label="Marketplace categories">
-        {categories.map(name => (
-          <button key={name} type="button" className={category === (name === "All" ? "" : name) ? "category-chip active" : "category-chip"} onClick={() => setCategory(name === "All" ? "" : name)}>
-            {name}
-          </button>
-        ))}
+      <div className="category-filter-row">
+        <div className="category-strip" aria-label="Marketplace categories">
+          {categories.map(name => (
+            <button key={name} type="button" className={category === (name === "All" ? "" : name) ? "category-chip active" : "category-chip"} onClick={() => setCategory(name === "All" ? "" : name)}>
+              {name}
+            </button>
+          ))}
+        </div>
+        <MarketplaceFilter />
       </div>
 
       <div className="market-section-head">
