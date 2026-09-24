@@ -50,7 +50,7 @@ export default async function ListingsPage({ searchParams }: { searchParams: Sea
       sort === "title-az" ? [{ title: "asc" as const }] :
       sort === "title-za" ? [{ title: "desc" as const }] :
       sort === "oldest" ? [{ createdAt: "asc" as const }] :
-      [{ promoted: "desc" as const }, { createdAt: "desc" as const }],
+      [{ createdAt: "desc" as const }],
     take: 60,
     select: {
       id: true, title: true, description: true, price: true, currency: true, category: true,
