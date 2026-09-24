@@ -144,7 +144,6 @@ export default function HomePage() {
       ) : (
         <div className="compact-empty">
           <strong>No items yet</strong>
-          <Link href="/sell">Sell the first item</Link>
         </div>
       )}
     </>
