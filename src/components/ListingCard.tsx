@@ -55,22 +55,16 @@ export default function ListingCard({ item, onCart }: ListingCardProps) {
       </div>
 
       <div className="listing-body">
-        <div className="listing-card-columns">
+        <div className="listing-card-columns listing-card-summary">
           <div className="listing-card-column">
             <div><strong>Title</strong><span>{item.title}</span></div>
             <div><strong>Condition</strong><span>{detail(item, "condition")}</span></div>
-            <div><strong>Colour</strong><span>{detail(item, "color")}</span></div>
           </div>
           <div className="listing-card-column">
             <div><strong>Brand</strong><span>{detail(item, "brand")}</span></div>
             <div><strong>Price</strong><span>{item.currency || "KES"} {Number.isFinite(price) ? price.toLocaleString() : "0"}</span></div>
-            <div><strong>Delivery</strong><span>{detail(item, "delivery")}</span></div>
           </div>
         </div>
-
-        <button type="button" className="listing-more-btn" onClick={() => setMore(v => !v)} aria-expanded={more}>
-          <span>{more ? "Less" : "More"}</span><ChevronDown size={15} className={more ? "rotated" : ""} />
-        </button>
 
         {more && (
           <div className="listing-expanded-details">
@@ -81,8 +75,14 @@ export default function ListingCard({ item, onCart }: ListingCardProps) {
             <div><strong>Currency</strong><span>{item.currency || "KES"}</span></div>
             <div><strong>Location</strong><span>{item.location || "—"}</span></div>
             <div><strong>Seller information</strong><span>{item.seller?.name || "Seller"}{verified ? " · Verified" : ""}{item.seller?.university ? ` · ${item.seller.university}` : ""}</span></div>
+            <div><strong>Colour</strong><span>{detail(item, "color")}</span></div>
+            <div><strong>Delivery</strong><span>{detail(item, "delivery")}</span></div>
           </div>
         )}
+
+        <button type="button" className="listing-more-btn" onClick={() => setMore(v => !v)} aria-expanded={more}>
+          <span>{more ? "Show less" : "More"}</span><ChevronDown size={15} className={more ? "rotated" : ""} />
+        </button>
 
         {onCart && (
           <button type="button" className="product-cart-btn" onClick={() => onCart(item.id)}>
