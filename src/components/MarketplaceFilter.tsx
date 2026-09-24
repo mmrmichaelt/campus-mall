@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { Funnel } from "lucide-react";
 
 const categories = [
   "Accommodation",
@@ -41,7 +42,7 @@ export default function MarketplaceFilter() {
         aria-controls="marketplace-filter-panel"
         onClick={() => setOpen((value) => !value)}
       >
-        <span aria-hidden="true">☰</span>
+        <Funnel size={19} aria-hidden="true" />
       </button>
 
       {open && (
