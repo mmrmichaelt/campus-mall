@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { Filter } from "lucide-react";
 
 const categories = [
   "Accommodation",
@@ -42,7 +41,22 @@ export default function MarketplaceFilter() {
         aria-controls="marketplace-filter-panel"
         onClick={() => setOpen((value) => !value)}
       >
-        <Filter size={19} aria-hidden="true" />
+        <svg
+          className="real-filter-icon"
+          width="21"
+          height="21"
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M3 5h18l-7 8v5.5l-4 2V13L3 5Z"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </button>
 
       {open && (
