@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import MarketplaceFilter from "./MarketplaceFilter";
 import Link from "next/link";
 import { Bell, Home, ShoppingCart, PlusCircle, MessageCircle, Settings, UserCircle, Search, Menu } from "lucide-react";
 
@@ -80,10 +79,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-      <div className="below-header-filter">
-        <MarketplaceFilter />
-      </div>
-
       <nav className="mobile-nav" aria-label="Mobile navigation">
         <Link href="/" className={pathname === "/" ? "active" : ""}><Home size={19} /><span>Home</span></Link>
         <Link href="/sell" className={pathname.startsWith("/sell") ? "active" : ""}><PlusCircle size={19} /><span>Add item</span></Link>
