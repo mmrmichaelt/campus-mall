@@ -7,7 +7,6 @@ import { countries } from "@/data/countries";
 type Props = {
   sellerName: string;
   sellerCountry: string;
-  sellerUniversity: string;
 };
 
 const categories = [
@@ -15,7 +14,7 @@ const categories = [
   "Printing & photography","Services","Stationery","Utensils","Other",
 ];
 
-export default function NewListingForm({ sellerName, sellerCountry, sellerUniversity }: Props) {
+export default function NewListingForm({ sellerName, sellerCountry }: Props) {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [brand, setBrand] = useState("");
