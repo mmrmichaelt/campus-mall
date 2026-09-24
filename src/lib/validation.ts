@@ -22,7 +22,7 @@ const optionalPhone = z
 export const registerSchema = z.object({
   name: z.string().trim().min(2, "Name must contain at least 2 characters").max(100, "Name is too long"),
   country: z.string().trim().min(2, "Please select a country").max(100, "Country is too long"),
-  university: z.string().trim().min(2, "Please select or enter your university/college").max(200, "University/college name is too long"),
+  university: z.string().trim().max(200, "University/college name is too long").optional().default(""),
   accountType: z.enum(["STUDENT", "OUTSIDER"]),
   phone: optionalPhone,
   email: optionalEmail,
@@ -65,6 +65,7 @@ export const listingSchema = z.object({
   price: z.coerce.number().finite().nonnegative("Price cannot be negative"),
   currency: z.string().trim().min(3).max(5).default("KES"),
   category: z.string().trim().min(2, "Please select a category").max(50, "Category is too long"),
+  institution: z.string().trim().min(2, "Please select the institution for this item").max(200, "Institution name is too long"),
   imageUrl: z.string().trim().url("Image URL must be valid").optional().or(z.literal("")),
   imageUrls: z.array(z.string().url("Each photo must be a valid uploaded image URL")).max(5, "You can upload up to 5 photos").optional().default([]),
   location: z.string().trim().min(2, "Location is required").max(200, "Location is too long"),
