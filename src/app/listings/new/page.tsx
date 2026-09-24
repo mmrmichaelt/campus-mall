@@ -104,6 +104,7 @@ export default async function NewListingPage() {
         <NewListingForm
           sellerName={user.name}
           sellerCountry={user.country}
+          sellerUniversity={user.university}
         />
       </div>
     </div>
