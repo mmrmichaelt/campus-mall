@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import MarketplaceFilter from "./MarketplaceFilter";
 import Link from "next/link";
-import { Bell, Home, ShoppingCart, PlusCircle, MessageCircle, Settings, UserCircle, Search } from "lucide-react";
+import { Bell, Home, ShoppingCart, PlusCircle, MessageCircle, Settings, UserCircle, Search, Menu } from "lucide-react";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
   const [q, setQ] = useState("");
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -22,6 +23,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         document.documentElement.dataset.theme = savedTheme;
       }
     } catch {}
+    setMenuOpen(false);
     fetch("/api/me").then(r => r.json()).then(data => {
       if (active) setUser(data.user ?? null);
     }).catch(() => { if (active) setUser(null); });
@@ -56,22 +58,27 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </button>
           <Link href="/notifications" className={pathname.startsWith("/notifications") ? "active-page" : ""} aria-label="Notifications" title="Notifications"><Bell size={20} /></Link>
           <MarketplaceFilter />
-          {user ? (
-            <Link
-              href="/profile"
-              className={"avatar " + (pathname.startsWith("/profile") ? "active-page" : "")}
-              aria-label="Profile"
-              title="Profile"
+          <div className="top-menu-wrap">
+            <button
+              type="button"
+              className="menu-toggle"
+              onClick={() => setMenuOpen(value => !value)}
+              aria-expanded={menuOpen}
+              aria-controls="campus-mall-menu"
+              aria-label="Open menu"
+              title="Menu"
             >
-              {user.imageUrl ? (
-                <img src={user.imageUrl} alt="" className="header-profile-image" />
-              ) : (
-                <UserCircle size={24} aria-hidden="true" />
-              )}
-            </Link>
-          ) : (
-            <Link className={"small-btn " + (pathname.startsWith("/join") ? "active-page" : "")} href="/join">Join</Link>
-          )}
+              <Menu size={22} aria-hidden="true" />
+            </button>
+            {menuOpen && (
+              <div id="campus-mall-menu" className="top-menu-panel">
+                <Link href="/settings" onClick={() => setMenuOpen(false)} className={pathname.startsWith("/settings") ? "active-page" : ""}>
+                  <Settings size={18} aria-hidden="true" />
+                  <span>Settings</span>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -80,7 +87,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <Link href="/sell" className={pathname.startsWith("/sell") ? "active" : ""}><PlusCircle size={19} /><span>Add item</span></Link>
         <Link href="/cart" className={pathname.startsWith("/cart") ? "active" : ""}><ShoppingCart size={19} /><span>Cart</span></Link>
         <Link href="/chats" className={pathname.startsWith("/chats") ? "active" : ""}><MessageCircle size={19} /><span>Chats</span></Link>
-        <Link href="/settings" className={pathname.startsWith("/settings") ? "active" : ""}><Settings size={19} /><span>Settings</span></Link>
+        <Link href={user ? "/profile" : "/join"} className={(pathname.startsWith("/profile") || pathname.startsWith("/join")) ? "active account-nav-link" : "account-nav-link"} aria-label={user ? "Account" : "Join"}>
+          {user?.imageUrl ? <img src={user.imageUrl} alt="" className="bottom-profile-image" /> : <UserCircle size={19} />}
+          <span>{user ? "Account" : "Join"}</span>
+        </Link>
       </nav>
 
       <main>{children}</main>
