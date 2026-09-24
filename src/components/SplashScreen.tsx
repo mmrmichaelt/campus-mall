@@ -11,14 +11,19 @@ export default function SplashScreen() {
     try {
       if (window.sessionStorage.getItem(SPLASH_SESSION_KEY) === "1") {
         setVisible(false);
+        document.documentElement.classList.remove("splash-blocking");
         return;
       }
       window.sessionStorage.setItem(SPLASH_SESSION_KEY, "1");
+      document.documentElement.classList.add("splash-blocking");
     } catch {
       // If sessionStorage is unavailable, still show the splash normally.
     }
 
-    const timer = window.setTimeout(() => setVisible(false), SPLASH_DURATION_MS);
+    const timer = window.setTimeout(() => {
+      setVisible(false);
+      document.documentElement.classList.remove("splash-blocking");
+    }, SPLASH_DURATION_MS);
     return () => window.clearTimeout(timer);
   }, []);
 
