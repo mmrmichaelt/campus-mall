@@ -420,7 +420,7 @@ footer{font-size:10px}
 .topbar .global-search{order:1;flex:1;max-width:680px;margin:0}
 .topbar .top-actions{order:2;flex:0 0 auto}
 @media(max-width:700px){
-  .topbar{height:60px;display:flex;align-items:center;gap:7px;padding:0 10px;overflow:hidden}
+  .topbar{height:60px;display:flex;align-items:center;gap:7px;padding:0 10px;overflow:visible}
   .topbar .global-search{position:static;order:1;flex:1;min-width:0;width:auto;max-width:none;height:38px}
   .topbar .top-actions{order:2;margin-left:0;gap:5px;flex:0 0 auto}
   .top-actions .theme-toggle,.top-actions .marketplace-filter,.top-actions>a[href="/notifications"],.top-actions .avatar,.top-actions .small-btn{width:34px;min-width:34px;height:34px}
