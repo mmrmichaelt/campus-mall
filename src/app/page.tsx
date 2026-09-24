@@ -73,87 +73,40 @@ export default function HomePage() {
         const url = new URL("/api/listings", window.location.origin);
 
         if (q.trim()) url.searchParams.set("q", q.trim());
-        if (category && category !== "All") url.searchParams.set("category", category);
-
-        if (!user && guestCountry) {
-          url.searchParams.set("country", guestCountry);
+        if (category && category !== "All") {
+          url.searchParams.set("category", category);
         }
 
-        if (!user && guestUniversity) {
-          url.searchParams.set("university", guestUniversity);
+        // The homepage is always scoped to the campus selected/confirmed
+        // for the current session:
+        // - logged-in users use the university saved on their account;
+        // - guests use the university they confirmed in the campus selector.
+        const selectedUniversity = user?.university?.trim() || guestUniversity.trim();
+
+        if (selectedUniversity) {
+          url.searchParams.set("university", selectedUniversity);
         }
 
         url.searchParams.set("limit", "12");
 
-        let response = await fetch(url.toString(), {
+        const response = await fetch(url.toString(), {
           signal: controller.signal,
           cache: "no-store",
         });
 
-        let data = await response.json().catch(() => ({}));
-        let listings = response.ok && Array.isArray(data.listings) ? data.listings : [];
+        const data = await response.json().catch(() => ({}));
+        const listings =
+          response.ok && Array.isArray(data.listings)
+            ? data.listings
+            : [];
 
-        // Guest users should see marketplace items immediately even when the
-        // saved institution has no exact matching listings yet. Fall back
-        // progressively instead of leaving the home page empty until "View all".
-        if (!user && listings.length === 0 && guestUniversity) {
-          const countryUrl = new URL("/api/listings", window.location.origin);
-          if (q.trim()) countryUrl.searchParams.set("q", q.trim());
-          if (category && category !== "All") countryUrl.searchParams.set("category", category);
-          if (guestCountry) countryUrl.searchParams.set("country", guestCountry);
-          countryUrl.searchParams.set("limit", "12");
-
-          response = await fetch(countryUrl.toString(), {
-            signal: controller.signal,
-            cache: "no-store",
-          });
-          data = await response.json().catch(() => ({}));
-          listings = response.ok && Array.isArray(data.listings) ? data.listings : [];
-        }
-
-        // Final fallback: never make the home marketplace appear broken just
-        // because a guest context has no matching records.
-        if (!user && listings.length === 0 && (guestCountry || guestUniversity)) {
-          const globalUrl = new URL("/api/listings", window.location.origin);
-          if (q.trim()) globalUrl.searchParams.set("q", q.trim());
-          if (category && category !== "All") globalUrl.searchParams.set("category", category);
-          globalUrl.searchParams.set("limit", "12");
-
-          response = await fetch(globalUrl.toString(), {
-            signal: controller.signal,
-            cache: "no-store",
-          });
-          data = await response.json().catch(() => ({}));
-          listings = response.ok && Array.isArray(data.listings) ? data.listings : [];
-        }
-
+        // Do not fall back to another university, the whole country, or the
+        // global marketplace. The homepage must represent the confirmed
+        // campus context.
         setItems(listings);
-
-        // If the first request was temporarily unavailable, retry once
-        // automatically. The user should never have to press "View all"
-        // just to start the marketplace loading.
-        if (listings.length === 0) {
-          const retryUrl = new URL("/api/listings", window.location.origin);
-          if (q.trim()) retryUrl.searchParams.set("q", q.trim());
-          if (category && category !== "All") retryUrl.searchParams.set("category", category);
-          retryUrl.searchParams.set("limit", "12");
-
-          const retryResponse = await fetch(retryUrl.toString(), {
-            signal: controller.signal,
-            cache: "no-store",
-          });
-          const retryData = await retryResponse.json().catch(() => ({}));
-          if (retryResponse.ok && Array.isArray(retryData.listings)) {
-            setItems(retryData.listings);
-          }
-        }
       } catch (error: any) {
         if (error?.name !== "AbortError") {
           setItems([]);
-          // Give the marketplace one automatic recovery attempt.
-          window.setTimeout(() => {
-            if (!controller.signal.aborted) loadListings();
-          }, 1200);
         }
       } finally {
         if (!controller.signal.aborted) setLoading(false);
@@ -170,7 +123,6 @@ export default function HomePage() {
     q,
     category,
     user,
-    guestCountry,
     guestUniversity,
   ]);
 
