@@ -77,17 +77,16 @@ export default function HomePage() {
           url.searchParams.set("category", category);
         }
 
-        // The homepage is always scoped to the campus selected/confirmed
-        // for the current session:
-        // - logged-in users use the university saved on their account;
-        // - guests use the university they confirmed in the campus selector.
         const selectedUniversity = user?.university?.trim() || guestUniversity.trim();
 
         if (selectedUniversity) {
           url.searchParams.set("university", selectedUniversity);
         }
 
-        url.searchParams.set("limit", "12");
+        // Load the marketplace itself, not a recommended/restricted subset.
+        // The homepage shows every active item matching the confirmed campus.
+        url.searchParams.set("limit", "60");
+        url.searchParams.set("sort", "newest");
 
         const response = await fetch(url.toString(), {
           signal: controller.signal,
@@ -100,9 +99,6 @@ export default function HomePage() {
             ? data.listings
             : [];
 
-        // Do not fall back to another university, the whole country, or the
-        // global marketplace. The homepage must represent the confirmed
-        // campus context.
         setItems(listings);
       } catch (error: any) {
         if (error?.name !== "AbortError") {
@@ -139,9 +135,6 @@ export default function HomePage() {
     setGuestUniversity(university);
     setGuestSetup(false);
 
-    // Start the marketplace load immediately with the newly selected campus.
-    // A full navigation also guarantees that the homepage initializes with
-    // the saved guest context instead of waiting for another user action.
     window.location.href = "/";
   }
 
@@ -268,7 +261,7 @@ export default function HomePage() {
       </div>
 
       <div className="market-section-head">
-        <h2>{category && category !== "All" ? category : "Recommended"}</h2>
+        <h2>All items</h2>
         <Link href="/listings">View all</Link>
       </div>
 
