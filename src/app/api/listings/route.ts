@@ -45,7 +45,6 @@ export async function GET(request: Request) {
     const q = searchParams.get("q")?.trim() || "";
     const category = searchParams.get("category")?.trim() || "";
     const country = searchParams.get("country")?.trim() || "";
-    const university = searchParams.get("university")?.trim() || "";
     const institution = searchParams.get("institution")?.trim() || "";
     const minPrice = Number(searchParams.get("minPrice"));
     const maxPrice = Number(searchParams.get("maxPrice"));
