@@ -23,6 +23,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try {
+              if (sessionStorage.getItem("campus_mall_splash_seen") !== "1") {
+                document.documentElement.classList.add("splash-blocking");
+              }
+            } catch {}
+            `,
+          }}
+        />
         <PwaRegister />
         <SplashScreen />
         <AppShell>{children}</AppShell>
