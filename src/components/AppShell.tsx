@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Bell, Home, ShoppingCart, PlusCircle, MessageCircle, Settings, UserCircle, Search, Menu } from "lucide-react";
+import { Bell, Home, ShoppingCart, PlusCircle, MessageCircle, Settings, UserCircle, Search, Menu, CreditCard, MapPin, ShoppingBag, Megaphone, Tag, HelpCircle, ShieldCheck, LogOut } from "lucide-react";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
@@ -70,10 +70,50 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </button>
             {menuOpen && (
               <div id="campus-mall-menu" className="top-menu-panel">
-                <Link href="/settings" onClick={() => setMenuOpen(false)} className={pathname.startsWith("/settings") ? "active-page" : ""}>
+                <Link href="/settings" onClick={() => setMenuOpen(false)} className={pathname === "/settings" ? "active-page" : ""}>
                   <Settings size={18} aria-hidden="true" />
                   <span>Settings</span>
                 </Link>
+                <Link href="/account/pro" onClick={() => setMenuOpen(false)} className={pathname.startsWith("/account/pro") ? "active-page" : ""}>
+                  <CreditCard size={18} aria-hidden="true" />
+                  <span>Campus Mall Pro</span>
+                </Link>
+                <Link href="/switch-institution" onClick={() => setMenuOpen(false)} className={pathname.startsWith("/switch-institution") ? "active-page" : ""}>
+                  <MapPin size={18} aria-hidden="true" />
+                  <span>Switch institution</span>
+                </Link>
+                <Link href="/orders" onClick={() => setMenuOpen(false)} className={pathname.startsWith("/orders") ? "active-page" : ""}>
+                  <ShoppingBag size={18} aria-hidden="true" />
+                  <span>My orders</span>
+                </Link>
+                <Link href="/advertise" onClick={() => setMenuOpen(false)} className={pathname.startsWith("/advertise") ? "active-page" : ""}>
+                  <Megaphone size={18} aria-hidden="true" />
+                  <span>Promote &amp; advertise</span>
+                </Link>
+                <Link href="/offers" onClick={() => setMenuOpen(false)} className={pathname.startsWith("/offers") ? "active-page" : ""}>
+                  <Tag size={18} aria-hidden="true" />
+                  <span>Offers &amp; promotions</span>
+                </Link>
+                <div className="top-menu-section-label">Support &amp; legal</div>
+                <a href="mailto:campusmall.support@gmail.com" onClick={() => setMenuOpen(false)}>
+                  <HelpCircle size={18} aria-hidden="true" />
+                  <span>Support</span>
+                </a>
+                <Link href="/terms" onClick={() => setMenuOpen(false)}>
+                  <HelpCircle size={18} aria-hidden="true" />
+                  <span>Terms</span>
+                </Link>
+                <Link href="/privacy" onClick={() => setMenuOpen(false)}>
+                  <ShieldCheck size={18} aria-hidden="true" />
+                  <span>Privacy</span>
+                </Link>
+                <button type="button" onClick={async () => {
+                  setMenuOpen(false);
+                  try { await fetch("/api/auth/logout", { method: "POST" }); } finally { window.location.href = "/"; }
+                }}>
+                  <LogOut size={18} aria-hidden="true" />
+                  <span>Log out</span>
+                </button>
               </div>
             )}
           </div>
