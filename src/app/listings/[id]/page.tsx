@@ -39,43 +39,49 @@ function formatPrice(price: unknown, currency: string) {
 export default async function ListingPage({ params }: PageProps) {
   const { id } = await params;
 
-  const [user, listing] = await Promise.all([
-    getCurrentUser(),
-    prisma.listing.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        sellerId: true,
-        title: true,
-        description: true,
-        price: true,
-        currency: true,
-        category: true,
-        imageUrl: true,
-        details: true,
-        location: true,
-        status: true,
-        promoted: true,
-        promotedUntil: true,
-        soldAt: true,
-        createdAt: true,
-        updatedAt: true,
-        seller: {
-          select: {
-            id: true,
-            name: true,
-            university: true,
-            country: true,
-            accountType: true,
-            emailVerified: true,
-            phoneVerified: true,
-          },
+  // Load the listing independently from the optional session. A broken or
+  // expired session must never prevent a public listing from opening.
+  const listing = await prisma.listing.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      sellerId: true,
+      title: true,
+      description: true,
+      price: true,
+      currency: true,
+      category: true,
+      imageUrl: true,
+      details: true,
+      location: true,
+      status: true,
+      promoted: true,
+      promotedUntil: true,
+      soldAt: true,
+      createdAt: true,
+      updatedAt: true,
+      seller: {
+        select: {
+          id: true,
+          name: true,
+          university: true,
+          country: true,
+          accountType: true,
+          emailVerified: true,
+          phoneVerified: true,
         },
       },
-    }),
-  ]);
+    },
+  });
 
   if (!listing) notFound();
+
+  let user = null;
+  try {
+    user = await getCurrentUser();
+  } catch (error) {
+    console.error("Campus Mall listing session lookup failed:", error);
+  }
 
   const isSeller = user?.id === listing.sellerId;
 
