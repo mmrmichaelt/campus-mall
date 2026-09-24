@@ -278,10 +278,10 @@ export default function AccountForms() {
                 Country
                 <select
                   value={country}
-                  onChange={(event) =>
+                  onChange={(event) => {
                     setCountry(event.target.value);
                     setUniversity("");
-                  }
+                  }}
                   required
                 >
                   {countries.map(
