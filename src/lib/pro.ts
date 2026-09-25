@@ -97,10 +97,6 @@ export function getProPrice(plan: ProPlan, countryCode?: string | null) {
 }
 
 export function getProDuration(plan: ProPlan) {
-  return plan === "MONTHLY" ? 30 : 365;
-}
-
-export function getProDuration(plan: ProPlan) {
   if (plan === "MONTHLY") {
     return 30;
   }
