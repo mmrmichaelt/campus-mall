@@ -125,7 +125,7 @@ export async function getInstitutionSuggestions(countryCode: string, query = "")
         countryCode: item.alpha_two_code || code,
         city: item["state-province"] || "",
         website: item.web_pages?.[0] || "",
-        type: "University/College",
+        type: "Institution",
       }));
 
     return unique([...seedInstitutions(code), ...upstreamInstitutions])
