@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ListingCard from "@/components/ListingCard";
 import MarketplaceFilter from "@/components/MarketplaceFilter";
@@ -15,6 +16,7 @@ export default function HomePage() {
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("");
   const [institutionOnly, setInstitutionOnly] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     try {
@@ -32,11 +34,11 @@ export default function HomePage() {
     if (!user) {
       try {
         if (!localStorage.getItem("campus_mall_guest_institution")) {
-          window.location.replace("/guest");
+          router.replace("/guest");
           return;
         }
       } catch {
-        window.location.replace("/guest");
+        router.replace("/guest");
         return;
       }
     }
@@ -102,6 +104,7 @@ export default function HomePage() {
     category,
     institutionOnly,
     user?.university,
+    router,
   ]);
 
   async function addToCart(listingId: string) {
