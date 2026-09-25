@@ -26,7 +26,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script
           dangerouslySetInnerHTML={{
             __html: `try {
-              if (sessionStorage.getItem("campus_mall_splash_seen") !== "1") {
+              if (sessionStorage.getItem("campus_mall_splash_seen_v2") !== "1") {
                 document.documentElement.classList.add("splash-blocking");
               }
             } catch {}
