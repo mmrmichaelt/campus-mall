@@ -161,6 +161,7 @@ function InstitutionPicker({
 
 export default function AccountForms({ initialMode }: { initialMode?: Mode } = {}) {
   const searchParams = useSearchParams();
+  const standaloneGuest = initialMode === "guest";
   const nextPath = searchParams.get("next")?.startsWith("/") ? searchParams.get("next")! : "/";
   const [mode, setMode] = useState<Mode>(
     initialMode ?? (searchParams.get("mode") === "login" ? "login" : "register")
@@ -288,11 +289,11 @@ export default function AccountForms({ initialMode }: { initialMode?: Mode } = {
         <div className="auth-heading">
           <div className="brand-mark" aria-label="Campus Mall">CM</div>
           <h1>
-            {mode === "register" ? "Join campus mall" : mode === "login" ? "Welcome back" : "Browse as guest"}
+            {mode === "register" ? "Join Campus Mall" : mode === "login" ? "Welcome back" : "Continue as guest"}
           </h1>
         </div>
 
-        <div className="auth-tabs">
+        {!standaloneGuest && <div className="auth-tabs">
           <button type="button" className={mode === "register" ? "primary-btn" : "secondary-btn"} onClick={() => { setMode("register"); setError(""); setSuccess(""); }}>
             Create Account
           </button>
@@ -302,7 +303,7 @@ export default function AccountForms({ initialMode }: { initialMode?: Mode } = {
           <button type="button" className={mode === "guest" ? "primary-btn" : "secondary-btn"} onClick={() => { setMode("guest"); setError(""); setSuccess(""); }}>
             Guest
           </button>
-        </div>
+        </div>}
 
         <form className="form" onSubmit={handleSubmit}>
           {mode === "guest" && (
@@ -425,7 +426,7 @@ export default function AccountForms({ initialMode }: { initialMode?: Mode } = {
           {success && <div className="success">{success}</div>}
 
           <button className="primary-btn" type="submit" disabled={loading}>
-            {loading ? "Please wait..." : mode === "register" ? "Create account" : "Log in"}
+            {loading ? "Please wait..." : mode === "register" ? "Create account" : mode === "guest" ? "Continue as Guest" : "Log in"}
           </button>
         </form>
 
