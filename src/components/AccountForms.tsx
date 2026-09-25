@@ -86,7 +86,6 @@ function InstitutionPicker({
           const next = event.target.value;
           setQuery(next);
           onChange(next);
-          setInstitutionSelected(false);
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
@@ -270,7 +269,10 @@ export default function AccountForms() {
       <InstitutionPicker
         country={country}
         value={university}
-        onChange={setUniversity}
+        onChange={(value) => {
+          setUniversity(value);
+          setInstitutionSelected(false);
+        }}
         onSelect={() => setInstitutionSelected(true)}
       />
       {mode === "register" && (
