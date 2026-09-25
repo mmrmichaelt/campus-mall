@@ -267,6 +267,24 @@ export async function POST(request: Request) {
     const data = parsed.data;
     const sellerInstitution = user.university.trim();
 
+    const activeListingCount = await prisma.listing.count({
+      where: { sellerId: user.id, status: "ACTIVE" },
+    });
+    const { getProListingLimit } = await import("../../../lib/pro");
+    const listingLimit = await getProListingLimit(user.id);
+    if (activeListingCount >= listingLimit) {
+      return NextResponse.json(
+        {
+          error: listingLimit === 5
+            ? "Free accounts can have up to 5 active listings. Upgrade to Campus Mall Pro for up to 50."
+            : "You have reached your Campus Mall Pro active listing limit of 50.",
+          code: "LISTING_LIMIT_REACHED",
+          listingLimit,
+        },
+        { status: 403 }
+      );
+    }
+
     if (sellerInstitution.length < 2) {
       return NextResponse.json(
         { error: "Your account does not have an institution saved. Please update your profile before posting an item." },
