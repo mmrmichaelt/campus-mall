@@ -39,6 +39,13 @@ export async function POST(request: Request) {
 
     const institutionValid = await isValidInstitution(data.country, data.university.trim());
 
+    if (data.university.trim().toLowerCase() !== data.confirmUniversity.trim().toLowerCase()) {
+      return NextResponse.json(
+        { error: "The confirmed institution does not match the selected institution." },
+        { status: 400 }
+      );
+    }
+
     if (!institutionValid) {
       return NextResponse.json(
         { error: "Please select an institution from the official institution suggestions. Institutions not in the directory cannot be used." },
