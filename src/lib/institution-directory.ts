@@ -1,5 +1,5 @@
 import { countries } from "@/data/countries";
-import { kenyaInstitutions, kenyaInstitutionNames, type Institution } from "@/data/universities";
+import { kenyaInstitutions, type Institution } from "@/data/universities";
 
 type UpstreamInstitution = {
   name?: string;
@@ -25,7 +25,7 @@ async function getKenyaTvetaInstitutions(): Promise<Institution[]> {
 
     const html = await response.text();
     const institutions: Institution[] = [];
-    const rowRegex = /<tr[^>]*>([\\s\\S]*?)<\\/tr>/gi;
+    const rowRegex = /<tr[^>]*>([\s\\S]*?)<\\/tr>/gi;
     const cellRegex = /<td[^>]*>([\\s\\S]*?)<\\/td>/gi;
 
     for (const row of html.matchAll(rowRegex)) {
