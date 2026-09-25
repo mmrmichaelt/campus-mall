@@ -153,8 +153,21 @@ export async function getInstitutionSuggestions(countryCode: string, query = "")
   const term = query.trim().toLowerCase();
 
   if (code === "KE") {
+    // Return the bundled Kenya directory immediately so the picker never
+    // depends on an external registry being available before showing results.
+    const localMatches = kenyaInstitutions
+      .filter((item) => !term || item.name.toLowerCase().includes(term))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    if (localMatches.length > 0) {
+      return localMatches.slice(0, 250);
+    }
+
     const all = await getKenyaInstitutions();
-    return all.filter((item) => !term || item.name.toLowerCase().includes(term)).sort((a, b) => a.name.localeCompare(b.name)).slice(0, 1000);
+    return all
+      .filter((item) => !term || item.name.toLowerCase().includes(term))
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .slice(0, 1000);
   }
 
   const country = countries.find((item) => item.code === code);
