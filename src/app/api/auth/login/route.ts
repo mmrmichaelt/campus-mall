@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../../../../lib/prisma";
 import { createSession } from "../../../../lib/auth";
 import { loginSchema } from "../../../../lib/validation";
+import { isValidInstitution } from "../../../../lib/institution-directory";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,15 @@ export async function POST(request: Request) {
             parsed.error.issues[0]?.message ||
             "Invalid login details.",
         },
+        { status: 400 }
+      );
+    }
+
+    const institutionValid = await isValidInstitution(body.country || "KE", parsed.data.university.trim());
+
+    if (!institutionValid) {
+      return NextResponse.json(
+        { error: "Please select your institution from the official suggestions." },
         { status: 400 }
       );
     }
