@@ -14,14 +14,11 @@ export default function HomePage() {
   const [authResolved, setAuthResolved] = useState(false);
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("");
-  const [enteredMarketplace, setEnteredMarketplace] = useState(false);
-  const [entryLoading, setEntryLoading] = useState(false);
   const [institutionOnly, setInstitutionOnly] = useState(false);
 
   useEffect(() => {
     try {
       setInstitutionOnly(localStorage.getItem("campus_mall_institution_filter") === "1");
-      setEnteredMarketplace(sessionStorage.getItem("campus_mall_marketplace_started") === "1");
     } catch {}
     fetch("/api/me", { cache: "no-store" })
       .then(r => r.json())
@@ -31,7 +28,7 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    if (!authResolved || !enteredMarketplace) return;
+    if (!authResolved) return;
 
     const controller = new AbortController();
 
@@ -73,7 +70,6 @@ export default function HomePage() {
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
-          setEntryLoading(false);
         }
       }
     }
@@ -91,20 +87,11 @@ export default function HomePage() {
     };
   }, [
     authResolved,
-    enteredMarketplace,
     q,
     category,
     institutionOnly,
     user?.university,
   ]);
-
-  function startMarketplace() {
-    try {
-      sessionStorage.setItem("campus_mall_marketplace_started", "1");
-    } catch {}
-    setEntryLoading(true);
-    setEnteredMarketplace(true);
-  }
 
   async function addToCart(listingId: string) {
     if (!user) { window.location.href = "/join"; return; }
@@ -136,26 +123,6 @@ export default function HomePage() {
 
   return (
     <>
-      {!enteredMarketplace || entryLoading ? (
-        <div className="marketplace-start-overlay" role="dialog" aria-label="Start Campus Mall">
-          <div className="marketplace-start-card">
-            <div className="brand-mark" aria-hidden="true">CM</div>
-            <h1>Campus Mall</h1>
-            <p>{entryLoading ? "Loading the marketplace..." : "Your campus marketplace is ready."}</p>
-            {!entryLoading && (
-              <button
-                type="button"
-                className="primary-btn marketplace-start-button"
-                onClick={startMarketplace}
-              >
-                START
-              </button>
-            )}
-            {entryLoading && <div className="compact-loading" aria-live="polite">Loading...</div>}
-          </div>
-        </div>
-      ) : null}
-
       <div className="category-filter-row">
         <div className="category-strip" aria-label="Marketplace categories">
           {categories.map(name => (
