@@ -5,6 +5,7 @@ import { prisma } from "../../../../lib/prisma";
 import { createSession } from "../../../../lib/auth";
 import { registerSchema } from "../../../../lib/validation";
 import { getCountryByCode } from "../../../../data/countries";
+import { isValidInstitution } from "../../../../lib/institution-directory";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,15 @@ export async function POST(request: Request) {
         {
           error: "Please select a valid country.",
         },
+        { status: 400 }
+      );
+    }
+
+    const institutionValid = await isValidInstitution(data.country, data.university.trim());
+
+    if (!institutionValid) {
+      return NextResponse.json(
+        { error: "Please select an institution from the official institution suggestions. Institutions not in the directory cannot be used." },
         { status: 400 }
       );
     }
