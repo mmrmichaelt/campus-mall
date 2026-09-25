@@ -16,6 +16,7 @@ export default function HomePage() {
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("");
   const [institutionOnly, setInstitutionOnly] = useState(false);
+  const [guestRedirecting, setGuestRedirecting] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -34,15 +35,18 @@ export default function HomePage() {
     if (!user) {
       try {
         if (!localStorage.getItem("campus_mall_guest_institution")) {
+          setGuestRedirecting(true);
           router.replace("/guest");
           return;
         }
       } catch {
+        setGuestRedirecting(true);
         router.replace("/guest");
         return;
       }
     }
 
+    setGuestRedirecting(false);
     const controller = new AbortController();
 
     async function loadListings() {
@@ -133,6 +137,10 @@ export default function HomePage() {
     } catch {
       window.alert("Unable to connect to Campus Mall.");
     }
+  }
+
+  if (!authResolved || guestRedirecting) {
+    return <div className="compact-loading" style={{ minHeight: "50vh", display: "grid", placeItems: "center" }}>Loading Campus Mall...</div>;
   }
 
   return (
