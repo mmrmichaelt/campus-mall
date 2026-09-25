@@ -118,7 +118,7 @@ function InstitutionPicker({
           role="listbox"
           style={{
             position: "absolute",
-            zIndex: 1000,
+            zIndex: 9999,
             left: 0,
             right: 0,
             top: "calc(100% + 4px)",
