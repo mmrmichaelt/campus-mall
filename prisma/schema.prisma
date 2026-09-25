@@ -254,6 +254,9 @@ model ProSubscription {
   providerReference String?
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
+  listingLimit      Int                @default(50)
+  boostCredits      Int                @default(3)
+  featuredCredits   Int                @default(2)
 
   user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   payments ProPayment[]
