@@ -23,6 +23,7 @@ export const registerSchema = z.object({
   name: z.string().trim().min(2, "Name must contain at least 2 characters").max(100, "Name is too long"),
   country: z.string().trim().min(2, "Please select a country").max(100, "Country is too long"),
   university: z.string().trim().min(2, "Please select your university or college").max(200, "University/college name is too long"),
+  confirmUniversity: z.string().trim().min(2, "Please confirm your institution").max(200, "Institution confirmation is too long"),
   accountType: z.enum(["STUDENT", "OUTSIDER"]),
   phone: optionalPhone,
   email: optionalEmail,
@@ -34,6 +35,13 @@ export const registerSchema = z.object({
       code: "custom",
       path: ["email"],
       message: "Enter an email address, a phone number, or both.",
+    });
+  }
+  if (data.university.trim().toLowerCase() !== data.confirmUniversity.trim().toLowerCase()) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["confirmUniversity"],
+      message: "The confirmed institution does not match the selected institution.",
     });
   }
   if (data.password !== data.confirmPassword) {
