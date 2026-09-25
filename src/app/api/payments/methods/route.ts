@@ -4,10 +4,8 @@ const methods = [
   ["MPESA", "MPESA_CONSUMER_KEY", "M-Pesa"],
   ["CARD", "STRIPE_SECRET_KEY", "Visa / Mastercard"],
   ["BANK_TRANSFER", "CAMPUS_MALL_BANK_NAME", "Bank transfer"],
-  ["PESALINK", "CAMPUS_MALL_BANK_NAME", "PesaLink"],
   ["PAYPAL", "PAYPAL_CLIENT_ID", "PayPal"],
   ["GOOGLE_PAY", "STRIPE_SECRET_KEY", "Google Pay"],
-  ["STRIPE", "STRIPE_SECRET_KEY", "Stripe"],
 ] as const;
 
 export async function GET() {
