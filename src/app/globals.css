@@ -733,16 +733,19 @@ html.splash-blocking .app{
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:7px;
-  min-height:36px;
-  padding:6px 12px;
+  gap:9px;
+  min-height:46px;
+  padding:9px 14px;
   background:var(--red-light);
   color:var(--ink);
   border-bottom:1px solid var(--line);
-  font-size:12px;
+  font-size:16px;
+  line-height:1.25;
+  font-weight:700;
   text-align:center;
 }
 .institution-context strong{color:var(--red);font-weight:900}
+.institution-context span{font-weight:700}
 .institution-switch{
   position:fixed;
   right:18px;
