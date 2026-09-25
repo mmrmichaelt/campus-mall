@@ -280,7 +280,7 @@ export default function AccountForms() {
       />
       {mode === "register" && (
         <small className="note">
-          Search the cloud directory and choose your institution. The selected institution is then associated with your account.
+          Search the full institution directory and choose your institution. The selected institution is then associated with your account.
         </small>
       )}
     </label>
@@ -296,10 +296,10 @@ export default function AccountForms() {
           </h1>
           <p className="note">
             {mode === "register"
-              ? "Choose your country, then search the cloud institution directory."
+              ? "Choose your country, then search the full institution directory."
               : mode === "login"
                 ? "Choose your country, then search for the institution associated with your account."
-                : "Choose your country, then search the cloud institution directory to browse that campus."}
+                : "Choose your country, then search the full institution directory to browse that campus."}
           </p>
         </div>
 
