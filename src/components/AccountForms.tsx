@@ -19,11 +19,13 @@ function InstitutionPicker({
   country,
   value,
   onChange,
+  onSelect,
   required = true,
 }: {
   country: string;
   value: string;
   onChange: (value: string) => void;
+  onSelect?: (value: string) => void;
   required?: boolean;
 }) {
   const [query, setQuery] = useState(value);
@@ -72,6 +74,7 @@ function InstitutionPicker({
   function choose(name: string) {
     setQuery(name);
     onChange(name);
+    onSelect?.(name);
     setOpen(false);
   }
 
@@ -166,6 +169,7 @@ export default function AccountForms() {
   const [name, setName] = useState("");
   const [country, setCountry] = useState("KE");
   const [university, setUniversity] = useState("");
+  const [institutionSelected, setInstitutionSelected] = useState(false);
   const [accountType, setAccountType] = useState("STUDENT");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -179,6 +183,7 @@ export default function AccountForms() {
   function changeCountry(value: string) {
     setCountry(value);
     setUniversity("");
+    setInstitutionSelected(false);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -189,8 +194,8 @@ export default function AccountForms() {
 
     try {
       if (mode === "guest") {
-        if (!country || !university.trim()) {
-          throw new Error("Select your country and institution to continue as a guest.");
+        if (!country || !university.trim() || !institutionSelected) {
+          throw new Error("Select an institution from the suggestions to continue.");
         }
         localStorage.setItem("campus_mall_guest_country", country);
         localStorage.setItem("campus_mall_guest_university", university.trim());
@@ -213,6 +218,7 @@ export default function AccountForms() {
           }
         : {
             identifier: email.trim() || phone.trim(),
+            country,
             university: university.trim(),
             password,
           };
@@ -264,6 +270,7 @@ export default function AccountForms() {
         country={country}
         value={university}
         onChange={setUniversity}
+        onSelect={() => setInstitutionSelected(true)}
       />
       {mode === "register" && (
         <small className="note">
