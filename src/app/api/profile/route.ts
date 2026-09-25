@@ -114,26 +114,6 @@ export async function PUT(request: Request) {
       );
     }
 
-    if (university.length < 2) {
-      return NextResponse.json(
-        {
-          error:
-            "Please enter your university or college.",
-        },
-        { status: 400 }
-      );
-    }
-
-    if (university.length > 200) {
-      return NextResponse.json(
-        {
-          error:
-            "University or college name is too long.",
-        },
-        { status: 400 }
-      );
-    }
-
     const updatedUser = await prisma.user.update({
       where: {
         id: user.id,
