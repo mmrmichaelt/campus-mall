@@ -29,6 +29,17 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!authResolved) return;
+    if (!user) {
+      try {
+        if (!localStorage.getItem("campus_mall_guest_institution")) {
+          window.location.replace("/guest");
+          return;
+        }
+      } catch {
+        window.location.replace("/guest");
+        return;
+      }
+    }
 
     const controller = new AbortController();
 
