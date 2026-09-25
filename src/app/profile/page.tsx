@@ -37,12 +37,10 @@ export default async function ProfilePage() {
 
         </div>
 
-        <Link
-          href="/account"
-          className="secondary-btn"
-        >
-          Back to account
-        </Link>
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <Link href="/pro" className="secondary-btn">Add institution</Link>
+          <Link href="/account" className="secondary-btn">Back to account</Link>
+        </div>
       </div>
 
       <div className="profile-grid">
