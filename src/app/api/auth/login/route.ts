@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const institutionValid = await isValidInstitution(body.country || "KE", parsed.data.university.trim());
+    const institutionValid = await isValidInstitution(parsed.data.country, parsed.data.university.trim());
 
     if (!institutionValid) {
       return NextResponse.json(
