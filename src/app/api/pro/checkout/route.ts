@@ -15,6 +15,9 @@ export async function POST(request: Request) {
     const amount = getProPrice(parsed.data.plan, user.country);
     const currency = pricing.currency;
     const phone = parsed.data.phone?.trim() || user.phone;
+    if (parsed.data.paymentMethod === "MPESA" && currency !== "KES") {
+      return NextResponse.json({ error: "M-Pesa Pro checkout is currently available for Kenya accounts. Please choose another payment method." }, { status: 400 });
+    }
     if (!phone) return NextResponse.json({ error: "A phone number is required for M-Pesa checkout." }, { status: 400 });
     const subscription = await prisma.proSubscription.create({ data: { userId: user.id, plan: parsed.data.plan, status: "PENDING", amount, currency } });
     const payment = await prisma.proPayment.create({ data: { subscriptionId: subscription.id, userId: user.id, amount, currency, status: "PENDING" } });
