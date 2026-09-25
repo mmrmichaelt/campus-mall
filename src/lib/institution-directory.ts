@@ -25,12 +25,12 @@ async function getKenyaTvetaInstitutions(): Promise<Institution[]> {
 
     const html = await response.text();
     const institutions: Institution[] = [];
-    const rowRegex = /<tr[^>]*>([\s\\S]*?)<\\/tr>/gi;
+    const rowRegex = /<tr[^>]*>([\\s\\S]*?)<\/tr>/gi;
     const cellRegex = /<td[^>]*>([\\s\\S]*?)<\\/td>/gi;
 
     for (const row of html.matchAll(rowRegex)) {
       const cells = [...row[1].matchAll(cellRegex)].map((match) =>
-        match[1].replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/&#039;|&apos;/g, "'").replace(/&nbsp;/g, " ").replace(/\\s+/g, " ").trim()
+        match[1].replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/&#039;|&apos;/g, "'").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim()
       );
       if (cells.length < 7) continue;
       const name = cells[1];
