@@ -132,9 +132,6 @@ return (
 <div className="panel">
 <h1>Add item</h1>
 
-  <p className="note">
-    Post an item, food, job or service and choose the institution where it is posted. You remain the owner and can manage your listing from your account.
-  </p>
 
   <form className="form" onSubmit={submit}>
     <label>
@@ -181,7 +178,6 @@ return (
     <label>
       Institution
       <input required value={institution} readOnly disabled aria-readonly="true" />
-      <small className="note">Taken automatically from your account profile. It cannot be changed while posting this item.</small>
     </label>
 
     <div className="panel">
@@ -189,7 +185,6 @@ return (
         <div>
           <p className="category">PHOTOS</p>
           <h2>Upload photos</h2>
-          <p className="note">Select up to 5 photos from your phone or computer. No photo URL is required.</p>
         </div>
         <ImageIcon size={24} />
       </div>
@@ -254,9 +249,6 @@ return (
 
       {photoMessage && <p className="success">{photoMessage}</p>}
 
-      <p className="note" style={{ marginTop: 8 }}>
-        Maximum 5 photos, 4 MB each. JPG, PNG, WEBP or GIF.
-      </p>
     </div>
 
 
@@ -295,7 +287,6 @@ return (
     <div className="panel" style={{ marginTop: 4, marginBottom: 0 }}>
       <p className="category">ADVERTISING & PROMOTION</p>
       <h2>Boost item to reach more people</h2>
-      <p className="note">Optional paid promotion. Your item will still be posted for free if you skip this. You can boost it later from the item page.</p>
       <label>
         Boost duration
         <select value={boostDays} onChange={(event) => setBoostDays(event.target.value)}>
@@ -307,7 +298,6 @@ return (
           <option value="30">30 days — KES 800</option>
         </select>
       </label>
-      <p className="note" style={{ marginBottom: 8 }}>These are Campus Mall promotion/advertising fees. If selected, the chosen payment method is started after your item is created.</p>
       {Number(boostDays) > 0 && <PaymentMethodSelector value={paymentMethod} onChange={setPaymentMethod} compact />}
     </div>
 
