@@ -50,9 +50,22 @@ function InstitutionPicker({
       const term = query.trim().toLowerCase();
       const localResults = kenyaInstitutions
         .filter((institution) => !term || institution.name.toLowerCase().includes(term))
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .slice(0, 100);
-      setInstitutions(localResults);
+        .sort((a, b) => {
+          if (!term) return a.name.localeCompare(b.name);
+
+          const aName = a.name.toLowerCase();
+          const bName = b.name.toLowerCase();
+          const aExact = aName === term;
+          const bExact = bName === term;
+          if (aExact !== bExact) return aExact ? -1 : 1;
+
+          const aStarts = aName.startsWith(term);
+          const bStarts = bName.startsWith(term);
+          if (aStarts !== bStarts) return aStarts ? -1 : 1;
+
+          return aName.localeCompare(bName);
+        });
+      setInstitutions(localResults.slice(0, 250));
       setLoading(false);
       return;
     }
