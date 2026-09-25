@@ -16,6 +16,7 @@ export default function HomePage() {
   const [category, setCategory] = useState("");
   const [enteredMarketplace, setEnteredMarketplace] = useState(false);
   const [entryLoading, setEntryLoading] = useState(false);
+  const [institutionOnly, setInstitutionOnly] = useState(false);
 
   useEffect(() => {
     try {
@@ -44,9 +45,11 @@ export default function HomePage() {
           url.searchParams.set("category", category);
         }
 
-        // Home always loads the full marketplace. Institution is an optional
-        // filter only; it must never be applied automatically from the
-        // account or guest-selected institution.
+        // Home starts with every institution. The circular switch is the
+        // only control that turns the profile institution into a filter.
+        if (institutionOnly && user?.university?.trim()) {
+          url.searchParams.set("institution", user.university.trim());
+        }
         url.searchParams.set("limit", "60");
         url.searchParams.set("sort", "newest");
 
@@ -82,6 +85,8 @@ export default function HomePage() {
     enteredMarketplace,
     q,
     category,
+    institutionOnly,
+    user?.university,
   ]);
 
   function startMarketplace() {
@@ -141,6 +146,22 @@ export default function HomePage() {
           </div>
         </div>
       ) : null}
+
+      <button
+        type="button"
+        className={`institution-switch ${institutionOnly ? "active" : ""}`}
+        aria-label={institutionOnly ? "Show items from all institutions" : "Show items from my institution"}
+        title={institutionOnly ? "Show all institutions" : user?.university ? `Show ${user.university}` : "Sign in and add an institution"}
+        disabled={!user?.university?.trim()}
+        onClick={() => setInstitutionOnly(value => !value)}
+      >
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M13 20a13 13 0 0 1 22-7l3 3" />
+          <path d="M38 13v8h-8" />
+          <path d="M35 28a13 13 0 0 1-22 7l-3-3" />
+          <path d="M10 35v-8h8" />
+        </svg>
+      </button>
 
       <div className="category-filter-row">
         <div className="category-strip" aria-label="Marketplace categories">
