@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Bell, Home, ShoppingCart, PlusCircle, MessageCircle, Settings, UserCircle, Search, Menu, CreditCard, MapPin, ShoppingBag, Megaphone, Tag, HelpCircle, ShieldCheck, LogOut } from "lucide-react";
+import { Bell, Home, ShoppingCart, PlusCircle, MessageCircle, Settings, UserCircle, Search, Menu, CreditCard, MapPin, ShoppingBag, Megaphone, Tag, HelpCircle, ShieldCheck, LogOut, Building2 } from "lucide-react";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
@@ -86,9 +86,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                   <Settings size={18} aria-hidden="true" />
                   <span>Settings</span>
                 </Link>
-                <Link href="/account/pro" onClick={() => setMenuOpen(false)} className={pathname.startsWith("/account/pro") ? "active-page" : ""}>
+                <Link href="/pro" onClick={() => setMenuOpen(false)} className={pathname.startsWith("/pro") ? "active-page" : ""}>
                   <CreditCard size={18} aria-hidden="true" />
                   <span>Campus Mall Pro</span>
+                </Link>
+                <Link href="/pro" onClick={() => setMenuOpen(false)} className={pathname === "/pro" ? "active-page" : ""}>
+                  <Building2 size={18} aria-hidden="true" />
+                  <span>Add institution</span>
                 </Link>
                 <Link href="/switch-institution" onClick={() => setMenuOpen(false)} className={pathname.startsWith("/switch-institution") ? "active-page" : ""}>
                   <MapPin size={18} aria-hidden="true" />
