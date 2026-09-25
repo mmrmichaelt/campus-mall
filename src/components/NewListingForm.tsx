@@ -12,7 +12,7 @@ type Props = {
 
 const categories = [
   "Accommodation","Beauty & dressing","Electronics","Food","Furniture","Jobs",
-  "Printing & photography","Services","Stationery","Utensils","Other",
+  "Printing & photography","Recreation","Services","Stationery","Utensils","Other",
 ];
 
 export default function NewListingForm({ sellerName, sellerCountry, sellerUniversity }: Props) {
