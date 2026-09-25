@@ -1,18 +1,30 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import PaymentMethodSelector, { type PaymentMethod } from "../../../components/PaymentMethodSelector";
+import { getProPricing } from "@/lib/pro";
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const plan = searchParams.get("plan") === "YEARLY" ? "YEARLY" : "MONTHLY";
-  const amount = plan === "YEARLY" ? 1999 : 199;
+  const [country, setCountry] = useState("US");
+  useEffect(() => {
+    fetch("/api/me", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((data) => setCountry(data?.user?.country || "US"))
+      .catch(() => setCountry("US"));
+  }, []);
+  const pricing = getProPricing(country);
+  const amount = plan === "YEARLY" ? pricing.yearly : pricing.monthly;
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("MPESA");
+  useEffect(() => {
+    if (country === "KE") setPaymentMethod("MPESA");
+  }, [country]);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("CARD");
 
   async function startCheckout() {
     setLoading(true);
@@ -52,7 +64,7 @@ function CheckoutContent() {
     <main className="mx-auto max-w-lg px-4 py-10">
       <div className="rounded-2xl border bg-white p-6 shadow-sm">
         <h1 className="text-2xl font-bold">Campus Mall Pro checkout</h1>
-        <p className="mt-2 text-gray-600">{plan === "YEARLY" ? "Yearly" : "Monthly"} plan — KSh {amount.toLocaleString()}</p>
+        <p className="mt-2 text-gray-600">{plan === "YEARLY" ? "Yearly" : "Monthly"} plan — {new Intl.NumberFormat(pricing.locale, { style: "currency", currency: pricing.currency, minimumFractionDigits: Number.isInteger(amount) ? 0 : 2, maximumFractionDigits: 2 }).format(amount)}</p>
         {error && <div className="mt-5 rounded-lg bg-red-50 p-4 text-sm text-red-700">{error}</div>}
         {message && <div className="mt-5 rounded-lg bg-green-50 p-4 text-sm text-green-800">{message}</div>}
         <PaymentMethodSelector value={paymentMethod} onChange={setPaymentMethod} />
