@@ -86,6 +86,7 @@ function InstitutionPicker({
           const next = event.target.value;
           setQuery(next);
           onChange(next);
+          setInstitutionSelected(false);
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
