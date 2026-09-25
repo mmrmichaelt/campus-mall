@@ -6,10 +6,8 @@ export type PaymentMethod =
   | "MPESA"
   | "CARD"
   | "BANK_TRANSFER"
-  | "PESALINK"
   | "PAYPAL"
   | "GOOGLE_PAY"
-  | "STRIPE"
   | "CASH_ON_DELIVERY";
 
 export const PAYMENT_METHODS: Array<{
@@ -20,10 +18,8 @@ export const PAYMENT_METHODS: Array<{
   { id: "MPESA", label: "M-Pesa", description: "STK Push for supported Kenyan payments" },
   { id: "CARD", label: "Visa / Mastercard", description: "Debit or credit card checkout" },
   { id: "BANK_TRANSFER", label: "Bank transfer", description: "Direct bank payment" },
-  { id: "PESALINK", label: "PesaLink", description: "Kenyan bank-to-bank payment" },
   { id: "PAYPAL", label: "PayPal", description: "PayPal checkout" },
   { id: "GOOGLE_PAY", label: "Google Pay", description: "Wallet checkout where supported" },
-  { id: "STRIPE", label: "Stripe", description: "Stripe checkout and supported local methods" },
 ];
 
 type Props = {
@@ -61,7 +57,7 @@ export default function PaymentMethodSelector({ value, onChange, compact = false
       </label>
       <p className="note" style={{ marginBottom: 0 }}>
         {PAYMENT_METHODS.find((method) => method.id === value)?.description}.
-        {!availability[value] && value !== "BANK_TRANSFER" && value !== "PESALINK"
+        {!availability[value] && value !== "BANK_TRANSFER"
           ? " This provider needs its merchant credentials before live checkout can be used."
           : ""}
       </p>
