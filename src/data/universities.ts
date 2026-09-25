@@ -1,4 +1,4 @@
-import type { Institution } from "./universities";
+export type Institution = { id: string; name: string; countryCode: string; city?: string; type?: string; website?: string; };
 
 const cueUniversities = [
   "University of Nairobi","Moi University","Kenyatta University","Egerton University",
