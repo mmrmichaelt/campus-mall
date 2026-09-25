@@ -14,14 +14,7 @@ export default async function ProfilePage() {
         <div className="auth-card">
           <div className="brand-mark">CM</div>
 
-          <p className="category">CAMPUS MALL</p>
-
           <h1>Sign in to edit your profile</h1>
-
-          <p className="note">
-            Log in to your Campus Mall account to manage
-            your profile information.
-          </p>
 
           <Link
             href="/account"
@@ -42,10 +35,6 @@ export default async function ProfilePage() {
 
           <h1>Your profile</h1>
 
-          <p className="note">
-            Update the information other Campus Mall
-            users see when they view your profile.
-          </p>
         </div>
 
         <Link
@@ -103,10 +92,6 @@ export default async function ProfilePage() {
         <div className="panel">
           <h2>Edit profile</h2>
 
-          <p className="note">
-            Keep your name and university information
-            up to date.
-          </p>
 
           <ProfileForm
             initialName={user.name}
@@ -126,10 +111,6 @@ export default async function ProfilePage() {
 
         <h2>Contact information</h2>
 
-        <p className="note">
-          Your email address and phone number are optional
-          account contact details.
-        </p>
 
         <div className="two-col">
           <div>
@@ -150,9 +131,6 @@ export default async function ProfilePage() {
         className="panel"
         style={{ marginTop: "20px" }}
       >
-        <p className="note">
-          Need help updating your account?
-        </p>
 
         <a
           href="mailto:campusmall.support@gmail.com"
