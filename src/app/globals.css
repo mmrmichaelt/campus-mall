@@ -617,3 +617,56 @@ footer{font-size:10px}
 html.splash-blocking .app{
   visibility:hidden !important;
 }
+
+
+/* One-time marketplace entry screen */
+.marketplace-start-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 24px;
+  background: var(--background, #fff);
+  backdrop-filter: blur(8px);
+}
+
+.marketplace-start-card {
+  width: min(92vw, 520px);
+  padding: 42px 28px;
+  text-align: center;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 28px;
+  background: var(--card, #fff);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .12);
+  animation: marketplaceStartIn .45s ease both;
+}
+
+.marketplace-start-card h1 {
+  margin: 18px 0 8px;
+  font-size: clamp(30px, 8vw, 48px);
+  font-weight: 900;
+  letter-spacing: -.04em;
+}
+
+.marketplace-start-card p {
+  margin: 0 0 28px;
+  color: var(--muted, #6b7280);
+}
+
+.marketplace-start-button {
+  min-width: min(78vw, 300px);
+  min-height: 68px;
+  padding: 16px 32px;
+  border-radius: 18px;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  box-shadow: 0 14px 32px rgba(201, 20, 41, .22);
+}
+
+@keyframes marketplaceStartIn {
+  from { opacity: 0; transform: translateY(16px) scale(.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
