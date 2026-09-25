@@ -1,5 +1,5 @@
 import AccountForms from "@/components/AccountForms";
 
 export default function GuestPage() {
-  return <AccountForms />;
+  return <AccountForms initialMode="guest" />;
 }
