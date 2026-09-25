@@ -358,6 +358,7 @@ export default function AccountForms({ initialMode }: { initialMode?: Mode } = {
             </>
           )}
 
+          {mode !== "guest" && (
           <label>
             {mode === "login" ? "Email or phone number" : "Email"}
             <input
@@ -400,6 +401,7 @@ export default function AccountForms({ initialMode }: { initialMode?: Mode } = {
               </button>
             </div>
           </label>
+          )}
 
           {mode === "register" && (
             <>
