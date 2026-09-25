@@ -359,8 +359,9 @@ export default function AccountForms({ initialMode }: { initialMode?: Mode } = {
           )}
 
           {mode !== "guest" && (
-          <label>
-            {mode === "login" ? "Email or phone number" : "Email"}
+          <>
+            <label>
+              {mode === "login" ? "Email or phone number" : "Email"}
             <input
               type={mode === "login" ? "text" : "email"}
               value={email}
@@ -400,7 +401,8 @@ export default function AccountForms({ initialMode }: { initialMode?: Mode } = {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
-          </label>
+            </label>
+          </>
           )}
 
           {mode === "register" && (
