@@ -395,13 +395,6 @@ export default function AccountForms({ initialMode }: { initialMode?: Mode } = {
             </>
           )}
 
-          {mode === "login" && (
-            <>
-              {countryPicker}
-              {institutionPicker}
-            </>
-          )}
-
           {mode !== "guest" && (
           <>
             <label>
