@@ -278,8 +278,7 @@ export default function AccountForms() {
         }}
         onSelect={() => setInstitutionSelected(true)}
       />
-      {mode === "register" && ("
-      )}
+
     </label>
   );
 
