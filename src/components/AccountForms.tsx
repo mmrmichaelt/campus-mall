@@ -169,6 +169,7 @@ export default function AccountForms() {
   const [name, setName] = useState("");
   const [country, setCountry] = useState("KE");
   const [university, setUniversity] = useState("");
+  const [confirmUniversity, setConfirmUniversity] = useState("");
   const [institutionSelected, setInstitutionSelected] = useState(false);
   const [accountType, setAccountType] = useState("STUDENT");
   const [phone, setPhone] = useState("");
@@ -183,6 +184,7 @@ export default function AccountForms() {
   function changeCountry(value: string) {
     setCountry(value);
     setUniversity("");
+    setConfirmUniversity("");
     setInstitutionSelected(false);
   }
 
@@ -210,6 +212,7 @@ export default function AccountForms() {
             name: name.trim(),
             country,
             university: university.trim(),
+            confirmUniversity: confirmUniversity.trim(),
             accountType,
             phone: phone.trim(),
             email: email.trim().toLowerCase(),
@@ -328,6 +331,20 @@ export default function AccountForms() {
               </label>
               {countryPicker}
               {institutionPicker}
+
+              <label>
+                Confirm Institution
+                <input
+                  value={confirmUniversity}
+                  onChange={(event) => setConfirmUniversity(event.target.value)}
+                  placeholder="Type the same institution name again"
+                  autoComplete="organization"
+                  required
+                />
+                <small className="note">
+                  One Campus Mall account is permanently associated with one institution. Your institution cannot be changed after account creation.
+                </small>
+              </label>
 
               <label>
                 Account type
