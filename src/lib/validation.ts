@@ -46,6 +46,7 @@ export const registerSchema = z.object({
 });
 
 export const loginSchema = z.object({
+  country: z.string().trim().min(2, "Please select a country").max(100, "Country is too long"),
   identifier: z.string().trim().min(1, "Enter your email address or phone number"),
   university: z.string().trim().min(2, "Please select your university or college").max(200, "University/college name is too long"),
   password: z.string().min(1, "Password is required"),
