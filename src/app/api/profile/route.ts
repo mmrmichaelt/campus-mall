@@ -90,11 +90,6 @@ export async function PUT(request: Request) {
         ? input.name.trim()
         : "";
 
-    const university =
-      typeof input.university === "string"
-        ? input.university.trim()
-        : "";
-
     const imageUrl =
       typeof input.imageUrl === "string"
         ? input.imageUrl.trim()
@@ -145,7 +140,6 @@ export async function PUT(request: Request) {
       },
       data: {
         name,
-        university,
         imageUrl: imageUrl || null,
       },
       select: {
@@ -166,7 +160,7 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Your profile has been updated successfully.",
+      message: "Your profile has been updated successfully. Your institution remains unchanged.",
       profile: updatedUser,
     });
   } catch (error) {
