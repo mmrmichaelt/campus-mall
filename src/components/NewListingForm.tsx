@@ -155,35 +155,48 @@ export default function NewListingForm({ sellerName, sellerCountry, sellerUniver
               <option>SOS</option>
               <option>DJF</option>
               <option>ERN</option>
-              <option>ZMW</option>
-              <option>MWK</option>
-              <option>MZN</option>
-              <option>NAD</option>
-              <option>BWP</option>
-              <option>SZL</option>
-              <option>LSL</option>
-              <option>ZAR</option>
-              <option>AOA</option>
-              <option>CDF</option>
-              <option>XAF</option>
-              <option>XOF</option>
+              <option>EGP</option>
+              <option>LYD</option>
+              <option>TND</option>
+              <option>DZD</option>
+              <option>MAD</option>
+              <option>MRU</option>
+              <option>MRO</option>
+              <option>CVE</option>
+              <option>STN</option>
               <option>GHS</option>
               <option>NGN</option>
               <option>GMD</option>
-              <option>GNF</option>
               <option>SLE</option>
+              <option>GNF</option>
               <option>LRD</option>
-              <option>SVC</option>
+              <option>CDF</option>
+              <option>AOA</option>
+              <option>XAF</option>
+              <option>BIF</option>
+              <option>XOF</option>
+              <option>GWP</option>
+              <option>BWP</option>
+              <option>NAD</option>
+              <option>SZL</option>
+              <option>LSL</option>
+              <option>ZAR</option>
+              <option>ZMW</option>
+              <option>MWK</option>
+              <option>MZN</option>
+              <option>MGA</option>
+              <option>MUR</option>
+              <option>SCR</option>
+              <option>KMF</option>
+              <option>SCR</option>
+              <option>SHP</option>
+              <option>SDG</option>
+              <option>SSP</option>
+              <option>ZWL</option>
+              <option>ZIG</option>
               <option>USD</option>
-              <option>GBP</option>
               <option>EUR</option>
-              <option>AED</option>
-              <option>SAR</option>
-              <option>INR</option>
-              <option>CNY</option>
-              <option>JPY</option>
-              <option>AUD</option>
-              <option>CAD</option>
+              <option>GBP</option>
             </select>
           </label>
 
