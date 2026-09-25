@@ -159,11 +159,11 @@ function InstitutionPicker({
   );
 }
 
-export default function AccountForms() {
+export default function AccountForms({ initialMode }: { initialMode?: Mode } = {}) {
   const searchParams = useSearchParams();
   const nextPath = searchParams.get("next")?.startsWith("/") ? searchParams.get("next")! : "/";
   const [mode, setMode] = useState<Mode>(
-    searchParams.get("mode") === "login" ? "login" : "register"
+    initialMode ?? (searchParams.get("mode") === "login" ? "login" : "register")
   );
 
   const [name, setName] = useState("");
