@@ -129,6 +129,9 @@ export async function getInstitutionSuggestions(countryCode: string, query = "")
       }));
 
     return unique([...seedInstitutions(code), ...upstreamInstitutions])
+      // Never allow an institution belonging to another country into the
+      // suggestions for the currently selected country.
+      .filter((item) => item.countryCode.toUpperCase() === code)
       .filter((item) => !term || item.name.toLowerCase().includes(term))
       .sort((a, b) => a.name.localeCompare(b.name))
       .slice(0, 250);
