@@ -55,7 +55,22 @@ function InstitutionPicker({
           cache: "no-store",
         });
         const data = await response.json();
-        setInstitutions(Array.isArray(data.institutions) ? data.institutions : []);
+        const results = Array.isArray(data.institutions) ? data.institutions : [];
+        setInstitutions(results);
+
+        // If the user typed an exact institution name, treat it as selected
+        // once the directory confirms the match. This keeps guest checkout
+        // from requiring a second click after an exact search.
+        const normalizedQuery = query.trim().toLowerCase();
+        if (normalizedQuery) {
+          const exact = results.find(
+            (institution: Institution) =>
+              institution.name.trim().toLowerCase() === normalizedQuery
+          );
+          if (exact) {
+            onSelect?.(exact.name);
+          }
+        }
       } catch (error) {
         if (error instanceof Error && error.name !== "AbortError") {
           setInstitutions([]);
