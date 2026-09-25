@@ -8,15 +8,17 @@ export type PaymentMethod =
   | "MPESA" | "CARD" | "BANK_TRANSFER"
   | "PAYPAL" | "GOOGLE_PAY";
 
-export async function createPaymentIntent(input:{userId:string;purpose:string;amount:number;phone:string;email?:string;paymentMethod?:PaymentMethod;metadata?:PaymentMetadata}){
+export async function createPaymentIntent(input:{userId:string;purpose:string;amount:number;currency?:string;phone:string;email?:string;paymentMethod?:PaymentMethod;metadata?:PaymentMetadata}){
   const reference=`CM-${Date.now()}-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
   const paymentMethod=input.paymentMethod ?? "MPESA";
+  const currency=input.currency ?? "KES";
   const intent=await prisma.paymentIntent.create({
     data:{
       userId:input.userId,
       purpose:input.purpose,
       reference,
       amount:input.amount,
+      currency,
       phone:input.phone,
       metadata:{
         ...(input.metadata && typeof input.metadata === "object" ? input.metadata : {}),
@@ -70,7 +72,7 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
       headers:{Authorization:`Bearer ${token.access_token}`,"Content-Type":"application/json"},
       body:JSON.stringify({
         intent:"CAPTURE",
-        purchase_units:[{reference_id:reference,amount:{currency_code:process.env.PAYPAL_CURRENCY || "USD",value:input.amount.toFixed(2)}}],
+        purchase_units:[{reference_id:reference,amount:{currency_code:currency,value:input.amount.toFixed(2)}}],
         application_context:{return_url:`${appUrl}/api/payments/callback/paypal?reference=${encodeURIComponent(reference)}`,cancel_url:`${appUrl}/payment-cancelled`}
       }),
       cache:"no-store"
@@ -90,7 +92,7 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
     params.set("success_url",`${appUrl}/api/payments/callback/stripe?reference=${encodeURIComponent(reference)}&session_id={CHECKOUT_SESSION_ID}`);
     params.set("cancel_url",`${appUrl}/payment-cancelled?reference=${encodeURIComponent(reference)}`);
     params.set("customer_email",input.email);
-    params.set("line_items[0][price_data][currency]",(process.env.STRIPE_CURRENCY || "kes").toLowerCase());
+    params.set("line_items[0][price_data][currency]",currency.toLowerCase());
     params.set("line_items[0][price_data][product_data][name]",`Campus Mall ${input.purpose}`);
     params.set("line_items[0][price_data][unit_amount]",String(Math.round(input.amount*100)));
     params.set("line_items[0][quantity]","1");
