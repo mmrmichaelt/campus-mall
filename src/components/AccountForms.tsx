@@ -402,7 +402,6 @@ export default function AccountForms({ initialMode }: { initialMode?: Mode } = {
             </div>
           </label>
           )}
-          )}
 
           {mode === "register" && (
             <>
