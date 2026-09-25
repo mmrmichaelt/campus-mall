@@ -5,8 +5,8 @@ import type { Prisma } from "@prisma/client";
 type PaymentMetadata = Prisma.InputJsonValue;
 
 export type PaymentMethod =
-  | "MPESA" | "CARD" | "BANK_TRANSFER" | "PESALINK"
-  | "PAYPAL" | "GOOGLE_PAY" | "STRIPE";
+  | "MPESA" | "CARD" | "BANK_TRANSFER"
+  | "PAYPAL" | "GOOGLE_PAY";
 
 export async function createPaymentIntent(input:{userId:string;purpose:string;amount:number;phone:string;email?:string;paymentMethod?:PaymentMethod;metadata?:PaymentMetadata}){
   const reference=`CM-${Date.now()}-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
@@ -25,7 +25,7 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
     }
   });
 
-  if (paymentMethod === "BANK_TRANSFER" || paymentMethod === "PESALINK") {
+  if (paymentMethod === "BANK_TRANSFER") {
     const configured=Boolean(process.env.CAMPUS_MALL_BANK_NAME && process.env.CAMPUS_MALL_BANK_ACCOUNT);
     return {
       intent,
@@ -82,7 +82,7 @@ export async function createPaymentIntent(input:{userId:string;purpose:string;am
     return {intent:updated,configured:true,stk:null,paymentMethod,checkoutUrl:approve};
   }
 
-  if (paymentMethod === "CARD" || paymentMethod === "GOOGLE_PAY" || paymentMethod === "STRIPE") {
+  if (paymentMethod === "CARD" || paymentMethod === "GOOGLE_PAY") {
     const key=process.env.STRIPE_SECRET_KEY;
     if (!key || !input.email) return { intent, configured:false, stk:null, paymentMethod, checkoutUrl:null };
     const params=new URLSearchParams();
