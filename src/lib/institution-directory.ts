@@ -26,7 +26,7 @@ async function getKenyaTvetaInstitutions(): Promise<Institution[]> {
     const html = await response.text();
     const institutions: Institution[] = [];
     const rowRegex = /<tr[^>]*>([\\s\\S]*?)<\/tr>/gi;
-    const cellRegex = /<td[^>]*>([\\s\\S]*?)<\\/td>/gi;
+    const cellRegex = /<td[^>]*>([\s\S]*?)<\/td>/gi;
 
     for (const row of html.matchAll(rowRegex)) {
       const cells = [...row[1].matchAll(cellRegex)].map((match) =>
