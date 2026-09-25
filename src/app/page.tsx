@@ -14,12 +14,10 @@ export default function HomePage() {
   const [authResolved, setAuthResolved] = useState(false);
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("");
-  const [guestInstitution, setGuestInstitution] = useState("");
   const [enteredMarketplace, setEnteredMarketplace] = useState(false);
   const [entryLoading, setEntryLoading] = useState(false);
 
   useEffect(() => {
-    setGuestInstitution(localStorage.getItem("campus_mall_guest_institution") || localStorage.getItem("campus_mall_guest_university") || "");
     try {
       setEnteredMarketplace(sessionStorage.getItem("campus_mall_marketplace_started") === "1");
     } catch {}
@@ -46,10 +44,9 @@ export default function HomePage() {
           url.searchParams.set("category", category);
         }
 
-        const savedInstitution = user?.university?.trim() || guestInstitution.trim();
-        if (savedInstitution) url.searchParams.set("institution", savedInstitution);
-
-        // Load the marketplace itself, not a recommended/restricted subset.
+        // Home always loads the full marketplace. Institution is an optional
+        // filter only; it must never be applied automatically from the
+        // account or guest-selected institution.
         url.searchParams.set("limit", "60");
         url.searchParams.set("sort", "newest");
 
@@ -85,8 +82,6 @@ export default function HomePage() {
     enteredMarketplace,
     q,
     category,
-    user,
-    guestInstitution,
   ]);
 
   function startMarketplace() {
