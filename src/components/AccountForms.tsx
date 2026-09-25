@@ -5,6 +5,7 @@ import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { countries } from "@/data/countries";
+import { kenyaInstitutions } from "@/data/universities";
 
 type Mode = "register" | "login" | "guest";
 
@@ -40,6 +41,19 @@ function InstitutionPicker({
   useEffect(() => {
     if (!country) {
       setInstitutions([]);
+      return;
+    }
+
+    // Kenya suggestions are bundled locally so the guest picker shows a
+    // visible list immediately, even when the remote institution API is slow.
+    if (country === "KE") {
+      const term = query.trim().toLowerCase();
+      const localResults = kenyaInstitutions
+        .filter((institution) => !term || institution.name.toLowerCase().includes(term))
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .slice(0, 100);
+      setInstitutions(localResults);
+      setLoading(false);
       return;
     }
 
