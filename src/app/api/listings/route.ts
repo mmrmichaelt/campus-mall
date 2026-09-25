@@ -114,10 +114,11 @@ export async function GET(request: Request) {
 
       ...(institution
         ? {
-            details: {
-              path: ["institution"],
-              string_contains: institution,
-              mode: "insensitive",
+            seller: {
+              university: {
+                contains: institution,
+                mode: "insensitive",
+              },
             },
           }
         : {}),
