@@ -278,10 +278,7 @@ export default function AccountForms() {
         }}
         onSelect={() => setInstitutionSelected(true)}
       />
-      {mode === "register" && (
-        <small className="note">
-          Search the full institution directory and choose your institution. The selected institution is then associated with your account.
-        </small>
+      {mode === "register" && ("
       )}
     </label>
   );
@@ -294,13 +291,6 @@ export default function AccountForms() {
           <h1>
             {mode === "register" ? "Join campus mall" : mode === "login" ? "Welcome back" : "Browse as guest"}
           </h1>
-          <p className="note">
-            {mode === "register"
-              ? "Choose your country, then search the full institution directory."
-              : mode === "login"
-                ? "Choose your country, then search for the institution associated with your account."
-                : "Choose your country, then search the full institution directory to browse that campus."}
-          </p>
         </div>
 
         <div className="auth-tabs">
@@ -440,9 +430,6 @@ export default function AccountForms() {
           </button>
         </form>
 
-        <p className="note support-note">
-          Support: <a href="mailto:campusmall.support@gmail.com">campusmall.support@gmail.com</a>
-        </p>
       </div>
     </div>
   );
