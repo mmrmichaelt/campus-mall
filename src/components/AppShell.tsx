@@ -10,6 +10,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [q, setQ] = useState("");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [institutionOnly, setInstitutionOnly] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -23,6 +24,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       }
     } catch {}
     setMenuOpen(false);
+    try {
+      setInstitutionOnly(window.localStorage.getItem("campus_mall_institution_filter") === "1");
+    } catch {}
     fetch("/api/me").then(r => r.json()).then(data => {
       if (active) setUser(data.user ?? null);
     }).catch(() => { if (active) setUser(null); });
@@ -30,6 +34,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }, [pathname]);
 
   if (pathname === "/welcome") return <>{children}</>;
+
+  function toggleInstitutionFilter() {
+    if (!user?.university?.trim()) return;
+    const next = !institutionOnly;
+    setInstitutionOnly(next);
+    try { window.localStorage.setItem("campus_mall_institution_filter", next ? "1" : "0"); } catch {}
+    window.dispatchEvent(new CustomEvent("campus-mall-institution-filter-change", { detail: { active: next } }));
+  }
 
   function toggleTheme() {
     const next = theme === "dark" ? "light" : "dark";
@@ -118,6 +130,28 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
+      {institutionOnly && user?.university?.trim() && (
+        <div className="institution-context" role="status" aria-live="polite">
+          <span>Showing items from</span>
+          <strong>{user.university}</strong>
+        </div>
+      )}
+      <button
+        type="button"
+        className={`institution-switch ${institutionOnly ? "active" : ""}`}
+        aria-label={institutionOnly ? "Show items from all institutions" : "Show items from my institution"}
+        title={institutionOnly ? "Show all institutions" : `Show ${user?.university || "my institution"}`}
+        disabled={!user?.university?.trim()}
+        onClick={toggleInstitutionFilter}
+      >
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M13 20a13 13 0 0 1 22-7l3 3" />
+          <path d="M38 13v8h-8" />
+          <path d="M35 28a13 13 0 0 1-22 7l-3-3" />
+          <path d="M10 35v-8h8" />
+        </svg>
+      </button>
+
       <nav className="mobile-nav" aria-label="Mobile navigation">
         <Link href="/" className={pathname === "/" ? "active" : ""}><Home size={19} /><span>Home</span></Link>
         <Link href="/sell" className={pathname.startsWith("/sell") ? "active" : ""}><PlusCircle size={19} /><span>Add item</span></Link>
