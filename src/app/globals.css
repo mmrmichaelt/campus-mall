@@ -670,3 +670,59 @@ html.splash-blocking .app{
   from { opacity: 0; transform: translateY(16px) scale(.97); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+
+/* Floating institution switch: starts on all institutions, then toggles to the user's institution. */
+.institution-switch{
+  position:fixed;
+  right:18px;
+  top:75vh;
+  transform:translateY(-50%);
+  z-index:1200;
+  width:64px;
+  height:64px;
+  min-width:64px;
+  min-height:64px;
+  padding:0;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--card);
+  color:var(--red);
+  border:2px solid var(--red);
+  box-shadow:0 10px 26px rgba(0,0,0,.18);
+  transition:transform .2s ease, background .2s ease, color .2s ease;
+}
+.institution-switch svg{
+  width:39px;
+  height:39px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:3.2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.institution-switch:hover{
+  background:var(--red-light);
+  color:var(--red-dark);
+  transform:translateY(-50%) scale(1.05);
+}
+.institution-switch.active{
+  background:var(--red);
+  color:#fff;
+}
+.institution-switch:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+@media(max-width:700px){
+  .institution-switch{
+    right:12px;
+    width:58px;
+    height:58px;
+    min-width:58px;
+    min-height:58px;
+  }
+  .institution-switch svg{width:35px;height:35px}
+}
