@@ -20,6 +20,7 @@ export default function HomePage() {
 
   useEffect(() => {
     try {
+      setInstitutionOnly(localStorage.getItem("campus_mall_institution_filter") === "1");
       setEnteredMarketplace(sessionStorage.getItem("campus_mall_marketplace_started") === "1");
     } catch {}
     fetch("/api/me", { cache: "no-store" })
@@ -79,7 +80,15 @@ export default function HomePage() {
 
     loadListings();
 
-    return () => controller.abort();
+    function syncInstitutionFilter(event: Event) {
+      const custom = event as CustomEvent<{ active?: boolean }>;
+      setInstitutionOnly(Boolean(custom.detail?.active));
+    }
+    window.addEventListener("campus-mall-institution-filter-change", syncInstitutionFilter);
+    return () => {
+      controller.abort();
+      window.removeEventListener("campus-mall-institution-filter-change", syncInstitutionFilter);
+    };
   }, [
     authResolved,
     enteredMarketplace,
@@ -146,22 +155,6 @@ export default function HomePage() {
           </div>
         </div>
       ) : null}
-
-      <button
-        type="button"
-        className={`institution-switch ${institutionOnly ? "active" : ""}`}
-        aria-label={institutionOnly ? "Show items from all institutions" : "Show items from my institution"}
-        title={institutionOnly ? "Show all institutions" : user?.university ? `Show ${user.university}` : "Sign in and add an institution"}
-        disabled={!user?.university?.trim()}
-        onClick={() => setInstitutionOnly(value => !value)}
-      >
-        <svg viewBox="0 0 48 48" aria-hidden="true">
-          <path d="M13 20a13 13 0 0 1 22-7l3 3" />
-          <path d="M38 13v8h-8" />
-          <path d="M35 28a13 13 0 0 1-22 7l-3-3" />
-          <path d="M10 35v-8h8" />
-        </svg>
-      </button>
 
       <div className="category-filter-row">
         <div className="category-strip" aria-label="Marketplace categories">
