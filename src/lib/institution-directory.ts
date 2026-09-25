@@ -52,6 +52,19 @@ function seedInstitutions(countryCode: string): Institution[] {
   }));
 }
 
+function cleanHtml(value: string) {
+  return value
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&#039;|&apos;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&#8217;|&rsquo;/g, "’")
+    .replace(/&#8211;|&ndash;/g, "–")
+    .replace(/&#8212;|&mdash;/g, "—")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 async function getKenyaTvetaInstitutions(): Promise<Institution[]> {
   try {
     const response = await fetch("https://www.tveta.go.ke/accredited-tvet-institutions/", {
@@ -59,26 +72,68 @@ async function getKenyaTvetaInstitutions(): Promise<Institution[]> {
       next: { revalidate: 3600 },
     });
     if (!response.ok) return [];
+
     const html = await response.text();
     const institutions: Institution[] = [];
     const rowRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
     const cellRegex = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+
     for (const row of html.matchAll(rowRegex)) {
-      const cells = [...row[1].matchAll(cellRegex)].map((match) =>
-        match[1].replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/&#039;|&apos;/g, "'").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim()
-      );
-      if (cells.length < 7) continue;
-      const name = cells[1];
-      const regNo = cells[2];
-      if (!name || !regNo?.startsWith("TVETA/")) continue;
+      const cells = [...row[1].matchAll(cellRegex)].map((match) => cleanHtml(match[1]));
+      if (cells.length < 5) continue;
+
+      const name = cells[0];
+      const regNo = cells[1];
+      const category = cells[2];
+      const type = cells[3];
+      const county = cells[4];
+
+      if (!name || !regNo?.toUpperCase().startsWith("TVETA/")) continue;
+
       institutions.push({
         id: "tveta-" + regNo.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
         name,
         countryCode: "KE",
-        city: cells[5],
-        type: cells[3] ? cells[4] + " " + cells[3] : "TVET",
+        city: county,
+        type: [category, type].filter(Boolean).join(" / ") || "TVETA institution",
       });
     }
+
+    return unique(institutions);
+  } catch {
+    return [];
+  }
+}
+
+async function getKenyaKnqaInstitutions(): Promise<Institution[]> {
+  try {
+    const response = await fetch("https://knqa.go.ke/registered-institutions-and-qualifications/", {
+      headers: { Accept: "text/html" },
+      next: { revalidate: 3600 },
+    });
+    if (!response.ok) return [];
+
+    const html = await response.text();
+    const institutions: Institution[] = [];
+    const rowRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+    const cellRegex = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+
+    for (const row of html.matchAll(rowRegex)) {
+      const cells = [...row[1].matchAll(cellRegex)].map((match) => cleanHtml(match[1]));
+      if (cells.length < 2) continue;
+
+      const code = cells[0];
+      const name = cells[1];
+      if (!name || !/^\d+$/.test(code)) continue;
+
+      institutions.push({
+        id: "knqa-" + code,
+        name,
+        countryCode: "KE",
+        type: "KNQA registered institution",
+      });
+    }
+
     return unique(institutions);
   } catch {
     return [];
@@ -86,7 +141,11 @@ async function getKenyaTvetaInstitutions(): Promise<Institution[]> {
 }
 
 async function getKenyaInstitutions() {
-  return unique([...kenyaInstitutions, ...(await getKenyaTvetaInstitutions())]);
+  const [tveta, knqa] = await Promise.all([
+    getKenyaTvetaInstitutions(),
+    getKenyaKnqaInstitutions(),
+  ]);
+  return unique([...kenyaInstitutions, ...tveta, ...knqa]);
 }
 
 export async function getInstitutionSuggestions(countryCode: string, query = ""): Promise<Institution[]> {
@@ -95,7 +154,7 @@ export async function getInstitutionSuggestions(countryCode: string, query = "")
 
   if (code === "KE") {
     const all = await getKenyaInstitutions();
-    return all.filter((item) => !term || item.name.toLowerCase().includes(term)).sort((a, b) => a.name.localeCompare(b.name)).slice(0, 250);
+    return all.filter((item) => !term || item.name.toLowerCase().includes(term)).sort((a, b) => a.name.localeCompare(b.name)).slice(0, 1000);
   }
 
   const country = countries.find((item) => item.code === code);
@@ -136,7 +195,7 @@ export async function getInstitutionSuggestions(countryCode: string, query = "")
       .sort((a, b) => a.name.localeCompare(b.name))
       .slice(0, 250);
   } catch {
-    return seedInstitutions(code).filter((item) => !term || item.name.toLowerCase().includes(term)).slice(0, 250);
+    return seedInstitutions(code).filter((item) => !term || item.name.toLowerCase().includes(term)).slice(0, 1000);
   }
 }
 
