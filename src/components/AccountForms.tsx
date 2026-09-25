@@ -154,6 +154,7 @@ function InstitutionPicker({
             border: "1px solid var(--border, #ddd)",
             borderRadius: 10,
             background: "var(--card, #fff)",
+            color: "var(--ink, #111)",
             boxShadow: "0 10px 25px rgba(0,0,0,.12)",
           }}
         >
@@ -184,6 +185,7 @@ function InstitutionPicker({
                 border: 0,
                 borderBottom: "1px solid var(--border, #eee)",
                 background: "transparent",
+                color: "var(--ink, #111)",
                 cursor: "pointer",
               }}
             >
