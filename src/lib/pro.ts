@@ -81,7 +81,8 @@ const DEFAULT_PRICING: ProPricing = {
 };
 
 export function getProPricing(countryCode?: string | null): ProPricing {
-  const currency = COUNTRY_CURRENCY[(countryCode || "").toUpperCase()] || "USD";
+  const requestedCurrency = COUNTRY_CURRENCY[(countryCode || "").toUpperCase()] || "USD";
+  const currency = PRICING_BY_CURRENCY[requestedCurrency] ? requestedCurrency : "USD";
   const base = PRICING_BY_CURRENCY[currency] || DEFAULT_PRICING;
   return { currency, ...base };
 }
