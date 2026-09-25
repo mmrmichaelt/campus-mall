@@ -130,12 +130,16 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-      {institutionOnly && user?.university?.trim() && (
-        <div className="institution-context" role="status" aria-live="polite">
-          <span>Showing items from</span>
-          <strong>{user.university}</strong>
-        </div>
-      )}
+      <div className={`institution-context ${institutionOnly ? "active" : ""}`} role="status" aria-live="polite">
+        {institutionOnly && user?.university?.trim() ? (
+          <>
+            <span>Showing items from</span>
+            <strong>{user.university}</strong>
+          </>
+        ) : (
+          <strong>All institutions</strong>
+        )}
+      </div>
       <button
         type="button"
         className={`institution-switch ${institutionOnly ? "active" : ""}`}
