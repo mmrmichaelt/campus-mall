@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   publisher: "Campus Mall",
   metadataBase: new URL(process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   robots: { index: true, follow: true },
-  icons: { icon: "/icon.svg", shortcut: "/icon.svg", apple: "/icon.svg" },
+  icons: { icon: "/campus-mall-icon-v2.svg", shortcut: "/campus-mall-icon-v2.svg", apple: "/campus-mall-icon-v2.svg" },
 };
 
 export const viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" as const, themeColor: "#c9152d" };
