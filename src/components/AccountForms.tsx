@@ -143,6 +143,7 @@ function InstitutionPicker({
       {open && country && (
         <div
           role="listbox"
+          className="institution-suggestions"
           style={{
             position: "absolute",
             zIndex: 9999,
@@ -175,6 +176,7 @@ function InstitutionPicker({
               key={institution.name + index}
               type="button"
               role="option"
+              className="institution-suggestion"
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => choose(institution.name)}
               style={{
@@ -184,7 +186,7 @@ function InstitutionPicker({
                 textAlign: "left",
                 border: 0,
                 borderBottom: "1px solid var(--border, #eee)",
-                background: "transparent",
+                background: "var(--card, #fff)",
                 color: "var(--ink, #111)",
                 cursor: "pointer",
               }}
