@@ -91,7 +91,7 @@ export default async function ListingPage({ params }: PageProps) {
 
   return (
     <div className="panel">
-      <div className="section-title" style={{ marginBottom: "20px" }}>
+      <div className="section-title" style={{ marginBottom: "10px" }}>
         <Link href="/" className="text-link">← Back to marketplace</Link>
         <span className="category">{listing.category}</span>
       </div>
@@ -157,7 +157,7 @@ export default async function ListingPage({ params }: PageProps) {
           </div>
 
           {listing.details && typeof listing.details === "object" && !Array.isArray(listing.details) && Object.values(listing.details).some(Boolean) && (
-            <section className="panel" style={{ marginTop: "20px", padding: "18px" }}>
+            <section className="panel" style={{ marginTop: "10px", padding: "12px" }}>
               <h2>Item details</h2>
               <div className="details-grid">
                 {Object.entries(listing.details as Record<string, unknown>).map(([key, value]) => {
@@ -200,7 +200,7 @@ export default async function ListingPage({ params }: PageProps) {
 
           <ListingEngagement listingId={listing.id} sellerId={listing.seller.id} active={listing.status === "ACTIVE"} />
 
-          <div style={{ marginTop: "20px" }}>
+          <div style={{ marginTop: "10px" }}>
             {isSeller ? (
               <ListingActions listingId={listing.id} status={listing.status} />
             ) : listing.status === "ACTIVE" ? (
