@@ -783,3 +783,23 @@ html.splash-blocking .app{
 .institution-suggestion:hover,.institution-suggestion:focus-visible{background:var(--red-light)!important;color:var(--red-dark)!important;outline:none}
 .institution-suggestion strong{color:inherit}
 html[data-theme="dark"] .institution-suggestion:hover,html[data-theme="dark"] .institution-suggestion:focus-visible{background:var(--red-light)!important;color:var(--ink)!important}
+
+
+/* Listing field labels: use the theme accent so labels are clearly
+   distinguished from their values in both light and dark mode. */
+.listing-card-column strong,
+.listing-expanded-details strong{
+  color:var(--red);
+  font-weight:800;
+}
+.listing-card-column span,
+.listing-expanded-details span{
+  color:var(--ink);
+}
+.listing-title-link{
+  color:var(--ink);
+  font-weight:700;
+}
+.listing-title-link:hover{
+  color:var(--red);
+}
