@@ -40,7 +40,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     const next = !institutionOnly;
     setInstitutionOnly(next);
     try { window.localStorage.setItem("campus_mall_institution_filter", next ? "1" : "0"); } catch {}
-    window.dispatchEvent(new CustomEvent("campus-mall-institution-filter-change", { detail: { active: next } }));
+    window.dispatchEvent(new CustomEvent("campus-mall-institution-filter-change", { detail: { active: next, previousActive: institutionOnly, scrollY: window.scrollY } }));
   }
 
   function toggleTheme() {
