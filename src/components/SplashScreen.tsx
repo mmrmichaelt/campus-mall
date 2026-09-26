@@ -94,8 +94,15 @@ export default function SplashScreen() {
           height: 112px;
           margin: 0 auto 28px;
           border-radius: 25px;
+          overflow: hidden;
           box-shadow: 0 18px 45px rgba(201, 20, 41, .2);
           animation: logoIn .9s cubic-bezier(.2,.8,.2,1) .05s both, logoFloat 3.2s ease-in-out 1s infinite;
+        }
+
+        .splash-logo svg {
+          display: block;
+          width: 100%;
+          height: 100%;
         }
 
         .splash-accent {
