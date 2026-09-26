@@ -75,7 +75,7 @@ export default function SplashScreen() {
           overflow: hidden;
           background:
             radial-gradient(circle at 50% 45%, #ffffff 0%, #ffffff 35%, #fafafa 68%, #f2f2f2 100%);
-          color: #171717;
+          color: #9f1024;
           text-align: center;
           animation: splashOut .55s ease 6.45s forwards;
         }
@@ -125,7 +125,7 @@ export default function SplashScreen() {
 
         p {
           margin: 17px 0 0;
-          color: #666;
+          color: #b44a59;
           font-size: clamp(16px, 3.6vw, 22px);
           line-height: 1.5;
           animation: textIn .8s ease .5s both;
@@ -137,7 +137,7 @@ export default function SplashScreen() {
           margin: 30px auto 0;
           overflow: hidden;
           border-radius: 999px;
-          background: #e9e9e9;
+          background: #f2d7dc;
           animation: textIn .8s ease .65s both;
         }
 
@@ -153,7 +153,7 @@ export default function SplashScreen() {
         small {
           display: block;
           margin-top: 23px;
-          color: #999;
+          color: #b97882;
           font-size: 13px;
           animation: textIn .8s ease .75s both;
         }
