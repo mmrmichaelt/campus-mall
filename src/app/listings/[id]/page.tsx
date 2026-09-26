@@ -139,10 +139,16 @@ export default async function ListingPage({ params }: PageProps) {
           {listing.promoted && listing.promotedUntil && listing.promotedUntil > new Date() && (
             <div className="success" style={{ marginBottom: "10px" }}>📣 Promoted listing — boosted until {listing.promotedUntil.toLocaleDateString()}</div>
           )}
-          <h1>{listing.title}</h1>
+          <div className="listing-detail-title">
+            <strong>Title</strong>
+            <h1>{listing.title}</h1>
+          </div>
 
-          <div style={{ fontSize: "1.35rem", fontWeight: 800, margin: "12px 0" }}>
-            {formatPrice(listing.price, listing.currency)}
+          <div className="listing-detail-price">
+            <strong>Price</strong>
+            <div style={{ fontSize: "1.35rem", fontWeight: 800, margin: "2px 0 0" }}>
+              {formatPrice(listing.price, listing.currency)}
+            </div>
           </div>
 
           <div className="meta">
