@@ -7,19 +7,68 @@ export default function SwitchInstitutionPage() {
   const [university, setUniversity] = useState("");
   const [message, setMessage] = useState("");
   const [saving, setSaving] = useState(false);
+  const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
-    fetch("/api/me").then(r => r.json()).then(d => setUniversity(d.user?.university || "")).catch(() => {});
+    fetch("/api/me")
+      .then(r => r.json())
+      .then(d => {
+        if (d.user?.university) {
+          setUniversity(d.user.university);
+          setIsGuest(false);
+          return;
+        }
+        try {
+          const guestInstitution =
+            localStorage.getItem("campus_mall_active_institution")?.trim() ||
+            localStorage.getItem("campus_mall_guest_university")?.trim() ||
+            localStorage.getItem("campus_mall_guest_institution")?.trim() ||
+            "";
+          setUniversity(guestInstitution);
+          setIsGuest(Boolean(guestInstitution));
+        } catch {}
+      })
+      .catch(() => {
+        try {
+          const guestInstitution =
+            localStorage.getItem("campus_mall_active_institution")?.trim() ||
+            localStorage.getItem("campus_mall_guest_university")?.trim() ||
+            localStorage.getItem("campus_mall_guest_institution")?.trim() ||
+            "";
+          setUniversity(guestInstitution);
+          setIsGuest(Boolean(guestInstitution));
+        } catch {}
+      });
   }, []);
 
   async function save() {
     if (!university.trim()) { setMessage("Enter your institution."); return; }
     setSaving(true); setMessage("");
     try {
+      const selected = university.trim();
+
+      if (isGuest) {
+        localStorage.setItem("campus_mall_guest_university", selected);
+        localStorage.setItem("campus_mall_guest_institution", selected);
+        localStorage.setItem("campus_mall_active_institution", selected);
+        localStorage.setItem("campus_mall_institution_filter", "1");
+        window.dispatchEvent(new CustomEvent("campus-mall-institution-filter-change", {
+          detail: {
+            active: true,
+            previousActive: true,
+            institution: selected,
+            source: "guest",
+            scrollY: 0,
+          },
+        }));
+        setMessage("Guest institution switched.");
+        return;
+      }
+
       const r = await fetch("/api/university", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ university: university.trim() })
+        body: JSON.stringify({ university: selected })
       });
       const d = await r.json().catch(() => ({}));
       setMessage(r.ok ? "Institution switched." : (d.error || "Unable to switch institution."));
