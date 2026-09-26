@@ -26,6 +26,7 @@ export default function HomePage() {
     try {
       setInstitutionOnly(localStorage.getItem("campus_mall_institution_filter") === "1");
       setGuestInstitution(
+        localStorage.getItem("campus_mall_active_institution")?.trim() ||
         localStorage.getItem("campus_mall_guest_university")?.trim() ||
         localStorage.getItem("campus_mall_guest_institution")?.trim() ||
         ""
@@ -43,6 +44,7 @@ export default function HomePage() {
     if (!user) {
       try {
         const guestInstitution =
+          localStorage.getItem("campus_mall_active_institution")?.trim() ||
           localStorage.getItem("campus_mall_guest_university")?.trim() ||
           localStorage.getItem("campus_mall_guest_institution")?.trim() ||
           "";
