@@ -35,12 +35,32 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   if (pathname === "/welcome") return <>{children}</>;
 
+  function getGuestInstitution() {
+    try {
+      return window.localStorage.getItem("campus_mall_guest_university")?.trim() || "";
+    } catch {
+      return "";
+    }
+  }
+
+  const guestInstitution = getGuestInstitution();
+  const filterInstitution = user?.university?.trim() || guestInstitution;
+  const isGuest = !user && Boolean(guestInstitution);
+
   function toggleInstitutionFilter() {
-    if (!user?.university?.trim()) return;
+    if (!filterInstitution) return;
     const next = !institutionOnly;
     setInstitutionOnly(next);
     try { window.localStorage.setItem("campus_mall_institution_filter", next ? "1" : "0"); } catch {}
-    window.dispatchEvent(new CustomEvent("campus-mall-institution-filter-change", { detail: { active: next, previousActive: institutionOnly, scrollY: window.scrollY } }));
+    window.dispatchEvent(new CustomEvent("campus-mall-institution-filter-change", {
+      detail: {
+        active: next,
+        previousActive: institutionOnly,
+        scrollY: window.scrollY,
+        institution: filterInstitution,
+        source: isGuest ? "guest" : "account",
+      },
+    }));
   }
 
   function toggleTheme() {
@@ -135,10 +155,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       <div className={`institution-context ${institutionOnly ? "active" : ""}`} role="status" aria-live="polite">
-        {institutionOnly && user?.university?.trim() ? (
+        {institutionOnly && filterInstitution ? (
           <>
             <span>Showing items from</span>
-            <strong>{user.university}</strong>
+            <strong>{filterInstitution}</strong>
           </>
         ) : (
           <strong>All institutions</strong>
@@ -147,9 +167,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <button
         type="button"
         className={`institution-switch ${institutionOnly ? "active" : ""}`}
-        aria-label={institutionOnly ? "Show items from all institutions" : "Show items from my institution"}
-        title={institutionOnly ? "Show all institutions" : `Show ${user?.university || "my institution"}`}
-        disabled={!user?.university?.trim()}
+        aria-label={institutionOnly ? "Show items from all institutions" : `Show items from ${isGuest ? "my guest institution" : "my institution"}`}
+        title={institutionOnly ? "Show all institutions" : `Show ${filterInstitution || (isGuest ? "my guest institution" : "my institution")}`}
+        disabled={!filterInstitution}
         onClick={toggleInstitutionFilter}
       >
         <svg viewBox="0 0 48 48" aria-hidden="true">
