@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Heart, ShoppingCart, Tag, ChevronDown, ExternalLink } from "lucide-react";
+import { Heart, ShoppingCart, Tag, ExternalLink } from "lucide-react";
 
 type ListingCardProps = {
   item: {
@@ -42,10 +42,8 @@ function detail(item: ListingCardProps["item"], key: string) {
 }
 
 export default function ListingCard({ item, onCart }: ListingCardProps) {
-  const [more, setMore] = useState(false);
   const [cartLoading, setCartLoading] = useState(false);
   const price = Number(item.price);
-  const verified = item.seller?.emailVerified || item.seller?.phoneVerified;
   const imageUrl = getImageUrl(item.imageUrl);
 
   async function handleCart() {
@@ -99,25 +97,7 @@ export default function ListingCard({ item, onCart }: ListingCardProps) {
             <div><strong>Price</strong><span>{item.currency || "KES"} {Number.isFinite(price) ? price.toLocaleString() : "0"}</span></div>
           </div>
         </div>
-
-        {more && (
-          <div className="listing-expanded-details">
-            <div><strong>Category</strong><span>{item.category}</span></div>
-            <div><strong>Model</strong><span>{detail(item, "model")}</span></div>
-            <div><strong>Year</strong><span>{detail(item, "year")}</span></div>
-            <div><strong>Warranty</strong><span>{detail(item, "warranty")}</span></div>
-            <div><strong>Currency</strong><span>{item.currency || "KES"}</span></div>
-            <div><strong>Location</strong><span>{item.location || "—"}</span></div>
-            <div><strong>Seller information</strong><span>{item.seller?.name || "Seller"}{verified ? " · Verified" : ""}{detail(item, "institution") !== "—" ? ` · ${detail(item, "institution")}` : ""}</span></div>
-            <div><strong>Colour</strong><span>{detail(item, "color")}</span></div>
-            <div><strong>Delivery</strong><span>{detail(item, "delivery")}</span></div>
-          </div>
-        )}
-
-        <button type="button" className="listing-more-btn" onClick={() => setMore(v => !v)} aria-expanded={more}>
-          <span>{more ? "Show less" : "More"}</span><ChevronDown size={15} className={more ? "rotated" : ""} />
-        </button>
-
+undefined
         <div className="listing-card-actions">
           <Link href={`/listings/${item.id}`} className="secondary-btn listing-details-btn">
             <ExternalLink size={16} /> View details
