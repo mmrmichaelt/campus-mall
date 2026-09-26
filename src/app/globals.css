@@ -803,3 +803,46 @@ html[data-theme="dark"] .institution-suggestion:hover,html[data-theme="dark"] .i
 .listing-title-link:hover{
   color:var(--red);
 }
+
+
+/* Compact home listing summary: values only, separated by slashes. */
+.listing-summary-link{
+  display:block;
+  color:var(--ink);
+  text-decoration:none;
+}
+.listing-summary-line{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  min-width:0;
+  padding:8px 1px 9px;
+  font-size:12px;
+  line-height:1.35;
+  color:var(--ink);
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.listing-summary-line>span{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.listing-summary-title{
+  font-weight:800;
+}
+.listing-summary-separator{
+  flex:0 0 auto;
+  color:var(--red);
+  font-weight:800;
+}
+.listing-summary-link:hover .listing-summary-title{
+  color:var(--red);
+}
+@media(max-width:430px){
+  .listing-summary-line{
+    gap:4px;
+    font-size:10px;
+  }
+}
