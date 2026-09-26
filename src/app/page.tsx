@@ -25,7 +25,11 @@ export default function HomePage() {
   useEffect(() => {
     try {
       setInstitutionOnly(localStorage.getItem("campus_mall_institution_filter") === "1");
-      setGuestInstitution(localStorage.getItem("campus_mall_guest_university")?.trim() || "");
+      setGuestInstitution(
+        localStorage.getItem("campus_mall_guest_university")?.trim() ||
+        localStorage.getItem("campus_mall_guest_institution")?.trim() ||
+        ""
+      );
     } catch {}
     fetch("/api/me", { cache: "no-store" })
       .then(r => r.json())
@@ -38,7 +42,11 @@ export default function HomePage() {
     if (!authResolved) return;
     if (!user) {
       try {
-        if (!localStorage.getItem("campus_mall_guest_institution")) {
+        const guestInstitution =
+          localStorage.getItem("campus_mall_guest_university")?.trim() ||
+          localStorage.getItem("campus_mall_guest_institution")?.trim() ||
+          "";
+        if (!guestInstitution) {
           setGuestRedirecting(true);
           router.replace("/guest");
           return;
