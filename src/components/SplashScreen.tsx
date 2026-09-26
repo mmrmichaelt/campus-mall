@@ -75,7 +75,7 @@ export default function SplashScreen() {
           overflow: hidden;
           background:
             radial-gradient(circle at 50% 45%, #ffffff 0%, #ffffff 35%, #fafafa 68%, #f2f2f2 100%);
-          color: #9f1024;
+          color: #171717;
           text-align: center;
           animation: splashOut .55s ease 6.45s forwards;
         }
@@ -125,7 +125,7 @@ export default function SplashScreen() {
 
         p {
           margin: 17px 0 0;
-          color: #b44a59;
+          color: #666;
           font-size: clamp(16px, 3.6vw, 22px);
           line-height: 1.5;
           animation: textIn .8s ease .5s both;
@@ -153,7 +153,7 @@ export default function SplashScreen() {
         small {
           display: block;
           margin-top: 23px;
-          color: #b97882;
+          color: #999;
           font-size: 13px;
           animation: textIn .8s ease .75s both;
         }
