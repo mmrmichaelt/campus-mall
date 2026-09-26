@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
 import { Heart, ShoppingCart, Tag, ExternalLink } from "lucide-react";
 
 type ListingCardProps = {
@@ -45,6 +45,8 @@ export default function ListingCard({ item, onCart }: ListingCardProps) {
   const [cartLoading, setCartLoading] = useState(false);
   const price = Number(item.price);
   const imageUrl = getImageUrl(item.imageUrl);
+  const brand = detail(item, "brand");
+  const condition = detail(item, "condition");
 
   async function handleCart() {
     if (onCart) {
@@ -87,17 +89,18 @@ export default function ListingCard({ item, onCart }: ListingCardProps) {
       </Link>
 
       <div className="listing-body">
-        <div className="listing-card-columns listing-card-summary">
-          <div className="listing-card-column">
-            <div><strong>Title</strong><Link href={`/listings/${item.id}`} className="listing-title-link">{item.title}</Link></div>
-            <div><strong>Condition</strong><span>{detail(item, "condition")}</span></div>
+        <Link href={`/listings/${item.id}`} className="listing-summary-link" aria-label={`View ${item.title} details`}>
+          <div className="listing-summary-line">
+            <span className="listing-summary-title">{item.title}</span>
+            <span className="listing-summary-separator">/</span>
+            <span>{brand}</span>
+            <span className="listing-summary-separator">/</span>
+            <span>{item.currency || "KES"} {Number.isFinite(price) ? price.toLocaleString() : "0"}</span>
+            <span className="listing-summary-separator">/</span>
+            <span>{condition}</span>
           </div>
-          <div className="listing-card-column">
-            <div><strong>Brand</strong><span>{detail(item, "brand")}</span></div>
-            <div><strong>Price</strong><span>{item.currency || "KES"} {Number.isFinite(price) ? price.toLocaleString() : "0"}</span></div>
-          </div>
-        </div>
-undefined
+        </Link>
+
         <div className="listing-card-actions">
           <Link href={`/listings/${item.id}`} className="secondary-btn listing-details-btn">
             <ExternalLink size={16} /> View details
