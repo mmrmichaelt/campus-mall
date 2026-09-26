@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 const SPLASH_DURATION_MS = 7000;
-const SPLASH_SESSION_KEY = "campus_mall_splash_seen_v2";
+const SPLASH_SESSION_KEY = "campus_mall_splash_seen_v3";
 
 export default function SplashScreen() {
   const [visible, setVisible] = useState(true);
