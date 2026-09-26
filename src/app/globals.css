@@ -776,3 +776,10 @@ html.splash-blocking .app{
   .institution-switch{right:12px;width:58px;height:58px;min-width:58px;min-height:58px}
   .institution-switch svg{width:35px;height:35px}
 }
+
+/* Theme-aware institution autocomplete */
+.institution-suggestions{background:var(--card);color:var(--ink);border-color:var(--line)}
+.institution-suggestion{color:var(--ink)!important;background:var(--card)!important;border-bottom:1px solid var(--line)!important}
+.institution-suggestion:hover,.institution-suggestion:focus-visible{background:var(--red-light)!important;color:var(--red-dark)!important;outline:none}
+.institution-suggestion strong{color:inherit}
+html[data-theme="dark"] .institution-suggestion:hover,html[data-theme="dark"] .institution-suggestion:focus-visible{background:var(--red-light)!important;color:var(--ink)!important}
