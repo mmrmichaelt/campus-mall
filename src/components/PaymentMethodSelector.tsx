@@ -7,8 +7,7 @@ export type PaymentMethod =
   | "CARD"
   | "BANK_TRANSFER"
   | "PAYPAL"
-  | "GOOGLE_PAY"
-  | "CASH_ON_DELIVERY";
+  | "GOOGLE_PAY";
 
 export const PAYMENT_METHODS: Array<{
   id: PaymentMethod;
