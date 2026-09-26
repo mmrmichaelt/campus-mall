@@ -38,17 +38,17 @@ export default function SplashScreen() {
       <div className="splash-content">
         <div className="splash-logo" role="img" aria-label="Campus Mall">
           <svg viewBox="0 0 512 512" aria-hidden="true">
-            <rect width="512" height="512" rx="92" fill="#111111" />
-            <g fill="#ffffff" fontFamily="Arial, Helvetica, sans-serif" fontWeight="900">
-              <text x="62" y="265" fontSize="205" fill="#ff1828">C</text>
+            <rect width="512" height="512" rx="92" fill="#ffffff" />
+            <g fill="#c91429" fontFamily="Arial, Helvetica, sans-serif" fontWeight="900">
+              <text x="62" y="265" fontSize="205" fill="#c91429">C</text>
               <text x="218" y="265" fontSize="205">M</text>
             </g>
-            <g fill="none" stroke="#ffffff" strokeWidth="15" strokeLinecap="round" strokeLinejoin="round">
+            <g fill="none" stroke="#c91429" strokeWidth="15" strokeLinecap="round" strokeLinejoin="round">
               <path d="M154 326h30l16 74h126l27-58H201" />
               <path d="M217 346h113" />
             </g>
-            <circle cx="220" cy="423" r="13" fill="#ffffff" />
-            <circle cx="316" cy="423" r="13" fill="#ffffff" />
+            <circle cx="220" cy="423" r="13" fill="#c91429" />
+            <circle cx="316" cy="423" r="13" fill="#c91429" />
           </svg>
         </div>
 
