@@ -129,7 +129,7 @@ export default function HomePage() {
     loadListings();
 
     function syncInstitutionFilter(event: Event) {
-      const custom = event as CustomEvent<{ active?: boolean; previousActive?: boolean; scrollY?: number }>;
+      const custom = event as CustomEvent<{ active?: boolean; previousActive?: boolean; scrollY?: number; institution?: string; source?: string }>;
       const eventInstitution = custom.detail?.institution || selectedInstitution;
       const previousKey = JSON.stringify({
         q: q.trim(),
