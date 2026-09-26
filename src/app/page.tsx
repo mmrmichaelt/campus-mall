@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ListingCard from "@/components/ListingCard";
@@ -18,6 +18,8 @@ export default function HomePage() {
   const [institutionOnly, setInstitutionOnly] = useState(false);
   const [guestRedirecting, setGuestRedirecting] = useState(false);
   const router = useRouter();
+  const restoreScrollRef = useRef<number | null>(null);
+  const listingsCacheRef = useRef<Record<string, any[]>>({});
 
   useEffect(() => {
     try {
@@ -48,6 +50,26 @@ export default function HomePage() {
 
     setGuestRedirecting(false);
     const controller = new AbortController();
+    const stateKey = JSON.stringify({
+      q: q.trim(),
+      category: category || "",
+      institutionOnly,
+      institution: user?.university?.trim() || "",
+    });
+
+    try {
+      const cached = sessionStorage.getItem("campus_mall_home_cache_" + btoa(unescape(encodeURIComponent(stateKey))));
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed.items)) {
+          listingsCacheRef.current[stateKey] = parsed.items;
+          setItems(parsed.items);
+          setLoading(false);
+        }
+      }
+      const savedScroll = sessionStorage.getItem("campus_mall_home_scroll_" + btoa(unescape(encodeURIComponent(stateKey))));
+      if (savedScroll) restoreScrollRef.current = Number(savedScroll);
+    } catch {}
 
     async function loadListings() {
       setLoading(true);
@@ -80,6 +102,11 @@ export default function HomePage() {
             : [];
 
         setItems(listings);
+        listingsCacheRef.current[stateKey] = listings;
+        try {
+          const encodedKey = btoa(unescape(encodeURIComponent(stateKey)));
+          sessionStorage.setItem("campus_mall_home_cache_" + encodedKey, JSON.stringify({ items: listings }));
+        } catch {}
       } catch (error: any) {
         if (error?.name !== "AbortError") {
           setItems([]);
@@ -87,6 +114,11 @@ export default function HomePage() {
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
+          if (restoreScrollRef.current !== null) {
+            const y = restoreScrollRef.current;
+            restoreScrollRef.current = null;
+            requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo(0, y)));
+          }
         }
       }
     }
@@ -94,7 +126,17 @@ export default function HomePage() {
     loadListings();
 
     function syncInstitutionFilter(event: Event) {
-      const custom = event as CustomEvent<{ active?: boolean }>;
+      const custom = event as CustomEvent<{ active?: boolean; previousActive?: boolean; scrollY?: number }>;
+      const previousKey = JSON.stringify({
+        q: q.trim(),
+        category: category || "",
+        institutionOnly: Boolean(custom.detail?.previousActive),
+        institution: user?.university?.trim() || "",
+      });
+      try {
+        const encodedKey = btoa(unescape(encodeURIComponent(previousKey)));
+        sessionStorage.setItem("campus_mall_home_scroll_" + encodedKey, String(custom.detail?.scrollY ?? window.scrollY));
+      } catch {}
       setInstitutionOnly(Boolean(custom.detail?.active));
     }
     window.addEventListener("campus-mall-institution-filter-change", syncInstitutionFilter);
