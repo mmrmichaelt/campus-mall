@@ -246,9 +246,21 @@ export default function AccountForms({ initialMode }: { initialMode?: Mode } = {
         if (!country || !university.trim() || !institutionSelected) {
           throw new Error("Select an institution from the suggestions to continue.");
         }
+        const selectedGuestInstitution = university.trim();
         localStorage.setItem("campus_mall_guest_country", country);
-        localStorage.setItem("campus_mall_guest_university", university.trim());
-        localStorage.setItem("campus_mall_guest_institution", university.trim());
+        localStorage.setItem("campus_mall_guest_university", selectedGuestInstitution);
+        localStorage.setItem("campus_mall_guest_institution", selectedGuestInstitution);
+        localStorage.setItem("campus_mall_active_institution", selectedGuestInstitution);
+        localStorage.setItem("campus_mall_institution_filter", "1");
+        window.dispatchEvent(new CustomEvent("campus-mall-institution-filter-change", {
+          detail: {
+            active: true,
+            previousActive: false,
+            institution: selectedGuestInstitution,
+            source: "guest",
+            scrollY: 0,
+          },
+        }));
         window.location.href = nextPath;
         return;
       }
