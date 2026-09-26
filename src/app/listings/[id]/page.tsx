@@ -189,13 +189,7 @@ export default async function ListingPage({ params }: PageProps) {
               <section className="panel" style={{ marginTop: "10px", padding: "12px" }}>
                 <h2>Item details</h2>
                 <div className="details-grid">
-                  {Object.entries(detailValues).map(([key, value]) => (
-                    <div key={key}>
-                      <strong>{labels[key] || key}</strong>
-                      <span>{value === undefined || value === null || value === "" || value === false ? "—" : value === true ? "Yes" : String(value)}</span>
-                    </div>
-                  ))}
-                  {extraEntries.map(([key, value]) => (
+                  {[...Object.entries(detailValues), ...extraEntries].map(([key, value], index, entries) => (
                     <div key={key}>
                       <strong>{labels[key] || key}</strong>
                       <span>{value === undefined || value === null || value === "" || value === false ? "—" : value === true ? "Yes" : String(value)}</span>
