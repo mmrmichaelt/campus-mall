@@ -885,3 +885,22 @@ footer{padding:10px}
   .listing-body{padding:7px}
   .market-hero{padding:10px 2px 8px}
 }
+
+
+/* Do not draw frames inside another framed section.
+   Topics can contain multiple subsections without creating nested boxes. */
+.panel .panel,
+.panel > section.panel,
+.panel > div > section.panel{
+  background:transparent;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  padding-left:0;
+  padding-right:0;
+}
+.panel .panel:first-child,
+.panel > section.panel:first-child,
+.panel > div > section.panel:first-child{
+  margin-top:0;
+}
