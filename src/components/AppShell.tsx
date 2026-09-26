@@ -37,7 +37,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   function getGuestInstitution() {
     try {
-      return window.localStorage.getItem("campus_mall_guest_university")?.trim() || "";
+      return (
+        window.localStorage.getItem("campus_mall_active_institution")?.trim() ||
+        window.localStorage.getItem("campus_mall_guest_university")?.trim() ||
+        window.localStorage.getItem("campus_mall_guest_institution")?.trim() ||
+        ""
+      );
     } catch {
       return "";
     }
