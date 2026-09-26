@@ -16,6 +16,7 @@ export default function HomePage() {
   const [q, setQ] = useState("");
   const [category, setCategory] = useState("");
   const [institutionOnly, setInstitutionOnly] = useState(false);
+  const [guestInstitution, setGuestInstitution] = useState("");
   const [guestRedirecting, setGuestRedirecting] = useState(false);
   const router = useRouter();
   const restoreScrollRef = useRef<number | null>(null);
@@ -24,6 +25,7 @@ export default function HomePage() {
   useEffect(() => {
     try {
       setInstitutionOnly(localStorage.getItem("campus_mall_institution_filter") === "1");
+      setGuestInstitution(localStorage.getItem("campus_mall_guest_university")?.trim() || "");
     } catch {}
     fetch("/api/me", { cache: "no-store" })
       .then(r => r.json())
@@ -50,11 +52,12 @@ export default function HomePage() {
 
     setGuestRedirecting(false);
     const controller = new AbortController();
+    const selectedInstitution = user?.university?.trim() || guestInstitution;
     const stateKey = JSON.stringify({
       q: q.trim(),
       category: category || "",
       institutionOnly,
-      institution: user?.university?.trim() || "",
+      institution: selectedInstitution,
     });
 
     try {
@@ -84,8 +87,8 @@ export default function HomePage() {
 
         // Home starts with every institution. The circular switch is the
         // only control that turns the profile institution into a filter.
-        if (institutionOnly && user?.university?.trim()) {
-          url.searchParams.set("institution", user.university.trim());
+        if (institutionOnly && selectedInstitution) {
+          url.searchParams.set("institution", selectedInstitution);
         }
         url.searchParams.set("limit", "60");
         url.searchParams.set("sort", "newest");
@@ -127,16 +130,20 @@ export default function HomePage() {
 
     function syncInstitutionFilter(event: Event) {
       const custom = event as CustomEvent<{ active?: boolean; previousActive?: boolean; scrollY?: number }>;
+      const eventInstitution = custom.detail?.institution || selectedInstitution;
       const previousKey = JSON.stringify({
         q: q.trim(),
         category: category || "",
         institutionOnly: Boolean(custom.detail?.previousActive),
-        institution: user?.university?.trim() || "",
+        institution: eventInstitution,
       });
       try {
         const encodedKey = btoa(unescape(encodeURIComponent(previousKey)));
         sessionStorage.setItem("campus_mall_home_scroll_" + encodedKey, String(custom.detail?.scrollY ?? window.scrollY));
       } catch {}
+      if (custom.detail?.source === "guest" && custom.detail?.institution) {
+        setGuestInstitution(custom.detail.institution);
+      }
       setInstitutionOnly(Boolean(custom.detail?.active));
     }
     window.addEventListener("campus-mall-institution-filter-change", syncInstitutionFilter);
@@ -150,6 +157,7 @@ export default function HomePage() {
     category,
     institutionOnly,
     user?.university,
+    guestInstitution,
     router,
   ]);
 
