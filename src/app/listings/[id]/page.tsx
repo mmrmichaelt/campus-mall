@@ -156,22 +156,55 @@ export default async function ListingPage({ params }: PageProps) {
             <span>Listed {listing.createdAt.toLocaleDateString()}</span>
           </div>
 
-          {listing.details && typeof listing.details === "object" && !Array.isArray(listing.details) && Object.values(listing.details).some(Boolean) && (
-            <section className="panel" style={{ marginTop: "10px", padding: "12px" }}>
-              <h2>Item details</h2>
-              <div className="details-grid">
-                {Object.entries(listing.details as Record<string, unknown>).map(([key, value]) => {
-                  if (value === undefined || value === null || value === "" || value === false) return null;
-                  const labels: Record<string, string> = {
-                    brand: "Brand", model: "Model", condition: "Condition", conditionNotes: "Condition details",
-                    color: "Color", size: "Size", material: "Material", quantity: "Quantity", year: "Year",
-                    warranty: "Warranty", negotiable: "Negotiable", delivery: "Delivery", tags: "Tags",
-                  };
-                  return <div key={key}><strong>{labels[key] || key}</strong><span>{value === true ? "Yes" : String(value)}</span></div>;
-                })}
-              </div>
-            </section>
-          )}
+          {(() => {
+            const detailValues: Record<string, unknown> = {
+              title: listing.title,
+              brand: listing.details && typeof listing.details === "object" && !Array.isArray(listing.details) ? (listing.details as Record<string, unknown>).brand : undefined,
+              condition: listing.details && typeof listing.details === "object" && !Array.isArray(listing.details) ? (listing.details as Record<string, unknown>).condition : undefined,
+              price: formatPrice(listing.price, listing.currency),
+              color: listing.details && typeof listing.details === "object" && !Array.isArray(listing.details) ? (listing.details as Record<string, unknown>).color : undefined,
+              delivery: listing.details && typeof listing.details === "object" && !Array.isArray(listing.details) ? (listing.details as Record<string, unknown>).delivery : undefined,
+              category: listing.category,
+              model: listing.details && typeof listing.details === "object" && !Array.isArray(listing.details) ? (listing.details as Record<string, unknown>).model : undefined,
+              year: listing.details && typeof listing.details === "object" && !Array.isArray(listing.details) ? (listing.details as Record<string, unknown>).year : undefined,
+              warranty: listing.details && typeof listing.details === "object" && !Array.isArray(listing.details) ? (listing.details as Record<string, unknown>).warranty : undefined,
+              currency: listing.currency,
+              institution: listing.seller.university,
+              location: listing.location,
+              description: listing.description,
+            };
+            const rawDetails = listing.details && typeof listing.details === "object" && !Array.isArray(listing.details)
+              ? listing.details as Record<string, unknown>
+              : {};
+            const labels: Record<string, string> = {
+              title: "Title", brand: "Brand", condition: "Condition", price: "Price", color: "Colour",
+              delivery: "Delivery", category: "Category", model: "Model", year: "Year", warranty: "Warranty",
+              currency: "Currency", institution: "Institution", location: "Location", description: "Description",
+              conditionNotes: "Condition details", size: "Size", material: "Material", quantity: "Quantity",
+              negotiable: "Negotiable", tags: "Tags",
+            };
+            const knownKeys = new Set(Object.keys(detailValues));
+            const extraEntries = Object.entries(rawDetails).filter(([key]) => !knownKeys.has(key));
+            return (
+              <section className="panel" style={{ marginTop: "10px", padding: "12px" }}>
+                <h2>Item details</h2>
+                <div className="details-grid">
+                  {Object.entries(detailValues).map(([key, value]) => (
+                    <div key={key}>
+                      <strong>{labels[key] || key}</strong>
+                      <span>{value === undefined || value === null || value === "" || value === false ? "—" : value === true ? "Yes" : String(value)}</span>
+                    </div>
+                  ))}
+                  {extraEntries.map(([key, value]) => (
+                    <div key={key}>
+                      <strong>{labels[key] || key}</strong>
+                      <span>{value === undefined || value === null || value === "" || value === false ? "—" : value === true ? "Yes" : String(value)}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            );
+          })()}
 
           <section className="panel" style={{ marginTop: "20px", padding: "18px" }}>
             <h2>Description</h2>
