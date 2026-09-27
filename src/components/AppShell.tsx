@@ -172,10 +172,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <button
         type="button"
         className={`institution-switch ${institutionOnly ? "active" : ""}`}
-        aria-label={institutionOnly ? "Show items from all institutions" : `Show items from ${isGuest ? "my guest institution" : "my institution"}`}
-        title={institutionOnly ? "Show all institutions" : `Show ${filterInstitution || (isGuest ? "my guest institution" : "my institution")}`}
-        disabled={!filterInstitution}
-        onClick={toggleInstitutionFilter}
+        aria-label="Change institution"
+        title="Change institution"
+        onClick={() => { window.location.href = "/switch-institution"; }}
       >
         <svg viewBox="0 0 48 48" aria-hidden="true">
           <path d="M13 20a13 13 0 0 1 22-7l3 3" />
