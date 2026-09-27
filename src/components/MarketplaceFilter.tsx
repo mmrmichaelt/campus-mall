@@ -1,8 +1,6 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { countries } from "@/data/countries";
-
 const categories = [
   "Accommodation",
   "Beauty & dressing",
@@ -19,22 +17,6 @@ const categories = [
 
 export default function MarketplaceFilter() {
   const [open, setOpen] = useState(false);
-  const [country, setCountry] = useState("");
-  const [institutions, setInstitutions] = useState<{ name: string }[]>([]);
-  const [institutionLoading, setInstitutionLoading] = useState(false);
-
-  useEffect(() => {
-    if (!open) { setInstitutions([]); return; }
-    const controller = new AbortController();
-    setInstitutionLoading(true);
-    fetch(country ? `/api/institutions?country=${encodeURIComponent(country)}` : "/api/institutions", { signal: controller.signal, cache: "no-store" })
-      .then(r => r.json())
-      .then(data => setInstitutions(Array.isArray(data.institutions) ? data.institutions : []))
-      .catch(error => { if (error?.name !== "AbortError") setInstitutions([]); })
-      .finally(() => { if (!controller.signal.aborted) setInstitutionLoading(false); });
-    return () => controller.abort();
-  }, [open, country]);
-
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -81,22 +63,6 @@ export default function MarketplaceFilter() {
 
           <form onSubmit={submit}>
             <label>
-              Country
-              <select name="country" value={country} onChange={e => setCountry(e.target.value)}>
-                <option value="">All countries</option>
-                {countries.map(item => <option key={item.code} value={item.code}>{item.flag} {item.name}</option>)}
-              </select>
-            </label>
-
-            <label>
-              Institution
-              <select name="institution" defaultValue="" disabled={institutionLoading}>
-                <option value="">{institutionLoading ? "Loading institutions..." : "All institutions"}</option>
-                {institutions.map((item, index) => <option key={item.name + index} value={item.name}>{item.name}</option>)}
-              </select>
-            </label>
-
-            <label>
               Category
               <select name="category" defaultValue="">
                 <option value="">All categories</option>
@@ -125,11 +91,6 @@ export default function MarketplaceFilter() {
                 <option value="title-az">Alphabetical: A to Z</option>
                 <option value="title-za">Alphabetical: Z to A</option>
               </select>
-            </label>
-
-            <label>
-              Location
-              <input name="location" type="search" placeholder="County, town or campus" />
             </label>
 
             <label>
