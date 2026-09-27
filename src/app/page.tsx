@@ -49,10 +49,10 @@ export default function HomePage() {
           localStorage.getItem("campus_mall_guest_institution")?.trim() ||
           "";
         if (!guestInstitution) {
-          // New visitors should first see the account entry page, where they
-          // can choose Create Account, Log In, or Continue as Guest.
+          // After the 7-second welcome screen, new visitors go directly
+          // to the guest institution page.
           setGuestRedirecting(true);
-          router.replace("/join");
+          router.replace("/guest");
           return;
         }
       } catch {
