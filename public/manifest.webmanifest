@@ -1,0 +1,18 @@
+{
+  "name": "Campus Mall",
+  "short_name": "Campus Mall",
+  "description": "Campus Mall marketplace for students, campuses and communities.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#c9152d",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/campus-mall-icon-v2.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
