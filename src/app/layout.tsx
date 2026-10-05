@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   robots: { index: true, follow: true },
   icons: { icon: "/campus-mall-icon-v2.svg", shortcut: "/campus-mall-icon-v2.svg", apple: "/campus-mall-icon-v2.svg" },
+  manifest: "/manifest.webmanifest",
 };
 
 export const viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" as const, themeColor: "#c9152d" };
